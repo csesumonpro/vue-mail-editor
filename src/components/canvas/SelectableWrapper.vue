@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { ChevronUp, ChevronDown, Copy, Trash2 } from 'lucide-vue-next'
+import { ChevronUp, ChevronDown, Copy, Trash2, GripVertical } from 'lucide-vue-next'
 import { useEditorStore } from '@/stores/editor'
 import type { SelectionKind } from '@/types/schema'
 
@@ -66,6 +66,14 @@ function remove() {
   }
 }
 
+const dragHandleClass = computed(() =>
+  props.kind === 'row'
+    ? 'row-drag-handle'
+    : props.kind === 'content'
+      ? 'content-drag-handle'
+      : '',
+)
+
 const ringClass = computed(() => {
   if (selected.value) return 'outline outline-2 outline-brand'
   return 'outline-1 outline-transparent hover:outline-dashed hover:outline-2 hover:outline-brand/50'
@@ -78,13 +86,22 @@ const ringClass = computed(() => {
     :class="ringClass"
     @click="onClick"
   >
-    <!-- Floating label -->
+    <!-- Floating label + drag handle -->
     <span
       v-if="!store.previewMode"
-      class="pointer-events-none absolute -top-px left-0 z-10 hidden -translate-y-full rounded-t bg-brand px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white group-hover/sel:block"
-      :class="{ '!block': selected }"
+      class="absolute -top-px left-0 z-10 hidden -translate-y-full items-center gap-1 rounded-t bg-brand pr-2 text-[10px] font-semibold uppercase tracking-wide text-white group-hover/sel:flex"
+      :class="{ '!flex': selected }"
     >
-      {{ label }}
+      <span
+        v-if="hasActions"
+        :class="dragHandleClass"
+        class="flex cursor-grab items-center px-1 py-0.5 active:cursor-grabbing"
+        title="Drag to move"
+        @click.stop
+      >
+        <GripVertical class="h-3 w-3" />
+      </span>
+      <span class="py-0.5">{{ label }}</span>
     </span>
 
     <!-- Action toolbar -->

@@ -38,6 +38,20 @@ body {
   border-radius: 9999px;
 }
 
+/* Drag & drop: placeholder shown where the item will land */
+.drop-ghost {
+  opacity: 0.5;
+  outline: 2px dashed var(--color-brand);
+  outline-offset: -2px;
+  background: color-mix(in srgb, var(--color-brand) 8%, transparent);
+}
+.drop-ghost * {
+  visibility: hidden;
+}
+.dragging {
+  opacity: 0.9;
+}
+
 /* The transparent checkerboard backdrop behind the email canvas */
 .canvas-backdrop {
   background-color: #f1f5f9;

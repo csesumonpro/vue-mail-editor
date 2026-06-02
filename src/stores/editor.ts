@@ -53,6 +53,23 @@ export const useEditorStore = defineStore('editor', () => {
     future.value = []
   }
 
+  // Drag & drop mutates arrays in place (via vuedraggable), so we snapshot the
+  // pre-drag state and only commit it to history if something actually changed.
+  let dragSnapshot: string | null = null
+  function beginDrag() {
+    dragSnapshot = JSON.stringify(design.value)
+  }
+  function endDrag() {
+    if (dragSnapshot === null) return
+    if (dragSnapshot !== JSON.stringify(design.value)) {
+      past.value.push(dragSnapshot)
+      if (past.value.length > HISTORY_LIMIT) past.value.shift()
+      future.value = []
+      lastKey = null
+    }
+    dragSnapshot = null
+  }
+
   function undo() {
     const prev = past.value.pop()
     if (prev === undefined) return
@@ -323,6 +340,8 @@ export const useEditorStore = defineStore('editor', () => {
     canRedo,
     // history
     record,
+    beginDrag,
+    endDrag,
     undo,
     redo,
     // lookups

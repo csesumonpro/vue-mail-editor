@@ -275,10 +275,72 @@ export const blockInspectors: Record<ContentType, InspectorSchema> = {
       controls: [{ type: 'slider', key: 'height', label: 'Height', unit: 'px', min: 4, max: 200 }],
     },
   ],
-  // Social / Menu / Carousel inspectors are fleshed out in Phase 7.
-  social: [],
-  menu: [],
-  carousel: [],
+  social: [
+    {
+      title: 'Icons',
+      icon: Type,
+      controls: [{ type: 'list', key: 'icons', itemKind: 'social' }],
+    },
+    {
+      title: 'Style',
+      icon: Palette,
+      controls: [
+        {
+          type: 'select',
+          key: 'iconStyle',
+          label: 'Style',
+          options: [
+            { label: 'Solid', value: 'color' },
+            { label: 'Outline', value: 'outline' },
+            { label: 'Rounded', value: 'rounded' },
+          ],
+        },
+        { type: 'number', key: 'size', label: 'Size', unit: 'px', min: 16, max: 64 },
+        { type: 'number', key: 'spacing', label: 'Spacing', unit: 'px', min: 0, max: 40 },
+        { type: 'align', key: 'align', label: 'Align' },
+      ],
+    },
+    spacingGroup(),
+  ],
+  menu: [
+    {
+      title: 'Items',
+      icon: Type,
+      controls: [
+        { type: 'list', key: 'items', itemKind: 'menu' },
+        {
+          type: 'select',
+          key: 'layout',
+          label: 'Layout',
+          options: [
+            { label: 'Horizontal', value: 'horizontal' },
+            { label: 'Vertical', value: 'vertical' },
+          ],
+        },
+        { type: 'text', key: 'separator', label: 'Separator' },
+      ],
+    },
+    {
+      title: 'Style',
+      icon: Palette,
+      controls: [
+        { type: 'font', key: 'fontFamily', label: 'Font' },
+        { type: 'number', key: 'fontSize', label: 'Size', unit: 'px', min: 8, max: 32 },
+        { type: 'color', key: 'color', label: 'Color' },
+        { type: 'number', key: 'spacing', label: 'Spacing', unit: 'px', min: 0, max: 48 },
+        { type: 'align', key: 'align', label: 'Align' },
+      ],
+    },
+    spacingGroup(),
+  ],
+  carousel: [
+    {
+      title: 'Slides',
+      icon: ImageIcon,
+      controls: [{ type: 'list', key: 'slides', itemKind: 'carousel' }],
+    },
+    spacingGroup(),
+  ],
   html: [
     {
       title: 'Content',

@@ -63,7 +63,7 @@ function update(v: unknown) {
   <ControlField :label="def.label" :stack="stacked">
     <component
       :is="component"
-      :model-value="modelValue"
+      :model-value="(modelValue as any)"
       :min="def.min"
       :max="def.max"
       :step="def.step"

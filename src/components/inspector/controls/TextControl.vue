@@ -1,0 +1,14 @@
+<script setup lang="ts">
+defineProps<{ modelValue: string; placeholder?: string }>()
+const emit = defineEmits<{ 'update:modelValue': [string] }>()
+</script>
+
+<template>
+  <input
+    type="text"
+    :value="modelValue"
+    :placeholder="placeholder"
+    class="w-full rounded-md border border-line bg-white px-2 py-1.5 text-xs text-ink outline-none focus:border-brand"
+    @input="emit('update:modelValue', ($event.target as HTMLInputElement).value)"
+  />
+</template>

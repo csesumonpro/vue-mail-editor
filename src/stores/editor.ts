@@ -10,9 +10,11 @@ import type {
   SelectionKind,
 } from '@/types/schema'
 import { createRow } from '@/config/defaults'
+import { createContent } from '@/config/blockDefaults'
 import { createDesign } from '@/config/seed'
 import { deepClone } from '@/utils/clone'
 import { uid } from '@/utils/id'
+import type { ContentType } from '@/types/schema'
 
 const HISTORY_LIMIT = 50
 /** Edits sharing a key within this window coalesce into one undo step. */
@@ -198,6 +200,44 @@ export const useEditorStore = defineStore('editor', () => {
     select('content', content.id)
   }
 
+  /**
+   * Add a block of `type` at a location inferred from the current selection:
+   * after the selected content, into the selected column, else the last row's
+   * first column (creating a row if the body is empty).
+   */
+  function addBlock(type: ContentType) {
+    const content = createContent(type)
+    const sel = selection.value
+
+    if (sel.kind === 'content' && sel.id) {
+      const found = findContent(sel.id)
+      if (found) {
+        record()
+        found.column.contents.splice(found.index + 1, 0, content)
+        select('content', content.id)
+        return content
+      }
+    }
+
+    if (sel.kind === 'column' && sel.id) {
+      const found = findColumn(sel.id)
+      if (found) {
+        record()
+        found.column.contents.push(content)
+        select('content', content.id)
+        return content
+      }
+    }
+
+    // Fall back to the last row's first column.
+    record()
+    const rows = design.value.body.rows
+    if (!rows.length) rows.push(createRow([12]))
+    rows[rows.length - 1].columns[0].contents.push(content)
+    select('content', content.id)
+    return content
+  }
+
   function removeNode(kind: Exclude<SelectionKind, 'body' | null>, id: string) {
     record()
     if (kind === 'row') {
@@ -304,6 +344,7 @@ export const useEditorStore = defineStore('editor', () => {
     // structure
     addRow,
     addContent,
+    addBlock,
     removeNode,
     duplicateNode,
     moveContent,

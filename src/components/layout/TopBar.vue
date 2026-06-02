@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { ref } from 'vue'
 import {
   Mail,
   Monitor,
@@ -11,9 +10,10 @@ import {
   Save,
   Code2,
 } from 'lucide-vue-next'
+import { useEditorStore } from '@/stores/editor'
+import type { Device } from '@/types/schema'
 
-type Device = 'desktop' | 'tablet' | 'mobile'
-const device = ref<Device>('desktop')
+const store = useEditorStore()
 
 const devices: { id: Device; icon: typeof Monitor; label: string }[] = [
   { id: 'desktop', icon: Monitor, label: 'Desktop' },
@@ -41,11 +41,11 @@ const devices: { id: Device; icon: typeof Monitor; label: string }[] = [
         :title="d.label"
         class="flex h-8 w-8 items-center justify-center rounded-md transition"
         :class="
-          device === d.id
+          store.device === d.id
             ? 'bg-white text-brand-dark shadow-sm'
             : 'text-white/80 hover:bg-white/10'
         "
-        @click="device = d.id"
+        @click="store.setDevice(d.id)"
       >
         <component :is="d.icon" class="h-4 w-4" />
       </button>
@@ -56,21 +56,31 @@ const devices: { id: Device; icon: typeof Monitor; label: string }[] = [
       <button
         type="button"
         title="Undo"
-        class="flex h-8 w-8 items-center justify-center rounded-md text-white/80 hover:bg-white/15"
+        class="flex h-8 w-8 items-center justify-center rounded-md text-white/80 transition hover:bg-white/15 disabled:opacity-40 disabled:hover:bg-transparent"
+        :disabled="!store.canUndo"
+        @click="store.undo()"
       >
         <Undo2 class="h-4 w-4" />
       </button>
       <button
         type="button"
         title="Redo"
-        class="flex h-8 w-8 items-center justify-center rounded-md text-white/80 hover:bg-white/15"
+        class="flex h-8 w-8 items-center justify-center rounded-md text-white/80 transition hover:bg-white/15 disabled:opacity-40 disabled:hover:bg-transparent"
+        :disabled="!store.canRedo"
+        @click="store.redo()"
       >
         <Redo2 class="h-4 w-4" />
       </button>
       <button
         type="button"
         title="Preview"
-        class="flex h-8 w-8 items-center justify-center rounded-md text-white/80 hover:bg-white/15"
+        class="flex h-8 w-8 items-center justify-center rounded-md transition"
+        :class="
+          store.previewMode
+            ? 'bg-white text-brand-dark'
+            : 'text-white/80 hover:bg-white/15'
+        "
+        @click="store.togglePreview()"
       >
         <Eye class="h-4 w-4" />
       </button>

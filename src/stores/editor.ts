@@ -9,7 +9,8 @@ import type {
   Selection,
   SelectionKind,
 } from '@/types/schema'
-import { createDesign, createRow } from '@/config/defaults'
+import { createRow } from '@/config/defaults'
+import { createDesign } from '@/config/seed'
 import { deepClone } from '@/utils/clone'
 import { uid } from '@/utils/id'
 
@@ -237,6 +238,18 @@ export const useEditorStore = defineStore('editor', () => {
     to.column.contents.splice(insertAt, 0, from.content)
   }
 
+  /** Nudge a content node up/down within its column (toolbar arrows). */
+  function moveContentWithinColumn(id: string, delta: number) {
+    const found = findContent(id)
+    if (!found) return
+    const arr = found.column.contents
+    const next = found.index + delta
+    if (next < 0 || next >= arr.length) return
+    record()
+    const [item] = arr.splice(found.index, 1)
+    arr.splice(next, 0, item)
+  }
+
   function moveRow(fromIndex: number, toIndex: number) {
     const rows = design.value.body.rows
     if (fromIndex === toIndex) return
@@ -294,6 +307,7 @@ export const useEditorStore = defineStore('editor', () => {
     removeNode,
     duplicateNode,
     moveContent,
+    moveContentWithinColumn,
     moveRow,
     // load
     loadDesign,

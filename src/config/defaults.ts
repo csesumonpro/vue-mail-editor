@@ -4,10 +4,8 @@ import type {
   BorderValue,
   BoxValue,
   Column,
-  Design,
   Row,
 } from '@/types/schema'
-import { SCHEMA_VERSION } from '@/types/schema'
 import { DEFAULT_FONT } from '@/config/fonts'
 import { uid } from '@/utils/id'
 
@@ -84,11 +82,4 @@ export function createBody(): Body {
     },
     rows: [],
   }
-}
-
-/** A fresh design: body with a single empty 1-column row. */
-export function createDesign(): Design {
-  const body = createBody()
-  body.rows = [createRow([12])]
-  return { schemaVersion: SCHEMA_VERSION, body }
 }

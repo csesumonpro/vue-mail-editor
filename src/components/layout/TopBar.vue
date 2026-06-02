@@ -13,6 +13,7 @@ import {
   Code2,
   FilePlus2,
   FolderOpen,
+  LayoutTemplate,
 } from 'lucide-vue-next'
 import { useEditorStore } from '@/stores/editor'
 import { useToast } from '@/composables/useToast'
@@ -23,7 +24,7 @@ const store = useEditorStore()
 const { notify } = useToast()
 const fileInput = ref<HTMLInputElement | null>(null)
 
-const emit = defineEmits<{ export: [] }>()
+const emit = defineEmits<{ export: []; templates: [] }>()
 
 const devices: { id: Device; icon: typeof Monitor; label: string }[] = [
   { id: 'desktop', icon: Monitor, label: 'Desktop' },
@@ -123,6 +124,14 @@ async function onImport(e: Event) {
 
       <div class="mx-1 h-6 w-px bg-white/25" />
 
+      <button
+        type="button"
+        title="Templates"
+        class="flex h-8 w-8 items-center justify-center rounded-md text-white/80 hover:bg-white/15"
+        @click="emit('templates')"
+      >
+        <LayoutTemplate class="h-4 w-4" />
+      </button>
       <button
         type="button"
         title="New design"

@@ -1,33 +1,50 @@
 import { onBeforeUnmount, onMounted } from 'vue'
 import { useEditorStore } from '@/stores/editor'
 
-/** Wire Cmd/Ctrl+Z (undo) and Cmd/Ctrl+Shift+Z / Ctrl+Y (redo) shortcuts. */
+function isTyping(t: EventTarget | null): boolean {
+  const el = t as HTMLElement | null
+  return (
+    !!el &&
+    (el.isContentEditable ||
+      el.tagName === 'INPUT' ||
+      el.tagName === 'TEXTAREA' ||
+      el.tagName === 'SELECT')
+  )
+}
+
+/**
+ * Global editor shortcuts:
+ *   Cmd/Ctrl+Z undo · Cmd/Ctrl+Shift+Z / Ctrl+Y redo
+ *   Cmd/Ctrl+D duplicate · Delete/Backspace remove · Esc deselect
+ */
 export function useHistoryShortcuts() {
   const store = useEditorStore()
 
   function onKeydown(e: KeyboardEvent) {
+    if (isTyping(e.target)) return
     const mod = e.metaKey || e.ctrlKey
-    if (!mod) return
-
-    // Ignore while typing in inputs / contenteditable.
-    const t = e.target as HTMLElement | null
-    if (
-      t &&
-      (t.isContentEditable ||
-        t.tagName === 'INPUT' ||
-        t.tagName === 'TEXTAREA' ||
-        t.tagName === 'SELECT')
-    ) {
-      return
-    }
-
     const key = e.key.toLowerCase()
-    if (key === 'z' && !e.shiftKey) {
+    const sel = store.selection
+    const removable = sel.kind === 'row' || sel.kind === 'content'
+
+    if (mod && key === 'z' && !e.shiftKey) {
       e.preventDefault()
       store.undo()
-    } else if ((key === 'z' && e.shiftKey) || key === 'y') {
+    } else if (mod && (key === 'y' || (key === 'z' && e.shiftKey))) {
       e.preventDefault()
       store.redo()
+    } else if (mod && key === 'd') {
+      if (removable && sel.id) {
+        e.preventDefault()
+        store.duplicateNode(sel.kind as 'row' | 'content', sel.id)
+      }
+    } else if (e.key === 'Delete' || e.key === 'Backspace') {
+      if (removable && sel.id) {
+        e.preventDefault()
+        store.removeNode(sel.kind as 'row' | 'content', sel.id)
+      }
+    } else if (e.key === 'Escape') {
+      store.selectBody()
     }
   }
 

@@ -1,8 +1,25 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import type { ParagraphValues } from '@/types/schema'
 import { padding } from '@/utils/style'
+import { useEditorStore } from '@/stores/editor'
+import RichTextEditor from '@/components/common/RichTextEditor.vue'
 
-defineProps<{ values: ParagraphValues }>()
+const props = defineProps<{ values: ParagraphValues; contentId?: string }>()
+const store = useEditorStore()
+
+const editable = computed(
+  () =>
+    !store.previewMode &&
+    store.selection.kind === 'content' &&
+    store.selection.id === props.contentId,
+)
+
+function onUpdate(html: string) {
+  if (props.contentId) {
+    store.updateContentValues(props.contentId, { text: html }, `content:${props.contentId}:text`)
+  }
+}
 </script>
 
 <template>
@@ -15,6 +32,13 @@ defineProps<{ values: ParagraphValues }>()
       textAlign: values.align,
       lineHeight: values.lineHeight,
     }"
-    v-html="values.text"
-  />
+  >
+    <RichTextEditor
+      :model-value="values.text"
+      :editable="editable"
+      lists
+      placeholder="Write something…"
+      @update:model-value="onUpdate"
+    />
+  </div>
 </template>

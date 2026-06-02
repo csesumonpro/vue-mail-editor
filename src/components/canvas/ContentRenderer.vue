@@ -9,5 +9,5 @@ const component = computed(() => blockComponent(props.content.type))
 </script>
 
 <template>
-  <component :is="component" :values="content.values" />
+  <component :is="component" :values="content.values" :content-id="content.id" />
 </template>

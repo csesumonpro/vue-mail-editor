@@ -1,15 +1,30 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import type { HeadingValues } from '@/types/schema'
 import { padding } from '@/utils/style'
+import { useEditorStore } from '@/stores/editor'
+import RichTextEditor from '@/components/common/RichTextEditor.vue'
 
-defineProps<{ values: HeadingValues }>()
+const props = defineProps<{ values: HeadingValues; contentId?: string }>()
+const store = useEditorStore()
+
+const editable = computed(
+  () =>
+    !store.previewMode &&
+    store.selection.kind === 'content' &&
+    store.selection.id === props.contentId,
+)
+
+function onUpdate(html: string) {
+  if (props.contentId) {
+    store.updateContentValues(props.contentId, { text: html }, `content:${props.contentId}:text`)
+  }
+}
 </script>
 
 <template>
-  <component
-    :is="values.level"
+  <div
     :style="{
-      margin: 0,
       padding: padding(values.padding),
       fontFamily: values.fontFamily.value,
       fontSize: values.fontSize + 'px',
@@ -19,6 +34,12 @@ defineProps<{ values: HeadingValues }>()
       lineHeight: values.lineHeight,
       letterSpacing: values.letterSpacing + 'px',
     }"
-    v-html="values.text"
-  />
+  >
+    <RichTextEditor
+      :model-value="values.text"
+      :editable="editable"
+      placeholder="Heading"
+      @update:model-value="onUpdate"
+    />
+  </div>
 </template>

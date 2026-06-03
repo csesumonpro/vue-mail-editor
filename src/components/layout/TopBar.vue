@@ -16,7 +16,6 @@ import {
   LayoutTemplate,
   Sun,
   Moon,
-  SlidersHorizontal,
 } from 'lucide-vue-next'
 import { useEditorStore } from '@/stores/editor'
 import { useToast } from '@/composables/useToast'
@@ -186,22 +185,6 @@ async function onImport(e: Event) {
       >
         <Code2 class="h-4 w-4" />
         Export HTML
-      </button>
-
-      <div class="mx-1 h-6 w-px bg-line" />
-
-      <button
-        type="button"
-        :title="store.inspectorOpen ? 'Hide settings' : 'Show settings'"
-        class="flex h-8 w-8 items-center justify-center rounded-md transition"
-        :class="
-          store.inspectorOpen
-            ? 'bg-brand text-on-accent'
-            : 'text-faint hover:bg-ink/10 hover:text-header-fg'
-        "
-        @click="store.toggleInspector()"
-      >
-        <SlidersHorizontal class="h-4 w-4" />
       </button>
     </div>
   </header>

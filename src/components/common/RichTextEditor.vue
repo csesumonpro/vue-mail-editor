@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { watch, onBeforeUnmount } from 'vue'
+import { ref, watch, onBeforeUnmount } from 'vue'
 import { useEditor, EditorContent, BubbleMenu } from '@tiptap/vue-3'
 import StarterKit from '@tiptap/starter-kit'
 import Underline from '@tiptap/extension-underline'
@@ -27,6 +27,15 @@ const props = withDefaults(
   { editable: false, lists: false, placeholder: 'Type here…' },
 )
 const emit = defineEmits<{ 'update:modelValue': [string]; focus: []; blur: [] }>()
+
+const root = ref<HTMLElement | null>(null)
+// Render the bubble toolbar inside the editor root so it inherits theme/dark
+// tokens; `strategy: 'fixed'` keeps it from being clipped by panel overflow.
+const tippyOptions = {
+  duration: 100,
+  appendTo: () => root.value?.closest('.vue-email-editor') ?? document.body,
+  popperOptions: { strategy: 'fixed' as const },
+}
 
 const editor = useEditor({
   editable: props.editable,
@@ -84,11 +93,11 @@ function setColor(e: Event) {
 </script>
 
 <template>
-  <div>
+  <div ref="root">
     <BubbleMenu
       v-if="editor"
       :editor="editor"
-      :tippy-options="{ duration: 100 }"
+      :tippy-options="tippyOptions"
       class="flex items-center gap-0.5 rounded-lg border border-line bg-surface p-1 shadow-lg"
     >
       <button

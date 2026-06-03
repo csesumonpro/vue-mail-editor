@@ -10,10 +10,12 @@ import { SlidersHorizontal } from 'lucide-vue-next'
 import { ref, provide, computed, watch, watchEffect, onBeforeUnmount } from 'vue'
 import { createEditor } from '@/core/createEditor'
 import { createRegistry } from '@/core/registry'
-import { EDITOR_KEY, BLOCKS_KEY } from '@/core/keys'
+import { EDITOR_KEY, BLOCKS_KEY, CONFIG_KEY } from '@/core/keys'
 import type { AnyBlockDefinition } from '@/api/types'
 import type { ThemeTokens } from '@/api/theme'
 import { themeToCss } from '@/api/theme'
+import type { EditorConfig } from '@/api/config'
+import { resolveConfig } from '@/api/config'
 import { vTooltip } from '@/directives/tooltip'
 import { useAutosave, loadAutosave } from '@/composables/useAutosave'
 import { useHistoryShortcuts } from '@/composables/useHistory'
@@ -25,13 +27,16 @@ const props = withDefaults(
     disabledBlocks?: string[]
     theme?: ThemeTokens
     colorMode?: 'light' | 'dark' | 'auto'
+    config?: EditorConfig
   }>(),
   { colorMode: 'light' },
 )
 
-// Per-instance registry + editor state.
+// Per-instance registry, config + editor state.
 const registry = createRegistry({ blocks: props.blocks, disabled: props.disabledBlocks })
 provide(BLOCKS_KEY, registry)
+const config = resolveConfig(props.config)
+provide(CONFIG_KEY, config)
 const store = createEditor({ createContent: (type) => registry.create(type) })
 provide(EDITOR_KEY, store)
 
@@ -71,8 +76,12 @@ const rootClass = computed(() => [instanceClass, { dark: store.isDark }])
 
 /* Lifecycle --------------------------------------------------------- */
 const saved = loadAutosave()
-if (saved) store.loadDesign(saved, false)
-useAutosave(store)
+if (saved) {
+  store.loadDesign(saved, false)
+} else if (config.contentWidth) {
+  store.design.body.values.contentWidth = config.contentWidth
+}
+useAutosave(store, config.autosaveMs)
 useHistoryShortcuts(store)
 </script>
 
@@ -81,10 +90,16 @@ useHistoryShortcuts(store)
     class="vue-email-editor flex h-full flex-col overflow-hidden bg-app"
     :class="rootClass"
   >
-    <TopBar @export="showExport = true" @templates="showTemplates = true" />
+    <slot v-if="$slots.header" name="header" />
+    <TopBar v-else @export="showExport = true" @templates="showTemplates = true">
+      <template v-if="$slots['header-brand']" #brand><slot name="header-brand" /></template>
+      <template v-if="$slots['header-actions']" #actions><slot name="header-actions" /></template>
+    </TopBar>
     <div class="relative flex min-h-0 flex-1">
       <LeftPanel v-show="!store.previewMode" />
-      <EditorCanvas />
+      <EditorCanvas>
+        <template v-if="$slots.empty" #empty><slot name="empty" /></template>
+      </EditorCanvas>
 
       <button
         v-show="!store.previewMode && !store.inspectorOpen"

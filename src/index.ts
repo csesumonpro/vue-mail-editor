@@ -18,4 +18,5 @@ export type {
   Design,
 } from './api/types'
 export type { ThemeTokens, ThemeColors, ThemeFont } from './api/theme'
+export type { EditorConfig, EditorActions, TemplateDef } from './api/config'
 export type { ContentType } from './types/schema'

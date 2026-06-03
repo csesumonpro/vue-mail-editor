@@ -4,7 +4,6 @@ import { SCHEMA_VERSION } from '@/types/schema'
 import type { Editor } from '@/core/createEditor'
 
 const STORAGE_KEY = 'vue-email-editor:autosave'
-const DEBOUNCE_MS = 800
 
 interface SavedPayload {
   schemaVersion: number
@@ -33,7 +32,7 @@ export function clearAutosave() {
  * Persist the design to localStorage, debounced, whenever it changes.
  * Call once from a setup context (e.g. App.vue).
  */
-export function useAutosave(store: Editor) {
+export function useAutosave(store: Editor, debounceMs = 800) {
   let timer: ReturnType<typeof setTimeout> | undefined
 
   watch(
@@ -51,7 +50,7 @@ export function useAutosave(store: Editor) {
         } catch {
           /* storage full / unavailable — ignore */
         }
-      }, DEBOUNCE_MS)
+      }, debounceMs)
     },
     { deep: true },
   )

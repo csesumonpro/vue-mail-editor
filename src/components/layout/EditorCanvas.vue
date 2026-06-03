@@ -34,7 +34,9 @@ function onBackdropClick() {
         }"
         @click.stop
       >
-        <BodyRenderer />
+        <BodyRenderer>
+          <template v-if="$slots.empty" #empty><slot name="empty" /></template>
+        </BodyRenderer>
       </div>
     </div>
   </main>

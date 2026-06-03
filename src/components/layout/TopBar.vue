@@ -17,23 +17,29 @@ import {
   Sun,
   Moon,
 } from 'lucide-vue-next'
+import { computed } from 'vue'
 import { useEditor } from '@/core/useEditor'
+import { useConfig } from '@/core/useConfig'
 import { useToast } from '@/composables/useToast'
 import { vTooltip } from '@/directives/tooltip'
 import { downloadDesign, readDesignFile } from '@/utils/designIO'
 import type { Device } from '@/types/schema'
 
 const store = useEditor()
+const config = useConfig()
 const { notify } = useToast()
 const fileInput = ref<HTMLInputElement | null>(null)
 
 const emit = defineEmits<{ export: []; templates: [] }>()
 
-const devices: { id: Device; icon: typeof Monitor; label: string }[] = [
+const allDevices: { id: Device; icon: typeof Monitor; label: string }[] = [
   { id: 'desktop', icon: Monitor, label: 'Desktop' },
   { id: 'tablet', icon: Tablet, label: 'Tablet' },
   { id: 'mobile', icon: Smartphone, label: 'Mobile' },
 ]
+const devices = computed(() =>
+  allDevices.filter((d) => config.devices.includes(d.id)),
+)
 
 function onSave() {
   downloadDesign(store.design)
@@ -67,10 +73,12 @@ async function onImport(e: Event) {
     class="flex h-14 shrink-0 items-center justify-between border-b border-line bg-header px-4 text-header-fg"
   >
     <!-- Brand -->
-    <div class="flex items-center gap-2">
-      <Mail class="h-5 w-5" />
-      <span class="text-sm font-semibold tracking-tight">Vue Email Editor</span>
-    </div>
+    <slot name="brand">
+      <div class="flex items-center gap-2">
+        <Mail class="h-5 w-5" />
+        <span class="text-sm font-semibold tracking-tight">Vue Email Editor</span>
+      </div>
+    </slot>
 
     <!-- Device toggles -->
     <div class="flex items-center gap-1 rounded-lg bg-ink/5 p-1">
@@ -93,25 +101,28 @@ async function onImport(e: Event) {
 
     <!-- Actions -->
     <div class="flex items-center gap-1.5">
+      <template v-if="config.actions.undo">
+        <button
+          type="button"
+          v-tooltip="'Undo'"
+          class="flex h-8 w-8 items-center justify-center rounded-md text-faint transition hover:bg-ink/10 hover:text-header-fg disabled:opacity-40 disabled:hover:bg-transparent"
+          :disabled="!store.canUndo"
+          @click="store.undo()"
+        >
+          <Undo2 class="h-4 w-4" />
+        </button>
+        <button
+          type="button"
+          v-tooltip="'Redo'"
+          class="flex h-8 w-8 items-center justify-center rounded-md text-faint transition hover:bg-ink/10 hover:text-header-fg disabled:opacity-40 disabled:hover:bg-transparent"
+          :disabled="!store.canRedo"
+          @click="store.redo()"
+        >
+          <Redo2 class="h-4 w-4" />
+        </button>
+      </template>
       <button
-        type="button"
-        v-tooltip="'Undo'"
-        class="flex h-8 w-8 items-center justify-center rounded-md text-faint transition hover:bg-ink/10 hover:text-header-fg disabled:opacity-40 disabled:hover:bg-transparent"
-        :disabled="!store.canUndo"
-        @click="store.undo()"
-      >
-        <Undo2 class="h-4 w-4" />
-      </button>
-      <button
-        type="button"
-        v-tooltip="'Redo'"
-        class="flex h-8 w-8 items-center justify-center rounded-md text-faint transition hover:bg-ink/10 hover:text-header-fg disabled:opacity-40 disabled:hover:bg-transparent"
-        :disabled="!store.canRedo"
-        @click="store.redo()"
-      >
-        <Redo2 class="h-4 w-4" />
-      </button>
-      <button
+        v-if="config.actions.preview"
         type="button"
         v-tooltip="store.previewMode ? 'Exit preview' : 'Preview'"
         class="flex h-8 w-8 items-center justify-center rounded-md transition"
@@ -125,6 +136,7 @@ async function onImport(e: Event) {
         <component :is="store.previewMode ? EyeOff : Eye" class="h-4 w-4" />
       </button>
       <button
+        v-if="config.actions.theme"
         type="button"
         v-tooltip="store.isDark ? 'Light mode' : 'Dark mode'"
         class="flex h-8 w-8 items-center justify-center rounded-md text-faint transition hover:bg-ink/10 hover:text-header-fg"
@@ -136,6 +148,7 @@ async function onImport(e: Event) {
       <div class="mx-1 h-6 w-px bg-line" />
 
       <button
+        v-if="config.actions.templates"
         type="button"
         v-tooltip="'Templates'"
         class="flex h-8 w-8 items-center justify-center rounded-md text-faint transition hover:bg-ink/10 hover:text-header-fg"
@@ -144,6 +157,7 @@ async function onImport(e: Event) {
         <LayoutTemplate class="h-4 w-4" />
       </button>
       <button
+        v-if="config.actions.new"
         type="button"
         v-tooltip="'New design'"
         class="flex h-8 w-8 items-center justify-center rounded-md text-faint transition hover:bg-ink/10 hover:text-header-fg"
@@ -152,6 +166,7 @@ async function onImport(e: Event) {
         <FilePlus2 class="h-4 w-4" />
       </button>
       <button
+        v-if="config.actions.import"
         type="button"
         v-tooltip="'Import design JSON'"
         class="flex h-8 w-8 items-center justify-center rounded-md text-faint transition hover:bg-ink/10 hover:text-header-fg"
@@ -170,6 +185,7 @@ async function onImport(e: Event) {
       <div class="mx-1 h-6 w-px bg-line" />
 
       <button
+        v-if="config.actions.save"
         type="button"
         class="flex items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-xs font-semibold text-on-primary transition hover:opacity-90"
         @click="onSave"
@@ -178,6 +194,7 @@ async function onImport(e: Event) {
         Save Design
       </button>
       <button
+        v-if="config.actions.export"
         type="button"
         class="flex items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-xs font-semibold text-on-primary transition hover:opacity-90"
         @click="emit('export')"
@@ -185,6 +202,9 @@ async function onImport(e: Event) {
         <Code2 class="h-4 w-4" />
         Export HTML
       </button>
+
+      <!-- Host-injected actions -->
+      <slot name="actions" />
     </div>
   </header>
 </template>

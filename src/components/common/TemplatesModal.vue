@@ -1,15 +1,21 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import { X, LayoutTemplate } from 'lucide-vue-next'
 import { TEMPLATES } from '@/config/templates'
 import type { TemplateDef } from '@/config/templates'
-import { useEditor } from "@/core/useEditor"
+import { useEditor } from '@/core/useEditor'
+import { useConfig } from '@/core/useConfig'
 import { useToast } from '@/composables/useToast'
 
 defineProps<{ open: boolean }>()
 const emit = defineEmits<{ close: [] }>()
 
 const store = useEditor()
+const config = useConfig()
 const { notify } = useToast()
+
+// Host-provided templates take precedence over the built-ins.
+const templates = computed(() => config.templates ?? TEMPLATES)
 
 function pick(t: TemplateDef) {
   store.loadDesign(t.build())
@@ -42,7 +48,7 @@ function pick(t: TemplateDef) {
 
         <div class="grid grid-cols-2 gap-4 p-5 sm:grid-cols-4">
           <button
-            v-for="t in TEMPLATES"
+            v-for="t in templates"
             :key="t.id"
             type="button"
             class="group overflow-hidden rounded-lg border border-line text-left transition hover:border-brand hover:shadow-md"

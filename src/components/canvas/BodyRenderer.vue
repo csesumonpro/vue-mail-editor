@@ -58,8 +58,10 @@ const rowGroup = { name: 'rows', pull: true, put: ['rows'] }
       v-if="!body.rows.length"
       class="pointer-events-none flex min-h-40 flex-col items-center justify-center gap-1 text-center text-faint"
     >
-      <p class="text-sm font-medium">Empty email</p>
-      <p class="text-xs">Drag a block from the left to get started.</p>
+      <slot name="empty">
+        <p class="text-sm font-medium">Empty email</p>
+        <p class="text-xs">Drag a block from the left to get started.</p>
+      </slot>
     </div>
   </div>
 </template>

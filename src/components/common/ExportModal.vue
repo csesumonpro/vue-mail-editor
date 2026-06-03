@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { X, Copy, Download, Check } from 'lucide-vue-next'
 import { useEditorStore } from '@/stores/editor'
 import { useToast } from '@/composables/useToast'
@@ -16,7 +16,30 @@ type Tab = 'preview' | 'code'
 const tab = ref<Tab>('preview')
 const copied = ref(false)
 
+// Raw, email-safe HTML — used for copy/download (compact keeps inline-block
+// social icons / menu links from gaining whitespace gaps).
 const html = computed(() => (props.open ? exportHtml(store.design) : ''))
+
+// Pretty-printed version, lazily beautified, shown only in the Code tab.
+const formatted = ref('')
+watch(
+  [() => props.open, tab, html],
+  async () => {
+    if (!props.open || tab.value !== 'code') return
+    try {
+      const { html: beautify } = await import('js-beautify')
+      formatted.value = beautify(html.value, {
+        indent_size: 2,
+        wrap_line_length: 0,
+        preserve_newlines: false,
+        end_with_newline: false,
+      })
+    } catch {
+      formatted.value = html.value
+    }
+  },
+  { immediate: true },
+)
 
 async function copy() {
   try {
@@ -102,7 +125,7 @@ function download() {
           <pre
             v-else
             class="scroll-thin h-full overflow-auto bg-slate-900 p-4 text-xs leading-relaxed text-slate-100"
-          ><code>{{ html }}</code></pre>
+          ><code>{{ formatted || html }}</code></pre>
         </div>
       </div>
     </div>

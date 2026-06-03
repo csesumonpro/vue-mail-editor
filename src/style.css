@@ -29,8 +29,9 @@
   --inkp-link: #2563eb;
   --inkp-link-hover: #1d4ed8;
 
-  --inkp-accent: #6366f1;
-  --inkp-accent-hover: #4f46e5;
+  --inkp-accent: #0f172a;
+  --inkp-accent-hover: #1e293b;
+  --inkp-on-accent: #ffffff;
 
   --inkp-status-success: #22c55e;
   --inkp-status-info: #3b82f6;
@@ -74,8 +75,9 @@
   --inkp-link: #60a5fa;
   --inkp-link-hover: #93c5fd;
 
-  --inkp-accent: #818cf8;
-  --inkp-accent-hover: #a5b4fc;
+  --inkp-accent: #f8fafc;
+  --inkp-accent-hover: #e2e8f0;
+  --inkp-on-accent: #0f172a;
 
   --inkp-status-danger-soft: #2a0f12;
 
@@ -116,6 +118,7 @@
   --color-brand: var(--inkp-accent);
   --color-brand-dark: var(--inkp-accent-hover);
   --color-accent: var(--inkp-accent);
+  --color-on-accent: var(--inkp-on-accent);
 
   /* Primary (near-black / inverts in dark) */
   --color-primary: var(--inkp-btn-primary-bg);
@@ -206,7 +209,7 @@ body {
 }
 .rte-active {
   background: var(--inkp-accent);
-  color: #fff;
+  color: var(--inkp-on-accent);
 }
 .rte-active:hover {
   background: var(--inkp-accent-hover);

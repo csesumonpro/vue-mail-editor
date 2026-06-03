@@ -48,7 +48,7 @@ function update(side: keyof BoxValue, raw: string) {
       type="button"
       :title="linked ? 'Unlink sides' : 'Link sides'"
       class="flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-line"
-      :class="linked ? 'bg-brand text-white' : 'text-faint hover:text-ink'"
+      :class="linked ? 'bg-brand text-on-accent' : 'text-faint hover:text-ink'"
       @click="linked = !linked"
     >
       <component :is="linked ? Link : Unlink" class="h-3.5 w-3.5" />

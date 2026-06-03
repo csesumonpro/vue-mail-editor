@@ -83,7 +83,7 @@ async function onImport(e: Event) {
         class="flex h-8 w-8 items-center justify-center rounded-md transition"
         :class="
           store.device === d.id
-            ? 'bg-brand text-white shadow-sm'
+            ? 'bg-brand text-on-accent shadow-sm'
             : 'text-faint hover:bg-ink/10 hover:text-header-fg'
         "
         @click="store.setDevice(d.id)"
@@ -118,7 +118,7 @@ async function onImport(e: Event) {
         class="flex h-8 w-8 items-center justify-center rounded-md transition"
         :class="
           store.previewMode
-            ? 'bg-brand text-white'
+            ? 'bg-brand text-on-accent'
             : 'text-faint hover:bg-ink/10 hover:text-header-fg'
         "
         @click="store.togglePreview()"

@@ -21,7 +21,7 @@ const opts: { value: TextAlign; icon: typeof AlignLeft }[] = [
       class="flex h-6 w-8 items-center justify-center rounded transition"
       :class="
         modelValue === o.value
-          ? 'bg-brand text-white'
+          ? 'bg-brand text-on-accent'
           : 'text-subtle hover:bg-hover'
       "
       @click="emit('update:modelValue', o.value)"

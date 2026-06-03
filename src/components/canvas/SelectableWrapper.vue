@@ -89,7 +89,7 @@ const ringClass = computed(() => {
     <!-- Floating label + drag handle -->
     <span
       v-if="!store.previewMode"
-      class="absolute -top-px left-0 z-10 hidden -translate-y-full items-center gap-1 rounded-t bg-brand pr-2 text-[10px] font-semibold uppercase tracking-wide text-white group-hover/sel:flex"
+      class="absolute -top-px left-0 z-10 hidden -translate-y-full items-center gap-1 rounded-t bg-brand pr-2 text-[10px] font-semibold uppercase tracking-wide text-on-accent group-hover/sel:flex"
       :class="{ '!flex': selected }"
     >
       <span
@@ -107,13 +107,13 @@ const ringClass = computed(() => {
     <!-- Action toolbar -->
     <div
       v-if="showToolbar && hasActions"
-      class="absolute -top-px right-0 z-20 flex -translate-y-full items-center gap-0.5 rounded-t bg-brand px-1 py-0.5 text-white"
+      class="absolute -top-px right-0 z-20 flex -translate-y-full items-center gap-0.5 rounded-t bg-brand px-1 py-0.5 text-on-accent"
       @click.stop
     >
       <button
         type="button"
         title="Move up"
-        class="rounded p-0.5 hover:bg-white/20 disabled:opacity-40"
+        class="rounded p-0.5 hover:bg-on-accent/20 disabled:opacity-40"
         :disabled="!canMoveUp"
         @click="move(-1)"
       >
@@ -122,7 +122,7 @@ const ringClass = computed(() => {
       <button
         type="button"
         title="Move down"
-        class="rounded p-0.5 hover:bg-white/20 disabled:opacity-40"
+        class="rounded p-0.5 hover:bg-on-accent/20 disabled:opacity-40"
         :disabled="!canMoveDown"
         @click="move(1)"
       >
@@ -131,7 +131,7 @@ const ringClass = computed(() => {
       <button
         type="button"
         title="Duplicate"
-        class="rounded p-0.5 hover:bg-white/20"
+        class="rounded p-0.5 hover:bg-on-accent/20"
         @click="duplicate"
       >
         <Copy class="h-3.5 w-3.5" />
@@ -139,7 +139,7 @@ const ringClass = computed(() => {
       <button
         type="button"
         title="Delete"
-        class="rounded p-0.5 hover:bg-white/20"
+        class="rounded p-0.5 hover:bg-on-accent/20"
         @click="remove"
       >
         <Trash2 class="h-3.5 w-3.5" />

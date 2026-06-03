@@ -51,7 +51,7 @@ function download() {
               <button
                 type="button"
                 class="rounded px-3 py-1 font-medium transition"
-                :class="tab === 'preview' ? 'bg-brand text-white' : 'text-subtle'"
+                :class="tab === 'preview' ? 'bg-brand text-on-accent' : 'text-subtle'"
                 @click="tab = 'preview'"
               >
                 Preview
@@ -59,7 +59,7 @@ function download() {
               <button
                 type="button"
                 class="rounded px-3 py-1 font-medium transition"
-                :class="tab === 'code' ? 'bg-brand text-white' : 'text-subtle'"
+                :class="tab === 'code' ? 'bg-brand text-on-accent' : 'text-subtle'"
                 @click="tab = 'code'"
               >
                 Code

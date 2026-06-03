@@ -12,8 +12,15 @@ import { createEditor } from '@/core/createEditor'
 import { createRegistry } from '@/core/registry'
 import { EDITOR_KEY, BLOCKS_KEY, CONFIG_KEY, ACTIONS_KEY } from '@/core/keys'
 import { base64Upload } from '@/core/useActions'
-import type { AnyBlockDefinition, Design, TemplatePayload, StorageMode } from '@/api/types'
+import type {
+  AnyBlockDefinition,
+  Design,
+  TemplatePayload,
+  StorageMode,
+  EditorApi,
+} from '@/api/types'
 import type { Selection } from '@/types/schema'
+import { deepClone } from '@/utils/clone'
 import type { ThemeTokens } from '@/api/theme'
 import { themeToCss } from '@/api/theme'
 import type { EditorConfig } from '@/api/config'
@@ -27,6 +34,7 @@ import { uid } from '@/utils/id'
 
 const props = withDefaults(
   defineProps<{
+    modelValue?: Design
     blocks?: AnyBlockDefinition[]
     disabledBlocks?: string[]
     theme?: ThemeTokens
@@ -43,12 +51,16 @@ const props = withDefaults(
 )
 
 const emit = defineEmits<{
+  'update:modelValue': [design: Design]
   change: [design: Design]
   save: [design: Design]
   'save-template': [payload: TemplatePayload]
   export: [html: string, design: Design]
   select: [selection: Selection]
+  ready: [api: EditorApi]
 }>()
+
+const controlled = props.modelValue != null
 
 // Per-instance registry, config + editor state.
 const registry = createRegistry({ blocks: props.blocks, disabled: props.disabledBlocks })
@@ -127,7 +139,10 @@ function applyContentWidth() {
   if (config.contentWidth) store.design.body.values.contentWidth = config.contentWidth
 }
 
-if (props.storage === 'local') {
+if (controlled) {
+  // v-model controlled mode — design comes from the parent.
+  store.loadDesign(props.modelValue as Design, false)
+} else if (props.storage === 'local') {
   const saved = loadAutosave()
   if (saved) store.loadDesign(saved, false)
   else applyContentWidth()
@@ -139,9 +154,17 @@ if (props.storage === 'local') {
 
 useHistoryShortcuts(store)
 
-// Host-driven initial load (e.g. fetch from server) overrides the seed.
+// External v-model updates → load into the editor (reference-guarded to avoid loops).
+watch(
+  () => props.modelValue,
+  (val) => {
+    if (val && val !== store.design) store.loadDesign(val, false)
+  },
+)
+
+// Host-driven initial load (server fetch) — skipped in controlled mode.
 onMounted(async () => {
-  if (props.onLoad) {
+  if (!controlled && props.onLoad) {
     const d = await props.onLoad()
     if (d) store.loadDesign(d, false)
   }
@@ -152,6 +175,7 @@ let changeTimer: ReturnType<typeof setTimeout> | undefined
 watch(
   () => store.design,
   () => {
+    emit('update:modelValue', store.design)
     clearTimeout(changeTimer)
     changeTimer = setTimeout(() => emit('change', store.design), 300)
   },
@@ -162,6 +186,19 @@ watch(
   (s) => emit('select', s),
   { deep: true },
 )
+
+/* Imperative API ---------------------------------------------------- */
+const api: EditorApi = {
+  getDesign: () => deepClone(store.design),
+  loadDesign: (d) => store.loadDesign(d),
+  exportHtml: () => exportHtml(store.design, registry),
+  undo: () => store.undo(),
+  redo: () => store.redo(),
+  registerBlock: (def) => registry.register(def),
+  selectBody: () => store.selectBody(),
+}
+defineExpose(api)
+onMounted(() => emit('ready', api))
 </script>
 
 <template>

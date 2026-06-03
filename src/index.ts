@@ -18,6 +18,7 @@ export type {
   Design,
   TemplatePayload,
   StorageMode,
+  EditorApi,
 } from './api/types'
 export type { ThemeTokens, ThemeColors, ThemeFont } from './api/theme'
 export type { EditorConfig, EditorActions, TemplateDef } from './api/config'

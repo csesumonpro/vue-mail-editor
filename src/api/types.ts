@@ -46,3 +46,15 @@ export interface BlockDefinition<V = Record<string, unknown>> {
 
 /** Loosely-typed definition used inside the registry. */
 export type AnyBlockDefinition = BlockDefinition<any>
+
+/** Imperative API exposed via `ready(api)` or a template ref. */
+export interface EditorApi {
+  /** A deep-cloned snapshot of the current design. */
+  getDesign(): import('@/types/schema').Design
+  loadDesign(design: import('@/types/schema').Design): void
+  exportHtml(): string
+  undo(): void
+  redo(): void
+  registerBlock(def: AnyBlockDefinition): void
+  selectBody(): void
+}

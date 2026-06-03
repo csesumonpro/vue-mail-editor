@@ -18,12 +18,12 @@ function patch(p: Partial<BorderValue>) {
         min="0"
         :value="modelValue.width"
         title="Width"
-        class="w-16 rounded-md border border-line bg-white px-2 py-1.5 text-xs text-ink outline-none focus:border-brand"
+        class="w-16 rounded-md border border-line bg-input px-2 py-1.5 text-xs text-ink outline-none focus:border-brand"
         @input="patch({ width: Math.max(0, Number(($event.target as HTMLInputElement).value)) })"
       />
       <select
         :value="modelValue.style"
-        class="flex-1 rounded-md border border-line bg-white px-2 py-1.5 text-xs text-ink outline-none focus:border-brand"
+        class="flex-1 rounded-md border border-line bg-input px-2 py-1.5 text-xs text-ink outline-none focus:border-brand"
         @change="patch({ style: ($event.target as HTMLSelectElement).value as BorderValue['style'] })"
       >
         <option value="solid">Solid</option>

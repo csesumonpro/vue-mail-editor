@@ -43,7 +43,7 @@ function step(delta: number) {
           v-for="(_, i) in values.slides"
           :key="i"
           class="h-1.5 w-1.5 rounded-full"
-          :class="i === active ? 'bg-slate-600' : 'bg-slate-300'"
+          :class="i === active ? 'bg-ink' : 'bg-active'"
         />
       </div>
     </template>

@@ -9,7 +9,7 @@ const emit = defineEmits<{ 'update:modelValue': [boolean] }>()
     role="switch"
     :aria-checked="modelValue"
     class="relative h-5 w-9 shrink-0 rounded-full transition"
-    :class="props.modelValue ? 'bg-brand' : 'bg-slate-300'"
+    :class="props.modelValue ? 'bg-brand' : 'bg-active'"
     @click="emit('update:modelValue', !props.modelValue)"
   >
     <span

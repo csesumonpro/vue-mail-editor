@@ -89,7 +89,7 @@ function setColor(e: Event) {
       v-if="editor"
       :editor="editor"
       :tippy-options="{ duration: 100 }"
-      class="flex items-center gap-0.5 rounded-lg border border-line bg-white p-1 shadow-lg"
+      class="flex items-center gap-0.5 rounded-lg border border-line bg-surface p-1 shadow-lg"
     >
       <button
         type="button"
@@ -132,7 +132,7 @@ function setColor(e: Event) {
         <Link2 class="h-3.5 w-3.5" />
       </button>
       <label class="rte-btn relative cursor-pointer">
-        <span class="h-3.5 w-3.5 rounded-sm border border-slate-300 bg-gradient-to-br from-red-500 via-green-500 to-blue-500" />
+        <span class="h-3.5 w-3.5 rounded-sm border border-line bg-gradient-to-br from-red-500 via-green-500 to-blue-500" />
         <input type="color" class="absolute inset-0 cursor-pointer opacity-0" @input="setColor" />
       </label>
       <template v-if="lists">

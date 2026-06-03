@@ -38,7 +38,7 @@ const cloneLayout = (l: { cells: number[] }) => createRow(l.cells)
         :class="
           tab === 'content'
             ? 'border-b-2 border-brand text-ink'
-            : 'text-slate-400 hover:text-slate-600'
+            : 'text-faint hover:text-ink'
         "
         @click="tab = 'content'"
       >
@@ -50,7 +50,7 @@ const cloneLayout = (l: { cells: number[] }) => createRow(l.cells)
         :class="
           tab === 'blocks'
             ? 'border-b-2 border-brand text-ink'
-            : 'text-slate-400 hover:text-slate-600'
+            : 'text-faint hover:text-ink'
         "
         @click="tab = 'blocks'"
       >
@@ -75,7 +75,7 @@ const cloneLayout = (l: { cells: number[] }) => createRow(l.cells)
           <button
             type="button"
             :title="`Add ${element.label}`"
-            class="group flex w-full cursor-grab flex-col items-center justify-center gap-1.5 rounded-lg border border-line bg-panel py-4 text-slate-500 shadow-sm transition hover:border-brand hover:text-brand-dark hover:shadow active:scale-95"
+            class="group flex w-full cursor-grab flex-col items-center justify-center gap-1.5 rounded-lg border border-line bg-panel py-4 text-subtle shadow-sm transition hover:border-brand hover:text-brand-dark hover:shadow active:scale-95"
             @click="store.addBlock(element.type)"
           >
             <component :is="element.icon" class="h-5 w-5" />
@@ -106,11 +106,11 @@ const cloneLayout = (l: { cells: number[] }) => createRow(l.cells)
             <span
               v-for="(c, i) in element.cells"
               :key="i"
-              class="h-8 rounded bg-slate-200"
+              class="h-8 rounded bg-active"
               :style="{ flexGrow: c }"
             />
             <span
-              class="ml-2 shrink-0 text-[11px] font-medium text-slate-500"
+              class="ml-2 shrink-0 text-[11px] font-medium text-subtle"
               >{{ element.label }}</span
             >
           </button>

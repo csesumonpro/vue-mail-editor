@@ -10,9 +10,9 @@ const icons = {
   error: AlertCircle,
 }
 const tones = {
-  success: 'text-emerald-600',
-  info: 'text-sky-600',
-  error: 'text-red-600',
+  success: 'text-success',
+  info: 'text-info',
+  error: 'text-danger',
 }
 </script>
 
@@ -22,7 +22,7 @@ const tones = {
       <div
         v-for="t in state.items"
         :key="t.id"
-        class="pointer-events-auto flex items-center gap-2 rounded-lg border border-line bg-white px-4 py-2.5 text-sm font-medium text-ink shadow-lg"
+        class="pointer-events-auto flex items-center gap-2 rounded-lg border border-line bg-surface px-4 py-2.5 text-sm font-medium text-ink shadow-lg"
       >
         <component :is="icons[t.type]" class="h-4 w-4" :class="tones[t.type]" />
         {{ t.message }}

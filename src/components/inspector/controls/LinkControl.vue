@@ -7,9 +7,9 @@ const emit = defineEmits<{ 'update:modelValue': [string] }>()
 
 <template>
   <div
-    class="flex w-full items-center gap-1.5 rounded-md border border-line bg-white px-2 focus-within:border-brand"
+    class="flex w-full items-center gap-1.5 rounded-md border border-line bg-input px-2 focus-within:border-brand"
   >
-    <Link2 class="h-3.5 w-3.5 shrink-0 text-slate-400" />
+    <Link2 class="h-3.5 w-3.5 shrink-0 text-faint" />
     <input
       type="url"
       :value="modelValue"

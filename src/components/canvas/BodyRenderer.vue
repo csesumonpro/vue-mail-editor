@@ -56,7 +56,7 @@ const rowGroup = { name: 'rows', pull: true, put: ['rows'] }
 
     <div
       v-if="!body.rows.length"
-      class="pointer-events-none flex min-h-40 flex-col items-center justify-center gap-1 text-center text-slate-400"
+      class="pointer-events-none flex min-h-40 flex-col items-center justify-center gap-1 text-center text-faint"
     >
       <p class="text-sm font-medium">Empty email</p>
       <p class="text-xs">Drag a block from the left to get started.</p>

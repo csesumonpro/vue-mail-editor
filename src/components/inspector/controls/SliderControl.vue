@@ -20,7 +20,7 @@ const emit = defineEmits<{ 'update:modelValue': [number] }>()
       class="h-1.5 flex-1 cursor-pointer accent-brand"
       @input="emit('update:modelValue', Number(($event.target as HTMLInputElement).value))"
     />
-    <span class="w-12 text-right text-[11px] tabular-nums text-slate-500"
+    <span class="w-12 text-right text-[11px] tabular-nums text-subtle"
       >{{ modelValue }}{{ unit }}</span
     >
   </div>

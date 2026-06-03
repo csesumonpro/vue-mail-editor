@@ -42,7 +42,7 @@ function download() {
       class="fixed inset-0 z-40 flex items-center justify-center bg-black/50 p-6"
       @click.self="emit('close')"
     >
-      <div class="flex h-full max-h-[85vh] w-full max-w-5xl flex-col overflow-hidden rounded-xl bg-white shadow-2xl">
+      <div class="flex h-full max-h-[85vh] w-full max-w-5xl flex-col overflow-hidden rounded-xl bg-surface shadow-2xl">
         <!-- Header -->
         <div class="flex items-center justify-between border-b border-line px-5 py-3">
           <h2 class="text-sm font-semibold text-ink">Export HTML</h2>
@@ -51,7 +51,7 @@ function download() {
               <button
                 type="button"
                 class="rounded px-3 py-1 font-medium transition"
-                :class="tab === 'preview' ? 'bg-brand text-white' : 'text-slate-500'"
+                :class="tab === 'preview' ? 'bg-brand text-white' : 'text-subtle'"
                 @click="tab = 'preview'"
               >
                 Preview
@@ -59,7 +59,7 @@ function download() {
               <button
                 type="button"
                 class="rounded px-3 py-1 font-medium transition"
-                :class="tab === 'code' ? 'bg-brand text-white' : 'text-slate-500'"
+                :class="tab === 'code' ? 'bg-brand text-white' : 'text-subtle'"
                 @click="tab = 'code'"
               >
                 Code
@@ -67,7 +67,7 @@ function download() {
             </div>
             <button
               type="button"
-              class="flex items-center gap-1.5 rounded-md border border-line px-3 py-1.5 text-xs font-medium text-slate-600 hover:border-brand hover:text-brand-dark"
+              class="flex items-center gap-1.5 rounded-md border border-line px-3 py-1.5 text-xs font-medium text-subtle hover:border-brand hover:text-brand-dark"
               @click="copy"
             >
               <component :is="copied ? Check : Copy" class="h-3.5 w-3.5" />
@@ -83,7 +83,7 @@ function download() {
             </button>
             <button
               type="button"
-              class="flex h-8 w-8 items-center justify-center rounded-md text-slate-400 hover:bg-slate-100 hover:text-slate-600"
+              class="flex h-8 w-8 items-center justify-center rounded-md text-faint hover:bg-hover hover:text-ink"
               @click="emit('close')"
             >
               <X class="h-4 w-4" />
@@ -92,11 +92,11 @@ function download() {
         </div>
 
         <!-- Body -->
-        <div class="min-h-0 flex-1 overflow-hidden bg-slate-100">
+        <div class="min-h-0 flex-1 overflow-hidden bg-muted">
           <iframe
             v-if="tab === 'preview'"
             :srcdoc="html"
-            class="h-full w-full border-0 bg-white"
+            class="h-full w-full border-0 bg-surface"
             title="Email preview"
           />
           <pre

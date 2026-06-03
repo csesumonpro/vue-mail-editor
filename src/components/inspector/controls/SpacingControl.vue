@@ -38,17 +38,17 @@ function update(side: keyof BoxValue, raw: string) {
           type="number"
           min="0"
           :value="modelValue[s.key]"
-          class="w-full rounded-md border border-line bg-white px-1 py-1 text-center text-xs text-ink outline-none focus:border-brand"
+          class="w-full rounded-md border border-line bg-input px-1 py-1 text-center text-xs text-ink outline-none focus:border-brand"
           @input="update(s.key, ($event.target as HTMLInputElement).value)"
         />
-        <span class="text-[10px] text-slate-400">{{ s.label }}</span>
+        <span class="text-[10px] text-faint">{{ s.label }}</span>
       </label>
     </div>
     <button
       type="button"
       :title="linked ? 'Unlink sides' : 'Link sides'"
       class="flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-line"
-      :class="linked ? 'bg-brand text-white' : 'text-slate-400 hover:text-slate-600'"
+      :class="linked ? 'bg-brand text-white' : 'text-faint hover:text-ink'"
       @click="linked = !linked"
     >
       <component :is="linked ? Link : Unlink" class="h-3.5 w-3.5" />

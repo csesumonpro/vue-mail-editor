@@ -62,13 +62,13 @@ function move(i: number, delta: number) {
     <div
       v-for="(item, i) in modelValue"
       :key="i"
-      class="space-y-1.5 rounded-md border border-line bg-slate-50 p-2"
+      class="space-y-1.5 rounded-md border border-line bg-muted p-2"
     >
       <div class="flex items-center justify-between">
-        <span class="text-[10px] font-semibold uppercase text-slate-400"
+        <span class="text-[10px] font-semibold uppercase text-faint"
           >#{{ i + 1 }}</span
         >
-        <div class="flex items-center gap-0.5 text-slate-400">
+        <div class="flex items-center gap-0.5 text-faint">
           <button type="button" class="rte-btn !h-6 !w-6" :disabled="i === 0" @click="move(i, -1)">
             <ChevronUp class="h-3 w-3" />
           </button>
@@ -80,7 +80,7 @@ function move(i: number, delta: number) {
           >
             <ChevronDown class="h-3 w-3" />
           </button>
-          <button type="button" class="rte-btn !h-6 !w-6 hover:!text-red-600" @click="remove(i)">
+          <button type="button" class="rte-btn !h-6 !w-6 hover:!text-danger" @click="remove(i)">
             <Trash2 class="h-3 w-3" />
           </button>
         </div>
@@ -90,7 +90,7 @@ function move(i: number, delta: number) {
       <template v-if="itemKind === 'social'">
         <select
           :value="item.network"
-          class="w-full rounded-md border border-line bg-white px-2 py-1.5 text-xs capitalize outline-none focus:border-brand"
+          class="w-full rounded-md border border-line bg-input px-2 py-1.5 text-xs capitalize outline-none focus:border-brand"
           @change="patchItem(i, { network: ($event.target as HTMLSelectElement).value })"
         >
           <option v-for="n in networks" :key="n" :value="n" class="capitalize">{{ n }}</option>
@@ -98,7 +98,7 @@ function move(i: number, delta: number) {
         <input
           :value="item.url"
           placeholder="URL"
-          class="w-full rounded-md border border-line bg-white px-2 py-1.5 text-xs outline-none focus:border-brand"
+          class="w-full rounded-md border border-line bg-input px-2 py-1.5 text-xs outline-none focus:border-brand"
           @input="patchItem(i, { url: ($event.target as HTMLInputElement).value })"
         />
       </template>
@@ -108,13 +108,13 @@ function move(i: number, delta: number) {
         <input
           :value="item.text"
           placeholder="Label"
-          class="w-full rounded-md border border-line bg-white px-2 py-1.5 text-xs outline-none focus:border-brand"
+          class="w-full rounded-md border border-line bg-input px-2 py-1.5 text-xs outline-none focus:border-brand"
           @input="patchItem(i, { text: ($event.target as HTMLInputElement).value })"
         />
         <input
           :value="item.url"
           placeholder="URL"
-          class="w-full rounded-md border border-line bg-white px-2 py-1.5 text-xs outline-none focus:border-brand"
+          class="w-full rounded-md border border-line bg-input px-2 py-1.5 text-xs outline-none focus:border-brand"
           @input="patchItem(i, { url: ($event.target as HTMLInputElement).value })"
         />
       </template>
@@ -128,7 +128,7 @@ function move(i: number, delta: number) {
         <input
           :value="item.href"
           placeholder="Link URL"
-          class="w-full rounded-md border border-line bg-white px-2 py-1.5 text-xs outline-none focus:border-brand"
+          class="w-full rounded-md border border-line bg-input px-2 py-1.5 text-xs outline-none focus:border-brand"
           @input="patchItem(i, { href: ($event.target as HTMLInputElement).value })"
         />
       </template>
@@ -136,7 +136,7 @@ function move(i: number, delta: number) {
 
     <button
       type="button"
-      class="flex w-full items-center justify-center gap-1.5 rounded-md border border-dashed border-line py-2 text-xs font-medium text-slate-500 hover:border-brand hover:text-brand-dark"
+      class="flex w-full items-center justify-center gap-1.5 rounded-md border border-dashed border-line py-2 text-xs font-medium text-subtle hover:border-brand hover:text-brand-dark"
       @click="add"
     >
       <Plus class="h-3.5 w-3.5" />

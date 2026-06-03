@@ -18,10 +18,10 @@ function patch(p: Partial<BgImage>) {
     />
     <template v-if="modelValue.url">
       <div class="flex items-center justify-between gap-2">
-        <span class="text-[11px] text-slate-500">Size</span>
+        <span class="text-[11px] text-subtle">Size</span>
         <select
           :value="modelValue.size"
-          class="rounded-md border border-line bg-white px-2 py-1 text-xs outline-none focus:border-brand"
+          class="rounded-md border border-line bg-input px-2 py-1 text-xs outline-none focus:border-brand"
           @change="patch({ size: ($event.target as HTMLSelectElement).value as BgImage['size'] })"
         >
           <option value="cover">Cover</option>
@@ -30,10 +30,10 @@ function patch(p: Partial<BgImage>) {
         </select>
       </div>
       <div class="flex items-center justify-between gap-2">
-        <span class="text-[11px] text-slate-500">Repeat</span>
+        <span class="text-[11px] text-subtle">Repeat</span>
         <select
           :value="modelValue.repeat"
-          class="rounded-md border border-line bg-white px-2 py-1 text-xs outline-none focus:border-brand"
+          class="rounded-md border border-line bg-input px-2 py-1 text-xs outline-none focus:border-brand"
           @change="patch({ repeat: ($event.target as HTMLSelectElement).value as BgImage['repeat'] })"
         >
           <option value="no-repeat">No repeat</option>

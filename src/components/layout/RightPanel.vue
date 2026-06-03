@@ -95,7 +95,7 @@ const hasControls = computed(
 <template>
   <aside class="flex w-80 shrink-0 flex-col border-l border-line bg-panel">
     <div class="flex items-center justify-between border-b border-line px-4 py-3">
-      <h2 class="text-xs font-semibold uppercase tracking-wide text-slate-500">
+      <h2 class="text-xs font-semibold uppercase tracking-wide text-subtle">
         {{ target ? target.title + ' settings' : 'Settings' }}
       </h2>
     </div>
@@ -120,7 +120,7 @@ const hasControls = computed(
 
       <div
         v-else
-        class="flex flex-col items-center justify-center gap-1 p-8 text-center text-slate-400"
+        class="flex flex-col items-center justify-center gap-1 p-8 text-center text-faint"
       >
         <p class="text-xs">No editable properties for this selection yet.</p>
       </div>

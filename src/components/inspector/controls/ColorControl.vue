@@ -32,7 +32,7 @@ const pickerValue = computed(() =>
       type="text"
       :value="isTransparent ? '' : modelValue"
       placeholder="transparent"
-      class="w-24 rounded-md border border-line bg-white px-2 py-1.5 text-xs text-ink outline-none focus:border-brand"
+      class="w-24 rounded-md border border-line bg-input px-2 py-1.5 text-xs text-ink outline-none focus:border-brand"
       @change="
         emit(
           'update:modelValue',
@@ -44,7 +44,7 @@ const pickerValue = computed(() =>
       v-if="allowTransparent"
       type="button"
       title="Transparent"
-      class="flex h-7 w-7 items-center justify-center rounded-md border border-line text-slate-400 hover:text-slate-600"
+      class="flex h-7 w-7 items-center justify-center rounded-md border border-line text-faint hover:text-ink"
       @click="emit('update:modelValue', 'transparent')"
     >
       <Ban class="h-3.5 w-3.5" />

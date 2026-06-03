@@ -10,10 +10,13 @@ import { ref } from 'vue'
 import { useEditorStore } from '@/stores/editor'
 import { useAutosave, loadAutosave } from '@/composables/useAutosave'
 import { useHistoryShortcuts } from '@/composables/useHistory'
+import { useTheme } from '@/composables/useTheme'
 
 const store = useEditorStore()
 const showExport = ref(false)
 const showTemplates = ref(false)
+
+useTheme().init()
 
 // Restore the last autosaved design (history not recorded for the initial load).
 const saved = loadAutosave()
@@ -24,7 +27,7 @@ useHistoryShortcuts()
 </script>
 
 <template>
-  <div class="flex h-full flex-col overflow-hidden bg-slate-100">
+  <div class="flex h-full flex-col overflow-hidden bg-app">
     <TopBar @export="showExport = true" @templates="showTemplates = true" />
     <div class="flex min-h-0 flex-1">
       <LeftPanel v-show="!store.previewMode" />

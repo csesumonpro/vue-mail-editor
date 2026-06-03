@@ -22,7 +22,7 @@ const opts: { value: TextAlign; icon: typeof AlignLeft }[] = [
       :class="
         modelValue === o.value
           ? 'bg-brand text-white'
-          : 'text-slate-500 hover:bg-slate-100'
+          : 'text-subtle hover:bg-hover'
       "
       @click="emit('update:modelValue', o.value)"
     >

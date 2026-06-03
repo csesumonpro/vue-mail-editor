@@ -60,7 +60,7 @@ function onChange(evt: { added?: { element: Content } }) {
 
       <div
         v-if="!column.contents.length"
-        class="pointer-events-none absolute inset-1 flex items-center justify-center rounded border border-dashed border-slate-300 text-[11px] text-slate-400"
+        class="pointer-events-none absolute inset-1 flex items-center justify-center rounded border border-dashed border-line text-[11px] text-faint"
       >
         Drop content here
       </div>

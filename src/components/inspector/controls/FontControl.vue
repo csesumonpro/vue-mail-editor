@@ -15,7 +15,7 @@ function onChange(e: Event) {
 <template>
   <select
     :value="props.modelValue.value"
-    class="w-full rounded-md border border-line bg-white px-2 py-1.5 text-xs text-ink outline-none focus:border-brand"
+    class="w-full rounded-md border border-line bg-input px-2 py-1.5 text-xs text-ink outline-none focus:border-brand"
     @change="onChange"
   >
     <option v-for="f in FONTS" :key="f.label" :value="f.value">

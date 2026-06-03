@@ -25,7 +25,7 @@ function pick(t: TemplateDef) {
       class="fixed inset-0 z-40 flex items-center justify-center bg-black/50 p-6"
       @click.self="emit('close')"
     >
-      <div class="w-full max-w-3xl overflow-hidden rounded-xl bg-white shadow-2xl">
+      <div class="w-full max-w-3xl overflow-hidden rounded-xl bg-surface shadow-2xl">
         <div class="flex items-center justify-between border-b border-line px-5 py-3">
           <h2 class="flex items-center gap-2 text-sm font-semibold text-ink">
             <LayoutTemplate class="h-4 w-4" />
@@ -33,7 +33,7 @@ function pick(t: TemplateDef) {
           </h2>
           <button
             type="button"
-            class="flex h-8 w-8 items-center justify-center rounded-md text-slate-400 hover:bg-slate-100 hover:text-slate-600"
+            class="flex h-8 w-8 items-center justify-center rounded-md text-faint hover:bg-hover hover:text-ink"
             @click="emit('close')"
           >
             <X class="h-4 w-4" />
@@ -56,7 +56,7 @@ function pick(t: TemplateDef) {
             </div>
             <div class="p-3">
               <p class="text-sm font-semibold text-ink">{{ t.name }}</p>
-              <p class="mt-0.5 text-[11px] leading-snug text-slate-500">
+              <p class="mt-0.5 text-[11px] leading-snug text-subtle">
                 {{ t.description }}
               </p>
             </div>

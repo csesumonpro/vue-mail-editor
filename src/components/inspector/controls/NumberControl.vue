@@ -25,9 +25,9 @@ function onInput(e: Event) {
       :min="min"
       :max="max"
       :step="step ?? 1"
-      class="w-20 rounded-md border border-line bg-white px-2 py-1.5 text-xs text-ink outline-none focus:border-brand"
+      class="w-20 rounded-md border border-line bg-input px-2 py-1.5 text-xs text-ink outline-none focus:border-brand"
       @input="onInput"
     />
-    <span v-if="unit" class="text-[11px] text-slate-400">{{ unit }}</span>
+    <span v-if="unit" class="text-[11px] text-faint">{{ unit }}</span>
   </div>
 </template>

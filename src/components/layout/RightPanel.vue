@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { X, Copy, Trash2 } from 'lucide-vue-next'
-import { useEditorStore } from '@/stores/editor'
+import { useEditor } from "@/core/useEditor"
 import type { InspectorSchema } from '@/config/inspector'
 import {
   bodyInspector,
@@ -13,7 +13,7 @@ import { BLOCKS } from '@/config/blocks'
 import Accordion from '@/components/inspector/Accordion.vue'
 import InspectorControl from '@/components/inspector/InspectorControl.vue'
 
-const store = useEditorStore()
+const store = useEditor()
 
 interface Target {
   title: string

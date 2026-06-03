@@ -2,11 +2,11 @@
 import { computed } from 'vue'
 import type { HeadingValues } from '@/types/schema'
 import { padding } from '@/utils/style'
-import { useEditorStore } from '@/stores/editor'
+import { useEditor } from "@/core/useEditor"
 import RichTextEditor from '@/components/common/RichTextEditor.vue'
 
 const props = defineProps<{ values: HeadingValues; contentId?: string }>()
-const store = useEditorStore()
+const store = useEditor()
 
 const editable = computed(
   () =>

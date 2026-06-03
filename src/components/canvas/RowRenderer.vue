@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import type { Row } from '@/types/schema'
-import { useEditorStore } from '@/stores/editor'
+import { useEditor } from "@/core/useEditor"
 import { padding, border, bgImage } from '@/utils/style'
 import SelectableWrapper from './SelectableWrapper.vue'
 import ColumnRenderer from './ColumnRenderer.vue'
 
 const props = defineProps<{ row: Row }>()
-const store = useEditorStore()
+const store = useEditor()
 
 const stacked = computed(
   () => store.device === 'mobile' && props.row.values.stackOnMobile,

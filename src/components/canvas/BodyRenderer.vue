@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import draggable from 'vuedraggable'
-import { useEditorStore } from '@/stores/editor'
+import { useEditor } from "@/core/useEditor"
 import { padding, bgImage } from '@/utils/style'
 import RowRenderer from './RowRenderer.vue'
 
-const store = useEditorStore()
+const store = useEditor()
 const body = computed(() => store.design.body)
 
 const selected = computed(() => store.selection.kind === 'body')

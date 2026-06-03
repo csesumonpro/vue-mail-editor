@@ -7,13 +7,17 @@ import ToastHost from '@/components/common/ToastHost.vue'
 import ExportModal from '@/components/common/ExportModal.vue'
 import TemplatesModal from '@/components/common/TemplatesModal.vue'
 import { SlidersHorizontal } from 'lucide-vue-next'
-import { ref } from 'vue'
-import { useEditorStore } from '@/stores/editor'
+import { ref, provide } from 'vue'
+import { createEditor } from '@/core/createEditor'
+import { EDITOR_KEY } from '@/core/keys'
 import { useAutosave, loadAutosave } from '@/composables/useAutosave'
 import { useHistoryShortcuts } from '@/composables/useHistory'
 import { useTheme } from '@/composables/useTheme'
 
-const store = useEditorStore()
+// One editor instance per <EmailEditor>, provided to all descendants.
+const store = createEditor()
+provide(EDITOR_KEY, store)
+
 const showExport = ref(false)
 const showTemplates = ref(false)
 
@@ -23,8 +27,8 @@ useTheme().init()
 const saved = loadAutosave()
 if (saved) store.loadDesign(saved, false)
 
-useAutosave()
-useHistoryShortcuts()
+useAutosave(store)
+useHistoryShortcuts(store)
 </script>
 
 <template>

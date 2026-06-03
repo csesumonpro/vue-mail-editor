@@ -1,5 +1,5 @@
 import { onBeforeUnmount, onMounted } from 'vue'
-import { useEditorStore } from '@/stores/editor'
+import type { Editor } from '@/core/createEditor'
 
 function isTyping(t: EventTarget | null): boolean {
   const el = t as HTMLElement | null
@@ -17,9 +17,7 @@ function isTyping(t: EventTarget | null): boolean {
  *   Cmd/Ctrl+Z undo · Cmd/Ctrl+Shift+Z / Ctrl+Y redo
  *   Cmd/Ctrl+D duplicate · Delete/Backspace remove · Esc deselect
  */
-export function useHistoryShortcuts() {
-  const store = useEditorStore()
-
+export function useHistoryShortcuts(store: Editor) {
   function onKeydown(e: KeyboardEvent) {
     if (isTyping(e.target)) return
     const mod = e.metaKey || e.ctrlKey

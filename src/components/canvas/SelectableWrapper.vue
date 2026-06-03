@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { ChevronUp, ChevronDown, Copy, Trash2, GripVertical } from 'lucide-vue-next'
-import { useEditorStore } from '@/stores/editor'
+import { useEditor } from "@/core/useEditor"
 import type { SelectionKind } from '@/types/schema'
 
 const props = defineProps<{
@@ -13,7 +13,7 @@ const props = defineProps<{
   hoverTargetId?: string
 }>()
 
-const store = useEditorStore()
+const store = useEditor()
 
 const selected = computed(
   () => store.selection.kind === props.kind && store.selection.id === props.id,

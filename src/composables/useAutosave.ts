@@ -1,7 +1,7 @@
 import { watch } from 'vue'
 import type { Design } from '@/types/schema'
 import { SCHEMA_VERSION } from '@/types/schema'
-import { useEditorStore } from '@/stores/editor'
+import type { Editor } from '@/core/createEditor'
 
 const STORAGE_KEY = 'vue-email-editor:autosave'
 const DEBOUNCE_MS = 800
@@ -33,8 +33,7 @@ export function clearAutosave() {
  * Persist the design to localStorage, debounced, whenever it changes.
  * Call once from a setup context (e.g. App.vue).
  */
-export function useAutosave() {
-  const store = useEditorStore()
+export function useAutosave(store: Editor) {
   let timer: ReturnType<typeof setTimeout> | undefined
 
   watch(

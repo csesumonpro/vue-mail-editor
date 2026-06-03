@@ -2,10 +2,10 @@
 import { computed, ref, watch, onMounted, nextTick } from 'vue'
 import type { ButtonValues } from '@/types/schema'
 import { padding, border, justify } from '@/utils/style'
-import { useEditorStore } from '@/stores/editor'
+import { useEditor } from "@/core/useEditor"
 
 const props = defineProps<{ values: ButtonValues; contentId?: string }>()
-const store = useEditorStore()
+const store = useEditor()
 
 const label = ref<HTMLElement | null>(null)
 

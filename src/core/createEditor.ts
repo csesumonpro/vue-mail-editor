@@ -1,8 +1,8 @@
-import { ref, computed } from 'vue'
-import { defineStore } from 'pinia'
+import { ref, computed, reactive } from 'vue'
 import type {
   Column,
   Content,
+  ContentType,
   Design,
   Device,
   Row,
@@ -14,26 +14,25 @@ import { createContent } from '@/config/blockDefaults'
 import { createDesign } from '@/config/seed'
 import { deepClone } from '@/utils/clone'
 import { uid } from '@/utils/id'
-import type { ContentType } from '@/types/schema'
 
 const HISTORY_LIMIT = 50
 /** Edits sharing a key within this window coalesce into one undo step. */
 const COALESCE_MS = 700
 
-export const useEditorStore = defineStore('editor', () => {
-  /* ------------------------------------------------------------------ */
-  /* State                                                              */
-  /* ------------------------------------------------------------------ */
+/**
+ * Per-instance editor state + actions. Wrapped in `reactive()` so consumers get
+ * Pinia-like ergonomics (`editor.design`, `editor.canUndo`, methods) without a
+ * global singleton — each <EmailEditor> owns its own instance.
+ */
+export function createEditor() {
+  /* State ------------------------------------------------------------- */
   const design = ref<Design>(createDesign())
   const selection = ref<Selection>({ kind: 'body', id: null })
   const device = ref<Device>('desktop')
   const previewMode = ref(false)
-  // Right inspector panel is hidden until the user opens it (icon or canvas click).
   const inspectorOpen = ref(false)
-  // Id of the innermost node currently hovered on the canvas (for the action bar).
   const hoverId = ref<string | null>(null)
 
-  // Snapshot history (serialized JSON to keep memory small).
   const past = ref<string[]>([])
   const future = ref<string[]>([])
   let lastKey: string | null = null
@@ -42,10 +41,7 @@ export const useEditorStore = defineStore('editor', () => {
   const canUndo = computed(() => past.value.length > 0)
   const canRedo = computed(() => future.value.length > 0)
 
-  /* ------------------------------------------------------------------ */
-  /* History                                                            */
-  /* ------------------------------------------------------------------ */
-  /** Record the *current* state before mutating. Pass a key to coalesce a burst. */
+  /* History ----------------------------------------------------------- */
   function record(key?: string) {
     const now = performance.now()
     const sameBurst = key != null && key === lastKey && now - lastTime < COALESCE_MS
@@ -57,8 +53,6 @@ export const useEditorStore = defineStore('editor', () => {
     future.value = []
   }
 
-  // Drag & drop mutates arrays in place (via vuedraggable), so we snapshot the
-  // pre-drag state and only commit it to history if something actually changed.
   let dragSnapshot: string | null = null
   function beginDrag() {
     dragSnapshot = JSON.stringify(design.value)
@@ -92,9 +86,7 @@ export const useEditorStore = defineStore('editor', () => {
     normalizeSelection()
   }
 
-  /* ------------------------------------------------------------------ */
-  /* Lookups                                                            */
-  /* ------------------------------------------------------------------ */
+  /* Lookups ----------------------------------------------------------- */
   function findRow(id: string): Row | null {
     return design.value.body.rows.find((r) => r.id === id) ?? null
   }
@@ -122,9 +114,7 @@ export const useEditorStore = defineStore('editor', () => {
     return null
   }
 
-  /* ------------------------------------------------------------------ */
-  /* Selection                                                          */
-  /* ------------------------------------------------------------------ */
+  /* Selection --------------------------------------------------------- */
   function select(kind: SelectionKind, id: string | null) {
     selection.value = { kind, id }
   }
@@ -137,7 +127,6 @@ export const useEditorStore = defineStore('editor', () => {
     selectBody()
   }
 
-  /** After undo/redo or deletion, drop selection if its node vanished. */
   function normalizeSelection() {
     const { kind, id } = selection.value
     if (kind === 'body' || kind === null) return
@@ -148,9 +137,7 @@ export const useEditorStore = defineStore('editor', () => {
     if (!exists) selectBody()
   }
 
-  /* ------------------------------------------------------------------ */
-  /* View state                                                         */
-  /* ------------------------------------------------------------------ */
+  /* View state -------------------------------------------------------- */
   function setDevice(d: Device) {
     device.value = d
   }
@@ -169,56 +156,39 @@ export const useEditorStore = defineStore('editor', () => {
     inspectorOpen.value = value ?? !inspectorOpen.value
   }
 
-  /** Select a node from the canvas and reveal the inspector. */
   function selectAndInspect(kind: SelectionKind, id: string | null) {
     selection.value = { kind, id }
     inspectorOpen.value = true
   }
 
-  /* ------------------------------------------------------------------ */
-  /* Value updates                                                      */
-  /* ------------------------------------------------------------------ */
+  /* Value updates ----------------------------------------------------- */
   function updateBodyValues(patch: Record<string, unknown>, key?: string) {
     record(key)
     Object.assign(design.value.body.values, patch)
   }
 
-  function updateRowValues(
-    id: string,
-    patch: Record<string, unknown>,
-    key?: string,
-  ) {
+  function updateRowValues(id: string, patch: Record<string, unknown>, key?: string) {
     const row = findRow(id)
     if (!row) return
     record(key)
     Object.assign(row.values, patch)
   }
 
-  function updateColumnValues(
-    id: string,
-    patch: Record<string, unknown>,
-    key?: string,
-  ) {
+  function updateColumnValues(id: string, patch: Record<string, unknown>, key?: string) {
     const found = findColumn(id)
     if (!found) return
     record(key)
     Object.assign(found.column.values, patch)
   }
 
-  function updateContentValues(
-    id: string,
-    patch: Record<string, unknown>,
-    key?: string,
-  ) {
+  function updateContentValues(id: string, patch: Record<string, unknown>, key?: string) {
     const found = findContent(id)
     if (!found) return
     record(key)
     Object.assign(found.content.values, patch)
   }
 
-  /* ------------------------------------------------------------------ */
-  /* Structure mutations                                                */
-  /* ------------------------------------------------------------------ */
+  /* Structure mutations ----------------------------------------------- */
   function addRow(cells: number[] = [12], atIndex?: number): Row {
     record()
     const row = createRow(cells)
@@ -237,11 +207,6 @@ export const useEditorStore = defineStore('editor', () => {
     selectAndInspect('content', content.id)
   }
 
-  /**
-   * Add a block of `type` at a location inferred from the current selection:
-   * after the selected content, into the selected column, else the last row's
-   * first column (creating a row if the body is empty).
-   */
   function addBlock(type: ContentType) {
     const content = createContent(type)
     const sel = selection.value
@@ -266,7 +231,6 @@ export const useEditorStore = defineStore('editor', () => {
       }
     }
 
-    // Fall back to the last row's first column.
     record()
     const rows = design.value.body.rows
     if (!rows.length) rows.push(createRow([12]))
@@ -303,7 +267,6 @@ export const useEditorStore = defineStore('editor', () => {
     }
   }
 
-  /** Move a content node to a (column, index). Used by drag & drop. */
   function moveContent(contentId: string, toColumnId: string, toIndex: number) {
     const from = findContent(contentId)
     const to = findColumn(toColumnId)
@@ -315,7 +278,6 @@ export const useEditorStore = defineStore('editor', () => {
     to.column.contents.splice(insertAt, 0, from.content)
   }
 
-  /** Nudge a content node up/down within its column (toolbar arrows). */
   function moveContentWithinColumn(id: string, delta: number) {
     const found = findContent(id)
     if (!found) return
@@ -335,9 +297,7 @@ export const useEditorStore = defineStore('editor', () => {
     rows.splice(toIndex, 0, row)
   }
 
-  /* ------------------------------------------------------------------ */
-  /* Load / reset                                                       */
-  /* ------------------------------------------------------------------ */
+  /* Load / reset ------------------------------------------------------ */
   function loadDesign(next: Design, recordHistory = true) {
     if (recordHistory) record()
     design.value = next
@@ -350,12 +310,14 @@ export const useEditorStore = defineStore('editor', () => {
     selectBody()
   }
 
-  return {
+  return reactive({
     // state
     design,
     selection,
     device,
     previewMode,
+    inspectorOpen,
+    hoverId,
     canUndo,
     canRedo,
     // history
@@ -373,8 +335,6 @@ export const useEditorStore = defineStore('editor', () => {
     selectBody,
     clearSelection,
     // view
-    inspectorOpen,
-    hoverId,
     setDevice,
     togglePreview,
     openInspector,
@@ -398,8 +358,10 @@ export const useEditorStore = defineStore('editor', () => {
     // load
     loadDesign,
     resetDesign,
-  }
-})
+  })
+}
+
+export type Editor = ReturnType<typeof createEditor>
 
 /* Give every node in a cloned subtree fresh ids (for duplicate). */
 function reId(node: Row | Content): Row | Content {

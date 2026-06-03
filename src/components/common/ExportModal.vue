@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import { X, Copy, Download, Check } from 'lucide-vue-next'
-import { useEditorStore } from '@/stores/editor'
+import { useEditor } from "@/core/useEditor"
 import { useToast } from '@/composables/useToast'
 import { exportHtml } from '@/export/htmlExporter'
 import { downloadText } from '@/utils/designIO'
@@ -9,7 +9,7 @@ import { downloadText } from '@/utils/designIO'
 const props = defineProps<{ open: boolean }>()
 const emit = defineEmits<{ close: [] }>()
 
-const store = useEditorStore()
+const store = useEditor()
 const { notify } = useToast()
 
 type Tab = 'preview' | 'code'

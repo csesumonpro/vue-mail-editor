@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { useEditorStore } from '@/stores/editor'
+import { useEditor } from "@/core/useEditor"
 import BodyRenderer from '@/components/canvas/BodyRenderer.vue'
 
-const store = useEditorStore()
+const store = useEditor()
 
 // Canvas frame width per device (email content width caps the desktop view).
 const frameWidth = computed(() => {

@@ -2,12 +2,12 @@
 import draggable from 'vuedraggable'
 import type { Column, Content } from '@/types/schema'
 import { padding, border } from '@/utils/style'
-import { useEditorStore } from '@/stores/editor'
+import { useEditor } from "@/core/useEditor"
 import SelectableWrapper from './SelectableWrapper.vue'
 import ContentRenderer from './ContentRenderer.vue'
 
 defineProps<{ column: Column; rowId: string }>()
-const store = useEditorStore()
+const store = useEditor()
 
 const valign: Record<string, string> = {
   top: 'flex-start',

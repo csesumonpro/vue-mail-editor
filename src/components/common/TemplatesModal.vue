@@ -2,13 +2,13 @@
 import { X, LayoutTemplate } from 'lucide-vue-next'
 import { TEMPLATES } from '@/config/templates'
 import type { TemplateDef } from '@/config/templates'
-import { useEditorStore } from '@/stores/editor'
+import { useEditor } from "@/core/useEditor"
 import { useToast } from '@/composables/useToast'
 
 defineProps<{ open: boolean }>()
 const emit = defineEmits<{ close: [] }>()
 
-const store = useEditorStore()
+const store = useEditor()
 const { notify } = useToast()
 
 function pick(t: TemplateDef) {

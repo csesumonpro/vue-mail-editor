@@ -6,9 +6,9 @@ import { BLOCK_LIST } from '@/config/blocks'
 import type { BlockDef } from '@/config/blocks'
 import { createContent } from '@/config/blockDefaults'
 import { createRow } from '@/config/defaults'
-import { useEditorStore } from '@/stores/editor'
+import { useEditor } from "@/core/useEditor"
 
-const store = useEditorStore()
+const store = useEditor()
 const containerOpen = ref(false)
 
 const layoutBlocks = [

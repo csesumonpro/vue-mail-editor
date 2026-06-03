@@ -17,13 +17,13 @@ import {
   Sun,
   Moon,
 } from 'lucide-vue-next'
-import { useEditorStore } from '@/stores/editor'
+import { useEditor } from "@/core/useEditor"
 import { useToast } from '@/composables/useToast'
 import { useTheme } from '@/composables/useTheme'
 import { downloadDesign, readDesignFile } from '@/utils/designIO'
 import type { Device } from '@/types/schema'
 
-const store = useEditorStore()
+const store = useEditor()
 const { notify } = useToast()
 const { isDark, toggle: toggleTheme } = useTheme()
 const fileInput = ref<HTMLInputElement | null>(null)

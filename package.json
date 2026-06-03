@@ -41,7 +41,6 @@
     "@tiptap/vue-3": "^2.27.2",
     "js-beautify": "^1.15.4",
     "lucide-vue-next": "^0.460.0",
-    "pinia": "^2.3.0",
     "vuedraggable": "^4.1.0"
   },
   "devDependencies": {

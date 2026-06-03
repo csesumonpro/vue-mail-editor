@@ -5,9 +5,11 @@
 
 /* ------------------------------------------------------------------ */
 /* Design tokens — neutral black/white system (light)                 */
-/* Scoped to the editor root so multiple instances/themes coexist.    */
+/* Declared on :root so portaled UI (Tiptap bubble menu, tooltips that */
+/* render to <body>) can also resolve them. Per-instance `theme`       */
+/* overrides + dark mode are scoped to .vue-email-editor below.        */
 /* ------------------------------------------------------------------ */
-.vue-email-editor {
+:root {
   --inkp-bg: #f8fafc;
   --inkp-bg-sidebar: #ffffff;
   --inkp-bg-surface: #ffffff;
@@ -51,8 +53,10 @@
 }
 
 /* ------------------------------------------------------------------ */
-/* Design tokens (dark)                                               */
+/* Design tokens (dark) — support a global `.dark` and per-instance     */
+/* `.vue-email-editor.dark` (the editor toggles dark on its own root).  */
 /* ------------------------------------------------------------------ */
+.dark,
 .vue-email-editor.dark {
   --inkp-bg: #0b0f1a;
   --inkp-bg-sidebar: #111827;

@@ -8,6 +8,9 @@ const props = defineProps<{
   kind: Extract<SelectionKind, 'row' | 'column' | 'content'>
   id: string
   label: string
+  /** Hovering this node reveals the action bar of this id instead (e.g. a
+   *  column escalates to its parent row). Defaults to the node's own id. */
+  hoverTargetId?: string
 }>()
 
 const store = useEditorStore()
@@ -16,10 +19,26 @@ const selected = computed(
   () => store.selection.kind === props.kind && store.selection.id === props.id,
 )
 
+// Only the innermost hovered node shows its bar/outline.
+const hoverTarget = computed(() => props.hoverTargetId ?? props.id)
+const hovered = computed(() => store.hoverId === props.id)
+const showBar = computed(
+  () => hasActions.value && !store.previewMode && (hovered.value || selected.value),
+)
+
 function onClick(e: MouseEvent) {
   if (store.previewMode) return
   e.stopPropagation()
   store.selectAndInspect(props.kind, props.id)
+}
+
+function onOver(e: MouseEvent) {
+  if (store.previewMode) return
+  e.stopPropagation()
+  store.hoverId = hoverTarget.value
+}
+function onLeave() {
+  if (store.hoverId === hoverTarget.value) store.hoverId = null
 }
 
 /* Position-aware actions (rows reorder in body; contents reorder in column). */
@@ -74,21 +93,25 @@ const dragHandleClass = computed(() =>
 
 const ringClass = computed(() => {
   if (selected.value) return 'outline outline-2 outline-brand'
-  return 'outline-1 outline-transparent hover:outline-dashed hover:outline-2 hover:outline-brand/50'
+  if (hovered.value && !store.previewMode)
+    return 'outline-dashed outline-2 outline-brand/50'
+  return 'outline outline-1 outline-transparent'
 })
 </script>
 
 <template>
   <div
-    class="group/sel relative outline-offset-[-1px] transition-[outline]"
+    class="relative outline-offset-[-1px] transition-[outline]"
     :class="ringClass"
     @click="onClick"
+    @mouseover="onOver"
+    @mouseleave="onLeave"
   >
-    <!-- Action bar: shown on hover or when selected -->
+    <!-- Action bar: shown only for the innermost hovered/selected node -->
     <div
       v-if="!store.previewMode && hasActions"
-      class="absolute -top-px left-0 z-20 hidden -translate-y-full items-center gap-0.5 rounded-t bg-brand px-1 py-0.5 text-on-accent group-hover/sel:flex"
-      :class="{ '!flex': selected }"
+      v-show="showBar"
+      class="absolute -top-px left-0 z-20 flex -translate-y-full items-center gap-0.5 rounded-t bg-brand px-1 py-0.5 text-on-accent"
       @click.stop
     >
       <span

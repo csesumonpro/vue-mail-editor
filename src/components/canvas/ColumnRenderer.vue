@@ -6,7 +6,7 @@ import { useEditorStore } from '@/stores/editor'
 import SelectableWrapper from './SelectableWrapper.vue'
 import ContentRenderer from './ContentRenderer.vue'
 
-defineProps<{ column: Column }>()
+defineProps<{ column: Column; rowId: string }>()
 const store = useEditorStore()
 
 const valign: Record<string, string> = {
@@ -24,7 +24,13 @@ function onChange(evt: { added?: { element: Content } }) {
 </script>
 
 <template>
-  <SelectableWrapper kind="column" :id="column.id" label="Column" class="h-full">
+  <SelectableWrapper
+    kind="column"
+    :id="column.id"
+    label="Column"
+    :hover-target-id="rowId"
+    class="h-full"
+  >
     <div
       class="relative flex h-full flex-col"
       :style="{
@@ -45,7 +51,7 @@ function onChange(evt: { added?: { element: Content } }) {
         handle=".content-drag-handle"
         :animation="150"
         ghost-class="drop-ghost"
-        class="flex min-h-[40px] flex-1 flex-col"
+        class="flex min-h-[40px] flex-1 flex-col gap-2"
         :disabled="store.previewMode"
         @start="store.beginDrag()"
         @end="store.endDrag()"

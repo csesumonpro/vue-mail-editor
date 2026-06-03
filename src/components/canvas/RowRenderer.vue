@@ -65,7 +65,7 @@ const dimmed = computed(() => {
             minWidth: 0,
           }"
         >
-          <ColumnRenderer :column="column" />
+          <ColumnRenderer :column="column" :row-id="row.id" />
         </div>
       </div>
     </div>

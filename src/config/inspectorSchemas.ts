@@ -288,11 +288,10 @@ export const blockInspectors: Record<ContentType, InspectorSchema> = {
         {
           type: 'select',
           key: 'iconStyle',
-          label: 'Style',
+          label: 'Shape',
           options: [
-            { label: 'Solid', value: 'color' },
-            { label: 'Outline', value: 'outline' },
-            { label: 'Rounded', value: 'rounded' },
+            { label: 'Circle', value: 'rounded' },
+            { label: 'Square', value: 'color' },
           ],
         },
         { type: 'number', key: 'size', label: 'Size', unit: 'px', min: 16, max: 64 },

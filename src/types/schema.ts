@@ -128,6 +128,8 @@ export interface SpacerValues {
 export interface SocialIcon {
   network: string
   url: string
+  /** Optional custom icon image URL (overrides the predefined network icon). */
+  icon?: string
 }
 
 export interface SocialValues {

@@ -24,6 +24,7 @@ import type {
   SocialValues,
   SpacerValues,
 } from '@/types/schema'
+import { resolveSocial } from '@/config/social'
 
 interface Ctx {
   contentWidth: number
@@ -115,14 +116,15 @@ function renderSpacer(v: SpacerValues): string {
 }
 
 function renderSocial(v: SocialValues): string {
+  const radius = v.iconStyle === 'rounded' ? '50%' : '6px'
+  const glyph = Math.round(v.size * 0.55)
   const icons = v.icons
-    .map((icon) => {
-      const radius = v.iconStyle === 'rounded' ? '50%' : '4px'
-      const fill = v.iconStyle === 'outline' ? 'transparent' : '#1f2937'
-      const color = v.iconStyle === 'outline' ? '#1f2937' : '#ffffff'
-      const brd = v.iconStyle === 'outline' ? 'border:1px solid #1f2937;' : ''
-      const letter = (icon.network[0] || '?').toUpperCase()
-      return `<a href="${esc(icon.url)}" style="display:inline-block;width:${v.size}px;height:${v.size}px;line-height:${v.size}px;background:${fill};${brd}color:${color};border-radius:${radius};text-align:center;text-decoration:none;font-family:Arial,sans-serif;font-size:${Math.round(v.size * 0.4)}px;margin:0 ${Math.round(v.spacing / 2)}px;">${letter}</a>`
+    .map((item) => {
+      const s = resolveSocial(item)
+      const inner = s.image
+        ? `<img src="${esc(s.image)}" alt="${esc(s.label)}" width="${s.isCustom ? v.size : glyph}" height="${s.isCustom ? v.size : glyph}" style="display:block;border:0;${s.isCustom ? '' : `width:${glyph}px;height:${glyph}px;`}" />`
+        : `<span style="color:#fff;font-family:Arial,sans-serif;font-size:${Math.round(v.size * 0.4)}px;line-height:${v.size}px;">${(item.network[0] || '?').toUpperCase()}</span>`
+      return `<a href="${esc(item.url)}" style="display:inline-block;width:${v.size}px;height:${v.size}px;background:${s.color};border-radius:${radius};text-align:center;text-decoration:none;vertical-align:middle;margin:0 ${Math.round(v.spacing / 2)}px;"><table role="presentation" width="${v.size}" height="${v.size}" cellpadding="0" cellspacing="0" style="width:${v.size}px;height:${v.size}px;"><tr><td align="center" valign="middle">${inner}</td></tr></table></a>`
     })
     .join('')
   return cell(v.align, pad(v.padding), icons)

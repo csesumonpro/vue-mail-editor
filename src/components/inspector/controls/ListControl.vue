@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Plus, Trash2, ChevronUp, ChevronDown } from 'lucide-vue-next'
+import { SOCIAL_NETWORKS } from '@/config/social'
 
 type Item = Record<string, string>
 
@@ -10,14 +11,8 @@ const props = defineProps<{
 const emit = defineEmits<{ 'update:modelValue': [Item[]] }>()
 
 const networks = [
-  'facebook',
-  'twitter',
-  'instagram',
-  'linkedin',
-  'youtube',
-  'github',
-  'tiktok',
-  'pinterest',
+  ...SOCIAL_NETWORKS.map((n) => ({ value: n.key, label: n.label })),
+  { value: 'custom', label: 'Custom' },
 ]
 
 function newItem(): Item {
@@ -83,16 +78,26 @@ function move(i: number, delta: number) {
       <template v-if="itemKind === 'social'">
         <select
           :value="item.network"
-          class="w-full rounded-md border border-line bg-input px-2 py-1.5 text-xs capitalize outline-none focus:border-brand"
+          class="w-full rounded-md border border-line bg-input px-2 py-1.5 text-xs outline-none focus:border-brand"
           @change="patchItem(i, { network: ($event.target as HTMLSelectElement).value })"
         >
-          <option v-for="n in networks" :key="n" :value="n" class="capitalize">{{ n }}</option>
+          <option v-for="n in networks" :key="n.value" :value="n.value">
+            {{ n.label }}
+          </option>
         </select>
         <input
           :value="item.url"
-          placeholder="URL"
+          placeholder="Profile URL"
           class="w-full rounded-md border border-line bg-input px-2 py-1.5 text-xs outline-none focus:border-brand"
           @input="patchItem(i, { url: ($event.target as HTMLInputElement).value })"
+        />
+        <input
+          :value="item.icon || ''"
+          :placeholder="
+            item.network === 'custom' ? 'Custom icon URL (required)' : 'Custom icon URL (optional)'
+          "
+          class="w-full rounded-md border border-line bg-input px-2 py-1.5 text-xs outline-none focus:border-brand"
+          @input="patchItem(i, { icon: ($event.target as HTMLInputElement).value })"
         />
       </template>
 

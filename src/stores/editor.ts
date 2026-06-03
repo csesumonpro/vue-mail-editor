@@ -30,6 +30,8 @@ export const useEditorStore = defineStore('editor', () => {
   const previewMode = ref(false)
   // Right inspector panel is hidden until the user opens it (icon or canvas click).
   const inspectorOpen = ref(false)
+  // Id of the innermost node currently hovered on the canvas (for the action bar).
+  const hoverId = ref<string | null>(null)
 
   // Snapshot history (serialized JSON to keep memory small).
   const past = ref<string[]>([])
@@ -372,6 +374,7 @@ export const useEditorStore = defineStore('editor', () => {
     clearSelection,
     // view
     inspectorOpen,
+    hoverId,
     setDevice,
     togglePreview,
     openInspector,

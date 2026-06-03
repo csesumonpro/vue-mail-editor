@@ -1,29 +1,16 @@
 <script setup lang="ts">
-import { computed, ref, watch, onMounted, nextTick } from 'vue'
+import { ref, watch, onMounted, nextTick, toRef } from 'vue'
 import type { ButtonValues } from '@/types/schema'
 import { padding, border, justify } from '@/utils/style'
-import { useEditor } from "@/core/useEditor"
 
-const props = defineProps<{ values: ButtonValues; contentId?: string }>()
-const store = useEditor()
+const props = defineProps<{ values: ButtonValues; editing?: boolean }>()
+const emit = defineEmits<{ update: [patch: Partial<ButtonValues>] }>()
 
 const label = ref<HTMLElement | null>(null)
-
-const editable = computed(
-  () =>
-    !store.previewMode &&
-    store.selection.kind === 'content' &&
-    store.selection.id === props.contentId,
-)
+const editing = toRef(props, 'editing')
 
 function onInput() {
-  if (props.contentId) {
-    store.updateContentValues(
-      props.contentId,
-      { text: label.value?.innerText ?? '' },
-      `content:${props.contentId}:text`,
-    )
-  }
+  emit('update', { text: label.value?.innerText ?? '' })
 }
 
 // Keep the DOM text in sync with the model when not actively typing.
@@ -38,7 +25,7 @@ onMounted(() => {
   if (label.value) label.value.innerText = props.values.text
 })
 watch(() => props.values.text, syncText)
-watch(editable, (v) => {
+watch(editing, (v) => {
   if (v) nextTick(() => label.value?.focus())
 })
 </script>
@@ -53,7 +40,7 @@ watch(editable, (v) => {
   >
     <span
       ref="label"
-      :contenteditable="editable"
+      :contenteditable="editing"
       :style="{
         display: 'inline-block',
         width: values.fullWidth ? '100%' : 'auto',
@@ -67,7 +54,7 @@ watch(editable, (v) => {
         borderRadius: values.borderRadius + 'px',
         padding: padding(values.innerPadding),
         outline: 'none',
-        cursor: editable ? 'text' : 'pointer',
+        cursor: editing ? 'text' : 'pointer',
       }"
       @input="onInput"
       @keydown.enter.prevent

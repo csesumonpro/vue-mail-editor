@@ -1,19 +1,19 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { X, Copy, Trash2 } from 'lucide-vue-next'
-import { useEditor } from "@/core/useEditor"
+import { useEditor } from '@/core/useEditor'
+import { useBlocks } from '@/core/registry'
 import type { InspectorSchema } from '@/config/inspector'
 import {
   bodyInspector,
   rowInspector,
   columnInspector,
-  blockInspectors,
 } from '@/config/inspectorSchemas'
-import { BLOCKS } from '@/config/blocks'
 import Accordion from '@/components/inspector/Accordion.vue'
 import InspectorControl from '@/components/inspector/InspectorControl.vue'
 
 const store = useEditor()
+const blocks = useBlocks()
 
 interface Target {
   title: string
@@ -55,9 +55,10 @@ const target = computed<Target | null>(() => {
   if (sel.kind === 'content' && sel.id) {
     const found = store.findContent(sel.id)
     if (!found) return null
+    const def = blocks.get(found.content.type)
     return {
-      title: BLOCKS[found.content.type].label,
-      schema: blockInspectors[found.content.type],
+      title: def?.label ?? found.content.type,
+      schema: def?.inspector ?? [],
       values: found.content.values as unknown as Record<string, unknown>,
       update: (patch, key) => store.updateContentValues(sel.id!, patch, key),
     }

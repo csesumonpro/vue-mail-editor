@@ -1,25 +1,10 @@
 <script setup lang="ts">
-import { computed } from 'vue'
 import type { ParagraphValues } from '@/types/schema'
 import { padding } from '@/utils/style'
-import { useEditor } from "@/core/useEditor"
 import RichTextEditor from '@/components/common/RichTextEditor.vue'
 
-const props = defineProps<{ values: ParagraphValues; contentId?: string }>()
-const store = useEditor()
-
-const editable = computed(
-  () =>
-    !store.previewMode &&
-    store.selection.kind === 'content' &&
-    store.selection.id === props.contentId,
-)
-
-function onUpdate(html: string) {
-  if (props.contentId) {
-    store.updateContentValues(props.contentId, { text: html }, `content:${props.contentId}:text`)
-  }
-}
+defineProps<{ values: ParagraphValues; editing?: boolean }>()
+const emit = defineEmits<{ update: [patch: Partial<ParagraphValues>] }>()
 </script>
 
 <template>
@@ -35,10 +20,10 @@ function onUpdate(html: string) {
   >
     <RichTextEditor
       :model-value="values.text"
-      :editable="editable"
+      :editable="editing"
       lists
       placeholder="Write something…"
-      @update:model-value="onUpdate"
+      @update:model-value="emit('update', { text: $event })"
     />
   </div>
 </template>

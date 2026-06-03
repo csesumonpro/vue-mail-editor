@@ -9,13 +9,27 @@ import TemplatesModal from '@/components/common/TemplatesModal.vue'
 import { SlidersHorizontal } from 'lucide-vue-next'
 import { ref, provide } from 'vue'
 import { createEditor } from '@/core/createEditor'
-import { EDITOR_KEY } from '@/core/keys'
+import { createRegistry } from '@/core/registry'
+import { EDITOR_KEY, BLOCKS_KEY } from '@/core/keys'
+import type { AnyBlockDefinition } from '@/api/types'
 import { useAutosave, loadAutosave } from '@/composables/useAutosave'
 import { useHistoryShortcuts } from '@/composables/useHistory'
 import { useTheme } from '@/composables/useTheme'
 
+const props = defineProps<{
+  blocks?: AnyBlockDefinition[]
+  disabledBlocks?: string[]
+}>()
+
+// Per-instance block registry (built-ins + consumer blocks − disabled).
+const registry = createRegistry({
+  blocks: props.blocks,
+  disabled: props.disabledBlocks,
+})
+provide(BLOCKS_KEY, registry)
+
 // One editor instance per <EmailEditor>, provided to all descendants.
-const store = createEditor()
+const store = createEditor({ createContent: (type) => registry.create(type) })
 provide(EDITOR_KEY, store)
 
 const showExport = ref(false)

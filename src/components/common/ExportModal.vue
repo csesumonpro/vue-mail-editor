@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import { X, Copy, Download, Check } from 'lucide-vue-next'
-import { useEditor } from "@/core/useEditor"
+import { useEditor } from '@/core/useEditor'
+import { useBlocks } from '@/core/registry'
 import { useToast } from '@/composables/useToast'
 import { exportHtml } from '@/export/htmlExporter'
 import { downloadText } from '@/utils/designIO'
@@ -10,6 +11,7 @@ const props = defineProps<{ open: boolean }>()
 const emit = defineEmits<{ close: [] }>()
 
 const store = useEditor()
+const blocks = useBlocks()
 const { notify } = useToast()
 
 type Tab = 'preview' | 'code'
@@ -18,7 +20,7 @@ const copied = ref(false)
 
 // Raw, email-safe HTML — used for copy/download (compact keeps inline-block
 // social icons / menu links from gaining whitespace gaps).
-const html = computed(() => (props.open ? exportHtml(store.design) : ''))
+const html = computed(() => (props.open ? exportHtml(store.design, blocks) : ''))
 
 // Pretty-printed version, lazily beautified, shown only in the Code tab.
 const formatted = ref('')

@@ -2,13 +2,13 @@
 import { ref } from 'vue'
 import draggable from 'vuedraggable'
 import { LayoutGrid, X } from 'lucide-vue-next'
-import { BLOCK_LIST } from '@/config/blocks'
-import type { BlockDef } from '@/config/blocks'
-import { createContent } from '@/config/blockDefaults'
+import type { AnyBlockDefinition } from '@/api/types'
 import { createRow } from '@/config/defaults'
-import { useEditor } from "@/core/useEditor"
+import { useEditor } from '@/core/useEditor'
+import { useBlocks } from '@/core/registry'
 
 const store = useEditor()
+const blocks = useBlocks()
 const containerOpen = ref(false)
 
 const layoutBlocks = [
@@ -24,7 +24,7 @@ const layoutBlocks = [
 const contentGroup = { name: 'content', pull: 'clone', put: false }
 const rowGroup = { name: 'rows', pull: 'clone', put: false }
 
-const cloneBlock = (b: BlockDef) => createContent(b.type)
+const cloneBlock = (b: AnyBlockDefinition) => blocks.create(b.type)!
 const cloneLayout = (l: { cells: number[] }) => createRow(l.cells)
 </script>
 
@@ -53,7 +53,7 @@ const cloneLayout = (l: { cells: number[] }) => createRow(l.cells)
 
       <!-- Content blocks (drag onto canvas, or click to add) -->
       <draggable
-        :list="BLOCK_LIST"
+        :list="blocks.list"
         :group="contentGroup"
         :clone="cloneBlock"
         :sort="false"

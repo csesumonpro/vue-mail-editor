@@ -10,7 +10,6 @@ import type {
   SelectionKind,
 } from '@/types/schema'
 import { createRow } from '@/config/defaults'
-import { createContent } from '@/config/blockDefaults'
 import { createDesign } from '@/config/seed'
 import { deepClone } from '@/utils/clone'
 import { uid } from '@/utils/id'
@@ -24,7 +23,12 @@ const COALESCE_MS = 700
  * Pinia-like ergonomics (`editor.design`, `editor.canUndo`, methods) without a
  * global singleton — each <EmailEditor> owns its own instance.
  */
-export function createEditor() {
+export interface CreateEditorOptions {
+  /** Registry-aware factory for a content node of a given type. */
+  createContent: (type: ContentType) => Content | null
+}
+
+export function createEditor(opts: CreateEditorOptions) {
   /* State ------------------------------------------------------------- */
   const design = ref<Design>(createDesign())
   const selection = ref<Selection>({ kind: 'body', id: null })
@@ -208,7 +212,8 @@ export function createEditor() {
   }
 
   function addBlock(type: ContentType) {
-    const content = createContent(type)
+    const content = opts.createContent(type)
+    if (!content) return
     const sel = selection.value
 
     if (sel.kind === 'content' && sel.id) {

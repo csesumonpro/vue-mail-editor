@@ -16,6 +16,8 @@ export type {
   ControlDef,
   ExportContext,
   Design,
+  TemplatePayload,
+  StorageMode,
 } from './api/types'
 export type { ThemeTokens, ThemeColors, ThemeFont } from './api/theme'
 export type { EditorConfig, EditorActions, TemplateDef } from './api/config'

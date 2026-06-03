@@ -14,19 +14,22 @@ import {
   FilePlus2,
   FolderOpen,
   LayoutTemplate,
+  BookmarkPlus,
   Sun,
   Moon,
 } from 'lucide-vue-next'
 import { computed } from 'vue'
 import { useEditor } from '@/core/useEditor'
 import { useConfig } from '@/core/useConfig'
+import { useActions } from '@/core/useActions'
 import { useToast } from '@/composables/useToast'
 import { vTooltip } from '@/directives/tooltip'
-import { downloadDesign, readDesignFile } from '@/utils/designIO'
+import { readDesignFile } from '@/utils/designIO'
 import type { Device } from '@/types/schema'
 
 const store = useEditor()
 const config = useConfig()
+const actions = useActions()
 const { notify } = useToast()
 const fileInput = ref<HTMLInputElement | null>(null)
 
@@ -40,11 +43,6 @@ const allDevices: { id: Device; icon: typeof Monitor; label: string }[] = [
 const devices = computed(() =>
   allDevices.filter((d) => config.devices.includes(d.id)),
 )
-
-function onSave() {
-  downloadDesign(store.design)
-  notify('Design saved')
-}
 
 function onNew() {
   if (confirm('Start a new design? Unsaved changes will be lost.')) {
@@ -185,10 +183,19 @@ async function onImport(e: Event) {
       <div class="mx-1 h-6 w-px bg-line" />
 
       <button
+        v-if="config.actions.saveTemplate"
+        type="button"
+        v-tooltip="'Save as template'"
+        class="flex h-8 w-8 items-center justify-center rounded-md text-faint transition hover:bg-ink/10 hover:text-header-fg"
+        @click="actions.saveTemplate()"
+      >
+        <BookmarkPlus class="h-4 w-4" />
+      </button>
+      <button
         v-if="config.actions.save"
         type="button"
         class="flex items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-xs font-semibold text-on-primary transition hover:opacity-90"
-        @click="onSave"
+        @click="actions.save()"
       >
         <Save class="h-4 w-4" />
         Save Design

@@ -7,11 +7,13 @@ import ToastHost from '@/components/common/ToastHost.vue'
 import ExportModal from '@/components/common/ExportModal.vue'
 import TemplatesModal from '@/components/common/TemplatesModal.vue'
 import { SlidersHorizontal } from 'lucide-vue-next'
-import { ref, provide, computed, watch, watchEffect, onBeforeUnmount } from 'vue'
+import { ref, provide, computed, watch, watchEffect, onMounted, onBeforeUnmount } from 'vue'
 import { createEditor } from '@/core/createEditor'
 import { createRegistry } from '@/core/registry'
-import { EDITOR_KEY, BLOCKS_KEY, CONFIG_KEY } from '@/core/keys'
-import type { AnyBlockDefinition } from '@/api/types'
+import { EDITOR_KEY, BLOCKS_KEY, CONFIG_KEY, ACTIONS_KEY } from '@/core/keys'
+import { base64Upload } from '@/core/useActions'
+import type { AnyBlockDefinition, Design, TemplatePayload, StorageMode } from '@/api/types'
+import type { Selection } from '@/types/schema'
 import type { ThemeTokens } from '@/api/theme'
 import { themeToCss } from '@/api/theme'
 import type { EditorConfig } from '@/api/config'
@@ -19,6 +21,8 @@ import { resolveConfig } from '@/api/config'
 import { vTooltip } from '@/directives/tooltip'
 import { useAutosave, loadAutosave } from '@/composables/useAutosave'
 import { useHistoryShortcuts } from '@/composables/useHistory'
+import { exportHtml } from '@/export/htmlExporter'
+import { downloadDesign } from '@/utils/designIO'
 import { uid } from '@/utils/id'
 
 const props = withDefaults(
@@ -28,9 +32,23 @@ const props = withDefaults(
     theme?: ThemeTokens
     colorMode?: 'light' | 'dark' | 'auto'
     config?: EditorConfig
+    storage?: StorageMode
+    onImageUpload?: (file: File) => Promise<string>
+    onSave?: (design: Design) => void | Promise<void>
+    onSaveTemplate?: (payload: TemplatePayload) => void | Promise<void>
+    onExport?: (html: string, design: Design) => void | Promise<void>
+    onLoad?: () => Design | Promise<Design>
   }>(),
-  { colorMode: 'light' },
+  { colorMode: 'light', storage: 'local' },
 )
+
+const emit = defineEmits<{
+  change: [design: Design]
+  save: [design: Design]
+  'save-template': [payload: TemplatePayload]
+  export: [html: string, design: Design]
+  select: [selection: Selection]
+}>()
 
 // Per-instance registry, config + editor state.
 const registry = createRegistry({ blocks: props.blocks, disabled: props.disabledBlocks })
@@ -42,6 +60,36 @@ provide(EDITOR_KEY, store)
 
 const showExport = ref(false)
 const showTemplates = ref(false)
+
+/* Action hooks (host-delegated; built-in fallbacks) ----------------- */
+async function doSave() {
+  emit('save', store.design)
+  if (props.onSave) await props.onSave(store.design)
+  else downloadDesign(store.design)
+}
+async function doSaveTemplate() {
+  const name = window.prompt('Template name')
+  if (!name) return
+  const payload: TemplatePayload = { name, design: store.design }
+  emit('save-template', payload)
+  if (props.onSaveTemplate) await props.onSaveTemplate(payload)
+}
+function doUpload(file: File) {
+  return props.onImageUpload ? props.onImageUpload(file) : base64Upload(file)
+}
+provide(ACTIONS_KEY, {
+  uploadImage: doUpload,
+  save: doSave,
+  saveTemplate: doSaveTemplate,
+  canSaveTemplate: !!props.onSaveTemplate,
+})
+
+async function onExportClick() {
+  showExport.value = true
+  const html = exportHtml(store.design, registry)
+  emit('export', html, store.design)
+  if (props.onExport) await props.onExport(html, store.design)
+}
 
 /* Color mode -------------------------------------------------------- */
 function resolveDark(mode: string): boolean {
@@ -75,14 +123,45 @@ onBeforeUnmount(() => {
 const rootClass = computed(() => [instanceClass, { dark: store.isDark }])
 
 /* Lifecycle --------------------------------------------------------- */
-const saved = loadAutosave()
-if (saved) {
-  store.loadDesign(saved, false)
-} else if (config.contentWidth) {
-  store.design.body.values.contentWidth = config.contentWidth
+function applyContentWidth() {
+  if (config.contentWidth) store.design.body.values.contentWidth = config.contentWidth
 }
-useAutosave(store, config.autosaveMs)
+
+if (props.storage === 'local') {
+  const saved = loadAutosave()
+  if (saved) store.loadDesign(saved, false)
+  else applyContentWidth()
+  useAutosave(store, config.autosaveMs)
+} else {
+  // 'none' — host owns persistence (server/database).
+  applyContentWidth()
+}
+
 useHistoryShortcuts(store)
+
+// Host-driven initial load (e.g. fetch from server) overrides the seed.
+onMounted(async () => {
+  if (props.onLoad) {
+    const d = await props.onLoad()
+    if (d) store.loadDesign(d, false)
+  }
+})
+
+// Notify the host of design + selection changes.
+let changeTimer: ReturnType<typeof setTimeout> | undefined
+watch(
+  () => store.design,
+  () => {
+    clearTimeout(changeTimer)
+    changeTimer = setTimeout(() => emit('change', store.design), 300)
+  },
+  { deep: true },
+)
+watch(
+  () => store.selection,
+  (s) => emit('select', s),
+  { deep: true },
+)
 </script>
 
 <template>
@@ -91,7 +170,7 @@ useHistoryShortcuts(store)
     :class="rootClass"
   >
     <slot v-if="$slots.header" name="header" />
-    <TopBar v-else @export="showExport = true" @templates="showTemplates = true">
+    <TopBar v-else @export="onExportClick" @templates="showTemplates = true">
       <template v-if="$slots['header-brand']" #brand><slot name="header-brand" /></template>
       <template v-if="$slots['header-actions']" #actions><slot name="header-actions" /></template>
     </TopBar>

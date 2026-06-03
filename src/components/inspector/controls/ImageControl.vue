@@ -1,18 +1,26 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { Upload } from 'lucide-vue-next'
+import { useActions } from '@/core/useActions'
 
 defineProps<{ modelValue: string }>()
 const emit = defineEmits<{ 'update:modelValue': [string] }>()
 
+const actions = useActions()
 const fileInput = ref<HTMLInputElement | null>(null)
+const uploading = ref(false)
 
-function onFile(e: Event) {
+async function onFile(e: Event) {
   const file = (e.target as HTMLInputElement).files?.[0]
   if (!file) return
-  const reader = new FileReader()
-  reader.onload = () => emit('update:modelValue', String(reader.result))
-  reader.readAsDataURL(file)
+  uploading.value = true
+  try {
+    const url = await actions.uploadImage(file)
+    emit('update:modelValue', url)
+  } finally {
+    uploading.value = false
+    if (fileInput.value) fileInput.value.value = ''
+  }
 }
 </script>
 
@@ -38,11 +46,12 @@ function onFile(e: Event) {
     />
     <button
       type="button"
-      class="flex w-full items-center justify-center gap-1.5 rounded-md border border-line bg-input py-1.5 text-xs font-medium text-subtle hover:border-brand hover:text-brand-dark"
+      :disabled="uploading"
+      class="flex w-full items-center justify-center gap-1.5 rounded-md border border-line bg-input py-1.5 text-xs font-medium text-subtle hover:border-brand hover:text-brand-dark disabled:opacity-60"
       @click="fileInput?.click()"
     >
       <Upload class="h-3.5 w-3.5" />
-      Upload image
+      {{ uploading ? 'Uploading…' : 'Upload image' }}
     </button>
     <input
       ref="fileInput"

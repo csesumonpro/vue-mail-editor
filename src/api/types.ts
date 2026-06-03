@@ -6,6 +6,15 @@ import type { ExportContext } from '@/export/helpers'
 export type { ControlDef, ExportContext }
 export type { Design } from '@/types/schema'
 
+/** Payload emitted/handled when saving the design as a template. */
+export interface TemplatePayload {
+  name: string
+  design: import('@/types/schema').Design
+}
+
+/** Built-in persistence mode. */
+export type StorageMode = 'local' | 'none'
+
 /** An inspector accordion group (re-exported public name). */
 export type InspectorGroup = AccordionGroup
 

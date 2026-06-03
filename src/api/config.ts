@@ -12,6 +12,7 @@ export interface EditorActions {
   new?: boolean
   import?: boolean
   save?: boolean
+  saveTemplate?: boolean
   export?: boolean
 }
 
@@ -48,6 +49,7 @@ export function resolveConfig(c?: EditorConfig): ResolvedConfig {
       new: c?.actions?.new ?? true,
       import: c?.actions?.import ?? true,
       save: c?.actions?.save ?? true,
+      saveTemplate: c?.actions?.saveTemplate ?? false,
       export: c?.actions?.export ?? true,
     },
     templates: c?.templates,

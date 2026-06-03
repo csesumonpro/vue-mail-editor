@@ -95,7 +95,11 @@
 /* ------------------------------------------------------------------ */
 /* Map Tailwind semantic colors → tokens                              */
 /* ------------------------------------------------------------------ */
-@theme {
+/* `inline` makes utilities reference --inkp-* DIRECTLY (e.g.
+   .bg-header{background:var(--inkp-header-bg)}) instead of a --color-* layer.
+   The indirection would otherwise bake the :root (light) value at compute time
+   and break dark-mode inheritance for the chrome. */
+@theme inline {
   --font-sans: var(--inkp-font-sans);
   --font-mono: var(--inkp-font-mono);
 

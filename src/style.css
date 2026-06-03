@@ -38,8 +38,8 @@
   --inkp-status-danger-soft: #fef2f2;
 
   /* App chrome */
-  --inkp-header-bg: #0f172a;
-  --inkp-header-fg: #f8fafc;
+  --inkp-header-bg: #ffffff;
+  --inkp-header-fg: #0f172a;
   --inkp-canvas: #eef2f6;
   --inkp-canvas-grid: #dbe2ea;
 
@@ -80,6 +80,7 @@
   --inkp-status-danger-soft: #2a0f12;
 
   --inkp-header-bg: #0b0f1a;
+  --inkp-header-fg: #f8fafc;
   --inkp-canvas: #0b0f1a;
   --inkp-canvas-grid: #1b2536;
 }

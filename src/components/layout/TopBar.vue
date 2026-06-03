@@ -65,7 +65,7 @@ async function onImport(e: Event) {
 
 <template>
   <header
-    class="flex h-14 shrink-0 items-center justify-between bg-header px-4 text-white"
+    class="flex h-14 shrink-0 items-center justify-between border-b border-line bg-header px-4 text-header-fg"
   >
     <!-- Brand -->
     <div class="flex items-center gap-2">
@@ -74,7 +74,7 @@ async function onImport(e: Event) {
     </div>
 
     <!-- Device toggles -->
-    <div class="flex items-center gap-1 rounded-lg bg-white/10 p-1">
+    <div class="flex items-center gap-1 rounded-lg bg-ink/5 p-1">
       <button
         v-for="d in devices"
         :key="d.id"
@@ -83,8 +83,8 @@ async function onImport(e: Event) {
         class="flex h-8 w-8 items-center justify-center rounded-md transition"
         :class="
           store.device === d.id
-            ? 'bg-white text-header shadow-sm'
-            : 'text-white/70 hover:bg-white/10'
+            ? 'bg-brand text-white shadow-sm'
+            : 'text-faint hover:bg-ink/10 hover:text-header-fg'
         "
         @click="store.setDevice(d.id)"
       >
@@ -97,7 +97,7 @@ async function onImport(e: Event) {
       <button
         type="button"
         title="Undo"
-        class="flex h-8 w-8 items-center justify-center rounded-md text-white/70 transition hover:bg-white/10 disabled:opacity-40 disabled:hover:bg-transparent"
+        class="flex h-8 w-8 items-center justify-center rounded-md text-faint transition hover:bg-ink/10 hover:text-header-fg disabled:opacity-40 disabled:hover:bg-transparent"
         :disabled="!store.canUndo"
         @click="store.undo()"
       >
@@ -106,7 +106,7 @@ async function onImport(e: Event) {
       <button
         type="button"
         title="Redo"
-        class="flex h-8 w-8 items-center justify-center rounded-md text-white/70 transition hover:bg-white/10 disabled:opacity-40 disabled:hover:bg-transparent"
+        class="flex h-8 w-8 items-center justify-center rounded-md text-faint transition hover:bg-ink/10 hover:text-header-fg disabled:opacity-40 disabled:hover:bg-transparent"
         :disabled="!store.canRedo"
         @click="store.redo()"
       >
@@ -118,8 +118,8 @@ async function onImport(e: Event) {
         class="flex h-8 w-8 items-center justify-center rounded-md transition"
         :class="
           store.previewMode
-            ? 'bg-white text-header'
-            : 'text-white/70 hover:bg-white/10'
+            ? 'bg-brand text-white'
+            : 'text-faint hover:bg-ink/10 hover:text-header-fg'
         "
         @click="store.togglePreview()"
       >
@@ -128,18 +128,18 @@ async function onImport(e: Event) {
       <button
         type="button"
         :title="isDark ? 'Light mode' : 'Dark mode'"
-        class="flex h-8 w-8 items-center justify-center rounded-md text-white/70 transition hover:bg-white/10"
+        class="flex h-8 w-8 items-center justify-center rounded-md text-faint transition hover:bg-ink/10 hover:text-header-fg"
         @click="toggleTheme"
       >
         <component :is="isDark ? Sun : Moon" class="h-4 w-4" />
       </button>
 
-      <div class="mx-1 h-6 w-px bg-white/20" />
+      <div class="mx-1 h-6 w-px bg-line" />
 
       <button
         type="button"
         title="Templates"
-        class="flex h-8 w-8 items-center justify-center rounded-md text-white/70 hover:bg-white/10"
+        class="flex h-8 w-8 items-center justify-center rounded-md text-faint transition hover:bg-ink/10 hover:text-header-fg"
         @click="emit('templates')"
       >
         <LayoutTemplate class="h-4 w-4" />
@@ -147,7 +147,7 @@ async function onImport(e: Event) {
       <button
         type="button"
         title="New design"
-        class="flex h-8 w-8 items-center justify-center rounded-md text-white/70 hover:bg-white/10"
+        class="flex h-8 w-8 items-center justify-center rounded-md text-faint transition hover:bg-ink/10 hover:text-header-fg"
         @click="onNew"
       >
         <FilePlus2 class="h-4 w-4" />
@@ -155,7 +155,7 @@ async function onImport(e: Event) {
       <button
         type="button"
         title="Import design JSON"
-        class="flex h-8 w-8 items-center justify-center rounded-md text-white/70 hover:bg-white/10"
+        class="flex h-8 w-8 items-center justify-center rounded-md text-faint transition hover:bg-ink/10 hover:text-header-fg"
         @click="fileInput?.click()"
       >
         <FolderOpen class="h-4 w-4" />
@@ -168,11 +168,11 @@ async function onImport(e: Event) {
         @change="onImport"
       />
 
-      <div class="mx-1 h-6 w-px bg-white/20" />
+      <div class="mx-1 h-6 w-px bg-line" />
 
       <button
         type="button"
-        class="flex items-center gap-1.5 rounded-md bg-white px-3 py-1.5 text-xs font-semibold text-header transition hover:bg-white/90"
+        class="flex items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-xs font-semibold text-on-primary transition hover:opacity-90"
         @click="onSave"
       >
         <Save class="h-4 w-4" />
@@ -180,7 +180,7 @@ async function onImport(e: Event) {
       </button>
       <button
         type="button"
-        class="flex items-center gap-1.5 rounded-md bg-white px-3 py-1.5 text-xs font-semibold text-header transition hover:bg-white/90"
+        class="flex items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-xs font-semibold text-on-primary transition hover:opacity-90"
         @click="emit('export')"
       >
         <Code2 class="h-4 w-4" />

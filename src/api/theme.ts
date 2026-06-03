@@ -1,5 +1,5 @@
 /**
- * Theme tokens a consumer can override. Each maps to a `--inkp-*` CSS variable
+ * Theme tokens a consumer can override. Each maps to a `--cvee-*` CSS variable
  * scoped to the editor instance. `dark` overrides apply when dark mode is active.
  */
 export interface ThemeColors {
@@ -39,30 +39,30 @@ export interface ThemeTokens {
   font?: ThemeFont
 }
 
-/** Map a theme color key → its `--inkp-*` variable name. */
+/** Map a theme color key → its `--cvee-*` variable name. */
 const COLOR_VARS: Record<keyof ThemeColors, string> = {
-  app: '--inkp-bg',
-  surface: '--inkp-bg-surface',
-  sidebar: '--inkp-bg-sidebar',
-  muted: '--inkp-bg-muted',
-  hover: '--inkp-bg-hover',
-  active: '--inkp-bg-active',
-  input: '--inkp-bg-input',
-  line: '--inkp-border',
-  lineSubtle: '--inkp-border-subtle',
-  ink: '--inkp-text',
-  subtle: '--inkp-text-secondary',
-  faint: '--inkp-text-muted',
-  strong: '--inkp-text-strong',
-  accent: '--inkp-accent',
-  accentHover: '--inkp-accent-hover',
-  onAccent: '--inkp-on-accent',
-  primary: '--inkp-btn-primary-bg',
-  onPrimary: '--inkp-btn-primary-text',
-  header: '--inkp-header-bg',
-  headerFg: '--inkp-header-fg',
-  link: '--inkp-link',
-  danger: '--inkp-status-danger',
+  app: '--cvee-bg',
+  surface: '--cvee-bg-surface',
+  sidebar: '--cvee-bg-sidebar',
+  muted: '--cvee-bg-muted',
+  hover: '--cvee-bg-hover',
+  active: '--cvee-bg-active',
+  input: '--cvee-bg-input',
+  line: '--cvee-border',
+  lineSubtle: '--cvee-border-subtle',
+  ink: '--cvee-text',
+  subtle: '--cvee-text-secondary',
+  faint: '--cvee-text-muted',
+  strong: '--cvee-text-strong',
+  accent: '--cvee-accent',
+  accentHover: '--cvee-accent-hover',
+  onAccent: '--cvee-on-accent',
+  primary: '--cvee-btn-primary-bg',
+  onPrimary: '--cvee-btn-primary-text',
+  header: '--cvee-header-bg',
+  headerFg: '--cvee-header-fg',
+  link: '--cvee-link',
+  danger: '--cvee-status-danger',
 }
 
 function colorsToDecls(colors: ThemeColors): string {
@@ -74,8 +74,8 @@ function colorsToDecls(colors: ThemeColors): string {
 
 function fontToDecls(font: ThemeFont): string {
   const parts: string[] = []
-  if (font.sans) parts.push(`--inkp-font-sans:${font.sans};`)
-  if (font.mono) parts.push(`--inkp-font-mono:${font.mono};`)
+  if (font.sans) parts.push(`--cvee-font-sans:${font.sans};`)
+  if (font.mono) parts.push(`--cvee-font-mono:${font.mono};`)
   return parts.join('')
 }
 

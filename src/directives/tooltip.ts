@@ -36,8 +36,8 @@ function show(el: TipEl) {
   // The tooltip lives on <body>, outside the themed editor root, so copy the
   // resolved theme colors from the trigger element.
   const cs = getComputedStyle(el)
-  const bg = cs.getPropertyValue('--inkp-text').trim()
-  const fg = cs.getPropertyValue('--inkp-bg').trim()
+  const bg = cs.getPropertyValue('--cvee-text').trim()
+  const fg = cs.getPropertyValue('--cvee-bg').trim()
   if (bg) tip.style.background = bg
   if (fg) tip.style.color = fg
   document.body.appendChild(tip)

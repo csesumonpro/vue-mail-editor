@@ -14,6 +14,8 @@ export type {
   BlockDefinition,
   InspectorGroup,
   ControlDef,
+  ControlType,
+  SelectOption,
   ExportContext,
   Design,
   TemplatePayload,

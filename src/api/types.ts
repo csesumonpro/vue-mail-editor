@@ -1,9 +1,14 @@
 import type { Component } from 'vue'
 import type { Content } from '@/types/schema'
-import type { AccordionGroup, ControlDef } from '@/config/inspector'
+import type {
+  AccordionGroup,
+  ControlDef,
+  ControlType,
+  SelectOption,
+} from '@/config/inspector'
 import type { ExportContext } from '@/export/helpers'
 
-export type { ControlDef, ExportContext }
+export type { ControlDef, ControlType, SelectOption, ExportContext }
 export type { Design } from '@/types/schema'
 
 /** Payload emitted/handled when saving the design as a template. */

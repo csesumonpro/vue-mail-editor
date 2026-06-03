@@ -40,7 +40,7 @@ const map = {
   list: ListControl,
 } as const
 
-const component = computed(() => map[props.def.type])
+const component = computed(() => map[props.def.type as keyof typeof map])
 
 // Controls that read better stacked under their label.
 const STACKED = new Set([
@@ -62,6 +62,7 @@ function update(v: unknown) {
 <template>
   <ControlField :label="def.label" :stack="stacked">
     <component
+      v-if="component"
       :is="component"
       :model-value="(modelValue as any)"
       :min="def.min"
@@ -74,5 +75,6 @@ function update(v: unknown) {
       :allow-transparent="def.type === 'color'"
       @update:model-value="update"
     />
+    <span v-else class="text-[11px] text-faint">Unknown control “{{ def.type }}”</span>
   </ControlField>
 </template>

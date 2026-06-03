@@ -17,4 +17,5 @@ export type {
   ExportContext,
   Design,
 } from './api/types'
+export type { ThemeTokens, ThemeColors, ThemeFont } from './api/theme'
 export type { ContentType } from './types/schema'

@@ -7,52 +7,85 @@ import ToastHost from '@/components/common/ToastHost.vue'
 import ExportModal from '@/components/common/ExportModal.vue'
 import TemplatesModal from '@/components/common/TemplatesModal.vue'
 import { SlidersHorizontal } from 'lucide-vue-next'
-import { ref, provide } from 'vue'
+import { ref, provide, computed, watch, watchEffect, onBeforeUnmount } from 'vue'
 import { createEditor } from '@/core/createEditor'
 import { createRegistry } from '@/core/registry'
 import { EDITOR_KEY, BLOCKS_KEY } from '@/core/keys'
 import type { AnyBlockDefinition } from '@/api/types'
+import type { ThemeTokens } from '@/api/theme'
+import { themeToCss } from '@/api/theme'
+import { vTooltip } from '@/directives/tooltip'
 import { useAutosave, loadAutosave } from '@/composables/useAutosave'
 import { useHistoryShortcuts } from '@/composables/useHistory'
-import { useTheme } from '@/composables/useTheme'
+import { uid } from '@/utils/id'
 
-const props = defineProps<{
-  blocks?: AnyBlockDefinition[]
-  disabledBlocks?: string[]
-}>()
+const props = withDefaults(
+  defineProps<{
+    blocks?: AnyBlockDefinition[]
+    disabledBlocks?: string[]
+    theme?: ThemeTokens
+    colorMode?: 'light' | 'dark' | 'auto'
+  }>(),
+  { colorMode: 'light' },
+)
 
-// Per-instance block registry (built-ins + consumer blocks − disabled).
-const registry = createRegistry({
-  blocks: props.blocks,
-  disabled: props.disabledBlocks,
-})
+// Per-instance registry + editor state.
+const registry = createRegistry({ blocks: props.blocks, disabled: props.disabledBlocks })
 provide(BLOCKS_KEY, registry)
-
-// One editor instance per <EmailEditor>, provided to all descendants.
 const store = createEditor({ createContent: (type) => registry.create(type) })
 provide(EDITOR_KEY, store)
 
 const showExport = ref(false)
 const showTemplates = ref(false)
 
-useTheme().init()
+/* Color mode -------------------------------------------------------- */
+function resolveDark(mode: string): boolean {
+  if (mode === 'dark') return true
+  if (mode === 'light') return false
+  return window.matchMedia?.('(prefers-color-scheme: dark)').matches ?? false
+}
+watch(
+  () => props.colorMode,
+  (mode) => store.setDark(resolveDark(mode)),
+  { immediate: true },
+)
 
-// Restore the last autosaved design (history not recorded for the initial load).
+/* Theme overrides: a scoped <style> tag, instance-classed -------------- */
+const instanceClass = uid('vee')
+let styleEl: HTMLStyleElement | null = null
+watchEffect(() => {
+  const css = themeToCss(instanceClass, props.theme)
+  if (!css && !styleEl) return
+  if (!styleEl) {
+    styleEl = document.createElement('style')
+    document.head.appendChild(styleEl)
+  }
+  styleEl.textContent = css
+})
+onBeforeUnmount(() => {
+  styleEl?.remove()
+  styleEl = null
+})
+
+const rootClass = computed(() => [instanceClass, { dark: store.isDark }])
+
+/* Lifecycle --------------------------------------------------------- */
 const saved = loadAutosave()
 if (saved) store.loadDesign(saved, false)
-
 useAutosave(store)
 useHistoryShortcuts(store)
 </script>
 
 <template>
-  <div class="vue-email-editor flex h-full flex-col overflow-hidden bg-app">
+  <div
+    class="vue-email-editor flex h-full flex-col overflow-hidden bg-app"
+    :class="rootClass"
+  >
     <TopBar @export="showExport = true" @templates="showTemplates = true" />
     <div class="relative flex min-h-0 flex-1">
       <LeftPanel v-show="!store.previewMode" />
       <EditorCanvas />
 
-      <!-- Floating settings toggle, top-right of the editing area -->
       <button
         v-show="!store.previewMode && !store.inspectorOpen"
         type="button"

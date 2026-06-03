@@ -17,15 +17,14 @@ import {
   Sun,
   Moon,
 } from 'lucide-vue-next'
-import { useEditor } from "@/core/useEditor"
+import { useEditor } from '@/core/useEditor'
 import { useToast } from '@/composables/useToast'
-import { useTheme } from '@/composables/useTheme'
+import { vTooltip } from '@/directives/tooltip'
 import { downloadDesign, readDesignFile } from '@/utils/designIO'
 import type { Device } from '@/types/schema'
 
 const store = useEditor()
 const { notify } = useToast()
-const { isDark, toggle: toggleTheme } = useTheme()
 const fileInput = ref<HTMLInputElement | null>(null)
 
 const emit = defineEmits<{ export: []; templates: [] }>()
@@ -127,11 +126,11 @@ async function onImport(e: Event) {
       </button>
       <button
         type="button"
-        v-tooltip="isDark ? 'Light mode' : 'Dark mode'"
+        v-tooltip="store.isDark ? 'Light mode' : 'Dark mode'"
         class="flex h-8 w-8 items-center justify-center rounded-md text-faint transition hover:bg-ink/10 hover:text-header-fg"
-        @click="toggleTheme"
+        @click="store.toggleDark()"
       >
-        <component :is="isDark ? Sun : Moon" class="h-4 w-4" />
+        <component :is="store.isDark ? Sun : Moon" class="h-4 w-4" />
       </button>
 
       <div class="mx-1 h-6 w-px bg-line" />

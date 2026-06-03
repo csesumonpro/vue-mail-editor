@@ -36,6 +36,7 @@ export function createEditor(opts: CreateEditorOptions) {
   const previewMode = ref(false)
   const inspectorOpen = ref(false)
   const hoverId = ref<string | null>(null)
+  const isDark = ref(false)
 
   const past = ref<string[]>([])
   const future = ref<string[]>([])
@@ -158,6 +159,13 @@ export function createEditor(opts: CreateEditorOptions) {
   }
   function toggleInspector(value?: boolean) {
     inspectorOpen.value = value ?? !inspectorOpen.value
+  }
+
+  function setDark(value: boolean) {
+    isDark.value = value
+  }
+  function toggleDark() {
+    isDark.value = !isDark.value
   }
 
   function selectAndInspect(kind: SelectionKind, id: string | null) {
@@ -323,6 +331,7 @@ export function createEditor(opts: CreateEditorOptions) {
     previewMode,
     inspectorOpen,
     hoverId,
+    isDark,
     canUndo,
     canRedo,
     // history
@@ -345,6 +354,8 @@ export function createEditor(opts: CreateEditorOptions) {
     openInspector,
     closeInspector,
     toggleInspector,
+    setDark,
+    toggleDark,
     selectAndInspect,
     // values
     updateBodyValues,

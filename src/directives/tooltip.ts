@@ -33,6 +33,13 @@ function show(el: TipEl) {
   tip = document.createElement('div')
   tip.className = 'app-tooltip'
   tip.textContent = text
+  // The tooltip lives on <body>, outside the themed editor root, so copy the
+  // resolved theme colors from the trigger element.
+  const cs = getComputedStyle(el)
+  const bg = cs.getPropertyValue('--inkp-text').trim()
+  const fg = cs.getPropertyValue('--inkp-bg').trim()
+  if (bg) tip.style.background = bg
+  if (fg) tip.style.color = fg
   document.body.appendChild(tip)
 
   const r = el.getBoundingClientRect()

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { vTooltip } from "@/directives/tooltip"
 import { ref } from 'vue'
 import { Link, Unlink } from 'lucide-vue-next'
 import type { BoxValue } from '@/types/schema'

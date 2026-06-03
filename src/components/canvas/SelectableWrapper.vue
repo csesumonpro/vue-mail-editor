@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { vTooltip } from "@/directives/tooltip"
 import { computed } from 'vue'
 import { ChevronUp, ChevronDown, Copy, Trash2, GripVertical } from 'lucide-vue-next'
 import { useEditor } from "@/core/useEditor"

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { vTooltip } from "@/directives/tooltip"
 import { ref } from 'vue'
 import draggable from 'vuedraggable'
 import { LayoutGrid, X } from 'lucide-vue-next'

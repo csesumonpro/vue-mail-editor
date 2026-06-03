@@ -1,4 +1,5 @@
 <script setup lang="ts">
+defineOptions({ inheritAttrs: false })
 import { Plus, Trash2, ChevronUp, ChevronDown } from 'lucide-vue-next'
 import { SOCIAL_NETWORKS } from '@/config/social'
 

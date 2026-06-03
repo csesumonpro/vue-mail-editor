@@ -1,4 +1,5 @@
 <script setup lang="ts">
+defineOptions({ inheritAttrs: false })
 import type { SelectOption } from '@/config/inspector'
 
 const props = defineProps<{

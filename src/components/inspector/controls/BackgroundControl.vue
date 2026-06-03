@@ -1,4 +1,5 @@
 <script setup lang="ts">
+defineOptions({ inheritAttrs: false })
 import type { BgImage } from '@/types/schema'
 import ImageControl from './ImageControl.vue'
 

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+defineOptions({ inheritAttrs: false })
 import { Link2 } from 'lucide-vue-next'
 
 defineProps<{ modelValue: string; placeholder?: string }>()

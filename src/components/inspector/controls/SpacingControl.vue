@@ -1,4 +1,5 @@
 <script setup lang="ts">
+defineOptions({ inheritAttrs: false })
 import { vTooltip } from "@/directives/tooltip"
 import { ref } from 'vue'
 import { Link, Unlink } from 'lucide-vue-next'

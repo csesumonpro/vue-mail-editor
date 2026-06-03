@@ -1,4 +1,5 @@
 <script setup lang="ts">
+defineOptions({ inheritAttrs: false })
 const props = defineProps<{
   modelValue: number
   min?: number

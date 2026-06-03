@@ -1,4 +1,5 @@
 <script setup lang="ts">
+defineOptions({ inheritAttrs: false })
 import { computed } from 'vue'
 import { Ban } from 'lucide-vue-next'
 

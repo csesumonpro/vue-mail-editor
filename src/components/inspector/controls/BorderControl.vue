@@ -1,4 +1,5 @@
 <script setup lang="ts">
+defineOptions({ inheritAttrs: false })
 import type { BorderValue } from '@/types/schema'
 import ColorControl from './ColorControl.vue'
 

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+defineOptions({ inheritAttrs: false })
 import { ref } from 'vue'
 import { Upload } from 'lucide-vue-next'
 import { useActions } from '@/core/useActions'
@@ -57,7 +58,7 @@ async function onFile(e: Event) {
       ref="fileInput"
       type="file"
       accept="image/*"
-      class="hidden"
+      style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0"
       @change="onFile"
     />
   </div>

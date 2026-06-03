@@ -1,4 +1,5 @@
 <script setup lang="ts">
+defineOptions({ inheritAttrs: false })
 import { AlignLeft, AlignCenter, AlignRight } from 'lucide-vue-next'
 import type { TextAlign } from '@/types/schema'
 

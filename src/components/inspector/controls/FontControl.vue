@@ -1,4 +1,5 @@
 <script setup lang="ts">
+defineOptions({ inheritAttrs: false })
 import type { FontValue } from '@/types/schema'
 import { FONTS } from '@/config/fonts'
 

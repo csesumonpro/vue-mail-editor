@@ -25,6 +25,13 @@ export default defineConfig({
   },
   build: {
     copyPublicDir: false,
+    // vuedraggable is CommonJS and `require('vue')`. Treat vue as an ESM external
+    // so the build emits a namespace import, not a default import (Vue 3's ESM has
+    // no default export). Do NOT set requireReturnsDefault globally — it breaks
+    // sortablejs's default export (vuedraggable does `new Sortable`).
+    commonjsOptions: {
+      esmExternals: ['vue'],
+    },
     lib: {
       entry: fileURLToPath(new URL('./src/index.ts', import.meta.url)),
       name: 'VueEmailEditor',

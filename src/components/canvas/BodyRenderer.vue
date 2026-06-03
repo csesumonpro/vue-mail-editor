@@ -12,7 +12,7 @@ const selected = computed(() => store.selection.kind === 'body')
 
 function selectBody() {
   if (store.previewMode) return
-  store.selectBody()
+  store.selectAndInspect('body', store.design.body.id)
 }
 
 const rowGroup = { name: 'rows', pull: true, put: ['rows'] }

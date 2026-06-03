@@ -28,6 +28,8 @@ export const useEditorStore = defineStore('editor', () => {
   const selection = ref<Selection>({ kind: 'body', id: null })
   const device = ref<Device>('desktop')
   const previewMode = ref(false)
+  // Right inspector panel is hidden until the user opens it (icon or canvas click).
+  const inspectorOpen = ref(false)
 
   // Snapshot history (serialized JSON to keep memory small).
   const past = ref<string[]>([])
@@ -155,6 +157,22 @@ export const useEditorStore = defineStore('editor', () => {
     previewMode.value = value ?? !previewMode.value
   }
 
+  function openInspector() {
+    inspectorOpen.value = true
+  }
+  function closeInspector() {
+    inspectorOpen.value = false
+  }
+  function toggleInspector(value?: boolean) {
+    inspectorOpen.value = value ?? !inspectorOpen.value
+  }
+
+  /** Select a node from the canvas and reveal the inspector. */
+  function selectAndInspect(kind: SelectionKind, id: string | null) {
+    selection.value = { kind, id }
+    inspectorOpen.value = true
+  }
+
   /* ------------------------------------------------------------------ */
   /* Value updates                                                      */
   /* ------------------------------------------------------------------ */
@@ -204,7 +222,7 @@ export const useEditorStore = defineStore('editor', () => {
     const row = createRow(cells)
     const rows = design.value.body.rows
     rows.splice(atIndex ?? rows.length, 0, row)
-    select('row', row.id)
+    selectAndInspect('row', row.id)
     return row
   }
 
@@ -214,7 +232,7 @@ export const useEditorStore = defineStore('editor', () => {
     record()
     const { contents } = found.column
     contents.splice(atIndex ?? contents.length, 0, content)
-    select('content', content.id)
+    selectAndInspect('content', content.id)
   }
 
   /**
@@ -231,7 +249,7 @@ export const useEditorStore = defineStore('editor', () => {
       if (found) {
         record()
         found.column.contents.splice(found.index + 1, 0, content)
-        select('content', content.id)
+        selectAndInspect('content', content.id)
         return content
       }
     }
@@ -241,7 +259,7 @@ export const useEditorStore = defineStore('editor', () => {
       if (found) {
         record()
         found.column.contents.push(content)
-        select('content', content.id)
+        selectAndInspect('content', content.id)
         return content
       }
     }
@@ -251,7 +269,7 @@ export const useEditorStore = defineStore('editor', () => {
     const rows = design.value.body.rows
     if (!rows.length) rows.push(createRow([12]))
     rows[rows.length - 1].columns[0].contents.push(content)
-    select('content', content.id)
+    selectAndInspect('content', content.id)
     return content
   }
 
@@ -353,8 +371,13 @@ export const useEditorStore = defineStore('editor', () => {
     selectBody,
     clearSelection,
     // view
+    inspectorOpen,
     setDevice,
     togglePreview,
+    openInspector,
+    closeInspector,
+    toggleInspector,
+    selectAndInspect,
     // values
     updateBodyValues,
     updateRowValues,

@@ -21,7 +21,7 @@ const showToolbar = computed(() => selected.value && !store.previewMode)
 function onClick(e: MouseEvent) {
   if (store.previewMode) return
   e.stopPropagation()
-  store.select(props.kind, props.id)
+  store.selectAndInspect(props.kind, props.id)
 }
 
 /* Position-aware actions (rows reorder in body; contents reorder in column). */

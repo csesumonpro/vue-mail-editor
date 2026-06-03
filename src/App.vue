@@ -32,7 +32,7 @@ useHistoryShortcuts()
     <div class="flex min-h-0 flex-1">
       <LeftPanel v-show="!store.previewMode" />
       <EditorCanvas />
-      <RightPanel v-show="!store.previewMode" />
+      <RightPanel v-show="!store.previewMode && store.inspectorOpen" />
     </div>
     <ExportModal :open="showExport" @close="showExport = false" />
     <TemplatesModal :open="showTemplates" @close="showTemplates = false" />

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import { X } from 'lucide-vue-next'
 import { useEditorStore } from '@/stores/editor'
 import type { InspectorSchema } from '@/config/inspector'
 import {
@@ -98,6 +99,14 @@ const hasControls = computed(
       <h2 class="text-xs font-semibold uppercase tracking-wide text-subtle">
         {{ target ? target.title + ' settings' : 'Settings' }}
       </h2>
+      <button
+        type="button"
+        title="Close"
+        class="flex h-7 w-7 items-center justify-center rounded-md text-faint transition hover:bg-hover hover:text-ink"
+        @click="store.closeInspector()"
+      >
+        <X class="h-4 w-4" />
+      </button>
     </div>
 
     <div class="scroll-thin flex-1 overflow-y-auto">

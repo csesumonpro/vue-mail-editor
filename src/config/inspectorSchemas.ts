@@ -333,14 +333,6 @@ export const blockInspectors: Record<ContentType, InspectorSchema> = {
     },
     spacingGroup(),
   ],
-  carousel: [
-    {
-      title: 'Slides',
-      icon: ImageIcon,
-      controls: [{ type: 'list', key: 'slides', itemKind: 'carousel' }],
-    },
-    spacingGroup(),
-  ],
   html: [
     {
       title: 'Content',

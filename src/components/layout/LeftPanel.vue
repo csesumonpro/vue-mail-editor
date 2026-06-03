@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import draggable from 'vuedraggable'
+import { LayoutGrid, X } from 'lucide-vue-next'
 import { BLOCK_LIST } from '@/config/blocks'
 import type { BlockDef } from '@/config/blocks'
 import { createContent } from '@/config/blockDefaults'
 import { createRow } from '@/config/defaults'
 import { useEditorStore } from '@/stores/editor'
 
-type Tab = 'content' | 'blocks'
-const tab = ref<Tab>('content')
 const store = useEditorStore()
+const containerOpen = ref(false)
 
 const layoutBlocks = [
   { label: '1 Column', cells: [12] },
@@ -29,70 +29,78 @@ const cloneLayout = (l: { cells: number[] }) => createRow(l.cells)
 </script>
 
 <template>
-  <aside class="flex w-64 shrink-0 flex-col border-r border-line bg-rail">
-    <!-- Tabs -->
-    <div class="flex border-b border-line">
+  <aside class="flex shrink-0">
+    <!-- Narrow icon rail (follows theme) -->
+    <div
+      class="flex w-14 shrink-0 flex-col items-center gap-1 border-r border-line bg-rail py-3"
+    >
+      <!-- Container (layouts) toggle -->
       <button
         type="button"
-        class="flex-1 px-3 py-2.5 text-xs font-semibold uppercase tracking-wide transition"
+        v-tooltip:right="'Container'"
+        class="flex h-10 w-10 items-center justify-center rounded-lg transition"
         :class="
-          tab === 'content'
-            ? 'border-b-2 border-brand text-ink'
-            : 'text-faint hover:text-ink'
+          containerOpen
+            ? 'bg-brand text-on-accent'
+            : 'text-subtle hover:bg-hover hover:text-ink'
         "
-        @click="tab = 'content'"
+        @click="containerOpen = !containerOpen"
       >
-        Content
+        <LayoutGrid class="h-5 w-5" />
       </button>
-      <button
-        type="button"
-        class="flex-1 px-3 py-2.5 text-xs font-semibold uppercase tracking-wide transition"
-        :class="
-          tab === 'blocks'
-            ? 'border-b-2 border-brand text-ink'
-            : 'text-faint hover:text-ink'
-        "
-        @click="tab = 'blocks'"
-      >
-        Blocks
-      </button>
-    </div>
 
-    <div class="scroll-thin flex-1 overflow-y-auto p-3">
-      <!-- Content blocks -->
+      <div class="my-1 h-px w-7 bg-line" />
+
+      <!-- Content blocks (drag onto canvas, or click to add) -->
       <draggable
-        v-show="tab === 'content'"
         :list="BLOCK_LIST"
         :group="contentGroup"
         :clone="cloneBlock"
         :sort="false"
         item-key="type"
-        class="grid grid-cols-2 gap-2"
+        class="flex flex-col items-center gap-1"
         @start="store.beginDrag()"
         @end="store.endDrag()"
       >
         <template #item="{ element }">
           <button
             type="button"
-            :title="`Add ${element.label}`"
-            class="group flex w-full cursor-grab flex-col items-center justify-center gap-1.5 rounded-lg border border-line bg-panel py-4 text-subtle shadow-sm transition hover:border-brand hover:text-brand-dark hover:shadow active:scale-95"
+            v-tooltip:right="element.label"
+            class="flex h-10 w-10 cursor-grab items-center justify-center rounded-lg text-subtle transition hover:bg-hover hover:text-ink active:scale-95"
             @click="store.addBlock(element.type)"
           >
             <component :is="element.icon" class="h-5 w-5" />
-            <span class="text-[11px] font-medium">{{ element.label }}</span>
           </button>
         </template>
       </draggable>
+    </div>
 
-      <!-- Layout blocks -->
+    <!-- Container panel (pushes the canvas) -->
+    <div
+      v-show="containerOpen"
+      class="flex w-56 shrink-0 flex-col border-r border-line bg-rail"
+    >
+      <div class="flex items-center justify-between border-b border-line px-3 py-2.5">
+        <span class="text-xs font-semibold uppercase tracking-wide text-subtle">
+          Container
+        </span>
+        <button
+          type="button"
+          title="Close"
+          class="flex h-6 w-6 items-center justify-center rounded text-faint transition hover:bg-hover hover:text-ink"
+          @click="containerOpen = false"
+        >
+          <X class="h-4 w-4" />
+        </button>
+      </div>
+
       <draggable
-        v-show="tab === 'blocks'"
         :list="layoutBlocks"
         :group="rowGroup"
         :clone="cloneLayout"
         :sort="false"
         item-key="label"
-        class="space-y-2"
+        class="scroll-thin flex-1 space-y-2 overflow-y-auto p-3"
         @start="store.beginDrag()"
         @end="store.endDrag()"
       >
@@ -109,10 +117,9 @@ const cloneLayout = (l: { cells: number[] }) => createRow(l.cells)
               class="h-8 rounded bg-active"
               :style="{ flexGrow: c }"
             />
-            <span
-              class="ml-2 shrink-0 text-[11px] font-medium text-subtle"
-              >{{ element.label }}</span
-            >
+            <span class="ml-2 shrink-0 text-[11px] font-medium text-subtle">{{
+              element.label
+            }}</span>
           </button>
         </template>
       </draggable>

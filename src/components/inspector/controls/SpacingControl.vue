@@ -27,7 +27,7 @@ function update(side: keyof BoxValue, raw: string) {
 </script>
 
 <template>
-  <div class="flex w-full items-center gap-1.5">
+  <div class="flex w-full items-start gap-1.5">
     <div class="grid flex-1 grid-cols-4 gap-1">
       <label
         v-for="s in sides"
@@ -38,7 +38,7 @@ function update(side: keyof BoxValue, raw: string) {
           type="number"
           min="0"
           :value="modelValue[s.key]"
-          class="w-full rounded-md border border-line bg-input px-1 py-1 text-center text-xs text-ink outline-none focus:border-brand"
+          class="h-8 w-full rounded-md border border-line bg-input px-1 text-center text-xs text-ink outline-none focus:border-brand"
           @input="update(s.key, ($event.target as HTMLInputElement).value)"
         />
         <span class="text-[10px] text-faint">{{ s.label }}</span>
@@ -46,8 +46,8 @@ function update(side: keyof BoxValue, raw: string) {
     </div>
     <button
       type="button"
-      :title="linked ? 'Unlink sides' : 'Link sides'"
-      class="flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-line"
+      v-tooltip:left="linked ? 'Unlink sides' : 'Link sides'"
+      class="flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-line"
       :class="linked ? 'bg-brand text-on-accent' : 'text-faint hover:text-ink'"
       @click="linked = !linked"
     >

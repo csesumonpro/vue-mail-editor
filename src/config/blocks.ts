@@ -8,7 +8,6 @@ import {
   MoveVertical,
   Users,
   Menu as MenuIcon,
-  GalleryHorizontal,
   Code,
 } from 'lucide-vue-next'
 import type { Content, ContentType } from '@/types/schema'
@@ -22,7 +21,6 @@ import DividerBlock from '@/components/blocks/DividerBlock.vue'
 import SpacerBlock from '@/components/blocks/SpacerBlock.vue'
 import SocialBlock from '@/components/blocks/SocialBlock.vue'
 import MenuBlock from '@/components/blocks/MenuBlock.vue'
-import CarouselBlock from '@/components/blocks/CarouselBlock.vue'
 import HtmlBlock from '@/components/blocks/HtmlBlock.vue'
 
 /**
@@ -97,13 +95,6 @@ export const BLOCKS: { [K in ContentType]: BlockDef<K> } = {
     component: MenuBlock,
     defaults: blockDefaults.menu,
   },
-  carousel: {
-    type: 'carousel',
-    label: 'Carousel',
-    icon: GalleryHorizontal,
-    component: CarouselBlock,
-    defaults: blockDefaults.carousel,
-  },
   html: {
     type: 'html',
     label: 'HTML',
@@ -123,10 +114,9 @@ export const BLOCK_LIST: BlockDef[] = [
   BLOCKS.spacer,
   BLOCKS.social,
   BLOCKS.menu,
-  BLOCKS.carousel,
   BLOCKS.html,
 ]
 
-export function blockComponent(type: ContentType): Component {
-  return BLOCKS[type].component
+export function blockComponent(type: ContentType): Component | undefined {
+  return BLOCKS[type]?.component
 }

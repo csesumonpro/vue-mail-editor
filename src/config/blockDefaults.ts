@@ -95,13 +95,6 @@ export const blockDefaults: { [K in ContentType]: () => Content<K>['values'] } =
     align: 'center',
     padding: box(10, 10, 10, 10),
   }),
-  carousel: () => ({
-    slides: [
-      { src: 'https://placehold.co/560x280/dbeafe/1e3a8a?text=Slide+1', alt: '', href: '' },
-      { src: 'https://placehold.co/560x280/dcfce7/166534?text=Slide+2', alt: '', href: '' },
-    ],
-    padding: box(0, 0, 0, 0),
-  }),
   html: () => ({
     html: '<p style="text-align:center;color:#64748b">Your custom HTML</p>',
   }),

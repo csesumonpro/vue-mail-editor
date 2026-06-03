@@ -16,8 +16,6 @@ const selected = computed(
   () => store.selection.kind === props.kind && store.selection.id === props.id,
 )
 
-const showToolbar = computed(() => selected.value && !store.previewMode)
-
 function onClick(e: MouseEvent) {
   if (store.previewMode) return
   e.stopPropagation()
@@ -86,33 +84,24 @@ const ringClass = computed(() => {
     :class="ringClass"
     @click="onClick"
   >
-    <!-- Floating label + drag handle -->
-    <span
-      v-if="!store.previewMode"
-      class="absolute -top-px left-0 z-10 hidden -translate-y-full items-center gap-1 rounded-t bg-brand pr-2 text-[10px] font-semibold uppercase tracking-wide text-on-accent group-hover/sel:flex"
-      :class="{ '!flex': selected }"
-    >
-      <span
-        v-if="hasActions"
-        :class="dragHandleClass"
-        class="flex cursor-grab items-center px-1 py-0.5 active:cursor-grabbing"
-        title="Drag to move"
-        @click.stop
-      >
-        <GripVertical class="h-3 w-3" />
-      </span>
-      <span class="py-0.5">{{ label }}</span>
-    </span>
-
-    <!-- Action toolbar -->
+    <!-- Action bar: shown on hover or when selected -->
     <div
-      v-if="showToolbar && hasActions"
-      class="absolute -top-px right-0 z-20 flex -translate-y-full items-center gap-0.5 rounded-t bg-brand px-1 py-0.5 text-on-accent"
+      v-if="!store.previewMode && hasActions"
+      class="absolute -top-px left-0 z-20 hidden -translate-y-full items-center gap-0.5 rounded-t bg-brand px-1 py-0.5 text-on-accent group-hover/sel:flex"
+      :class="{ '!flex': selected }"
       @click.stop
     >
+      <span
+        :class="dragHandleClass"
+        class="flex cursor-grab items-center px-0.5 active:cursor-grabbing"
+        v-tooltip="'Drag to move'"
+        @click.stop="onClick"
+      >
+        <GripVertical class="h-3.5 w-3.5" />
+      </span>
       <button
         type="button"
-        title="Move up"
+        v-tooltip="'Move up'"
         class="rounded p-0.5 hover:bg-on-accent/20 disabled:opacity-40"
         :disabled="!canMoveUp"
         @click="move(-1)"
@@ -121,7 +110,7 @@ const ringClass = computed(() => {
       </button>
       <button
         type="button"
-        title="Move down"
+        v-tooltip="'Move down'"
         class="rounded p-0.5 hover:bg-on-accent/20 disabled:opacity-40"
         :disabled="!canMoveDown"
         @click="move(1)"
@@ -130,7 +119,7 @@ const ringClass = computed(() => {
       </button>
       <button
         type="button"
-        title="Duplicate"
+        v-tooltip="'Duplicate'"
         class="rounded p-0.5 hover:bg-on-accent/20"
         @click="duplicate"
       >
@@ -138,7 +127,7 @@ const ringClass = computed(() => {
       </button>
       <button
         type="button"
-        title="Delete"
+        v-tooltip="'Delete'"
         class="rounded p-0.5 hover:bg-on-accent/20"
         @click="remove"
       >

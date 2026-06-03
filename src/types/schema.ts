@@ -57,7 +57,6 @@ export type ContentType =
   | 'spacer'
   | 'social'
   | 'menu'
-  | 'carousel'
   | 'html'
 
 export interface HeadingValues {
@@ -157,17 +156,6 @@ export interface MenuValues {
   padding: BoxValue
 }
 
-export interface CarouselSlide {
-  src: string
-  alt: string
-  href: string
-}
-
-export interface CarouselValues {
-  slides: CarouselSlide[]
-  padding: BoxValue
-}
-
 export interface HtmlValues {
   html: string
 }
@@ -182,7 +170,6 @@ export interface ContentValueMap {
   spacer: SpacerValues
   social: SocialValues
   menu: MenuValues
-  carousel: CarouselValues
   html: HtmlValues
 }
 

@@ -1,12 +1,11 @@
 <script setup lang="ts">
 import { Plus, Trash2, ChevronUp, ChevronDown } from 'lucide-vue-next'
-import ImageControl from './ImageControl.vue'
 
 type Item = Record<string, string>
 
 const props = defineProps<{
   modelValue: Item[]
-  itemKind?: 'social' | 'menu' | 'carousel'
+  itemKind?: 'social' | 'menu'
 }>()
 const emit = defineEmits<{ 'update:modelValue': [Item[]] }>()
 
@@ -23,12 +22,6 @@ const networks = [
 
 function newItem(): Item {
   if (props.itemKind === 'menu') return { text: 'Link', url: '#' }
-  if (props.itemKind === 'carousel')
-    return {
-      src: 'https://placehold.co/560x280/e2e8f0/64748b?text=Slide',
-      alt: '',
-      href: '',
-    }
   return { network: 'facebook', url: 'https://' }
 }
 
@@ -116,20 +109,6 @@ function move(i: number, delta: number) {
           placeholder="URL"
           class="w-full rounded-md border border-line bg-input px-2 py-1.5 text-xs outline-none focus:border-brand"
           @input="patchItem(i, { url: ($event.target as HTMLInputElement).value })"
-        />
-      </template>
-
-      <!-- Carousel -->
-      <template v-else>
-        <ImageControl
-          :model-value="item.src"
-          @update:model-value="patchItem(i, { src: $event })"
-        />
-        <input
-          :value="item.href"
-          placeholder="Link URL"
-          class="w-full rounded-md border border-line bg-input px-2 py-1.5 text-xs outline-none focus:border-brand"
-          @input="patchItem(i, { href: ($event.target as HTMLInputElement).value })"
         />
       </template>
     </div>

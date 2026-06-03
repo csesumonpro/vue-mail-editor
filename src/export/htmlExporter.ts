@@ -11,7 +11,6 @@ import type {
   BorderValue,
   BoxValue,
   ButtonValues,
-  CarouselValues,
   Column,
   Content,
   DividerValues,
@@ -152,17 +151,6 @@ function renderMenu(v: MenuValues): string {
   )
 }
 
-function renderCarousel(v: CarouselValues): string {
-  // Email clients can't run carousels — degrade to stacked images.
-  const imgs = v.slides
-    .map((s) => {
-      const img = `<img src="${esc(s.src)}" alt="${esc(s.alt)}" style="display:block;width:100%;max-width:100%;border:0;margin-bottom:8px;" />`
-      return s.href ? `<a href="${esc(s.href)}">${img}</a>` : img
-    })
-    .join('')
-  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td style="padding:${pad(v.padding)};">${imgs}</td></tr></table>`
-}
-
 function renderHtml(v: HtmlValues): string {
   return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td>${v.html}</td></tr></table>`
 }
@@ -190,8 +178,6 @@ function renderContent(content: Content): string {
       return renderSocial(content.values as SocialValues)
     case 'menu':
       return renderMenu(content.values as MenuValues)
-    case 'carousel':
-      return renderCarousel(content.values as CarouselValues)
     case 'html':
       return renderHtml(content.values as HtmlValues)
     default:

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { X } from 'lucide-vue-next'
+import { X, Copy, Trash2 } from 'lucide-vue-next'
 import { useEditorStore } from '@/stores/editor'
 import type { InspectorSchema } from '@/config/inspector'
 import {
@@ -91,6 +91,33 @@ function setValue(key: string, value: unknown) {
 const hasControls = computed(
   () => !!target.value && target.value.schema.some((g) => g.controls.length),
 )
+
+const sel = computed(() => store.selection)
+const canDuplicate = computed(
+  () => sel.value.kind === 'row' || sel.value.kind === 'content',
+)
+const canDelete = computed(() => sel.value.kind !== 'body' && sel.value.kind !== null)
+const deleteLabel = computed(() =>
+  sel.value.kind === 'column' ? 'Delete container' : `Delete ${target.value?.title.toLowerCase()}`,
+)
+
+function duplicate() {
+  const s = sel.value
+  if ((s.kind === 'row' || s.kind === 'content') && s.id) {
+    store.duplicateNode(s.kind, s.id)
+  }
+}
+
+function remove() {
+  const s = sel.value
+  if ((s.kind === 'row' || s.kind === 'content') && s.id) {
+    store.removeNode(s.kind, s.id)
+  } else if (s.kind === 'column' && s.id) {
+    // Removing a column removes its parent container (row).
+    const found = store.findColumn(s.id)
+    if (found) store.removeNode('row', found.row.id)
+  }
+}
 </script>
 
 <template>
@@ -99,14 +126,35 @@ const hasControls = computed(
       <h2 class="text-xs font-semibold uppercase tracking-wide text-subtle">
         {{ target ? target.title + ' settings' : 'Settings' }}
       </h2>
-      <button
-        type="button"
-        title="Close"
-        class="flex h-7 w-7 items-center justify-center rounded-md text-faint transition hover:bg-hover hover:text-ink"
-        @click="store.closeInspector()"
-      >
-        <X class="h-4 w-4" />
-      </button>
+      <div class="flex items-center gap-0.5">
+        <button
+          v-if="canDuplicate"
+          type="button"
+          v-tooltip="'Duplicate'"
+          class="flex h-7 w-7 items-center justify-center rounded-md text-faint transition hover:bg-hover hover:text-ink"
+          @click="duplicate"
+        >
+          <Copy class="h-4 w-4" />
+        </button>
+        <button
+          v-if="canDelete"
+          type="button"
+          v-tooltip="deleteLabel"
+          class="flex h-7 w-7 items-center justify-center rounded-md text-faint transition hover:bg-danger-soft hover:text-danger"
+          @click="remove"
+        >
+          <Trash2 class="h-4 w-4" />
+        </button>
+        <div v-if="canDelete" class="mx-0.5 h-5 w-px bg-line" />
+        <button
+          type="button"
+          v-tooltip="'Close'"
+          class="flex h-7 w-7 items-center justify-center rounded-md text-faint transition hover:bg-hover hover:text-ink"
+          @click="store.closeInspector()"
+        >
+          <X class="h-4 w-4" />
+        </button>
+      </div>
     </div>
 
     <div class="scroll-thin flex-1 overflow-y-auto">

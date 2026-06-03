@@ -38,7 +38,7 @@ useHistoryShortcuts()
       <button
         v-show="!store.previewMode && !store.inspectorOpen"
         type="button"
-        title="Settings"
+        v-tooltip:left="'Settings'"
         class="absolute right-3 top-3 z-20 flex h-9 w-9 items-center justify-center rounded-lg border border-line bg-surface text-subtle shadow-md transition hover:border-ink hover:text-ink"
         @click="store.openInspector()"
       >

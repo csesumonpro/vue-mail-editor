@@ -35,7 +35,7 @@ export interface ControlDef {
   options?: SelectOption[]
   placeholder?: string
   /** For the list editor: which item shape to edit. */
-  itemKind?: 'social' | 'menu' | 'carousel'
+  itemKind?: 'social' | 'menu'
 }
 
 export interface AccordionGroup {

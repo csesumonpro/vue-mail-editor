@@ -9,5 +9,10 @@ const component = computed(() => blockComponent(props.content.type))
 </script>
 
 <template>
-  <component :is="component" :values="content.values" :content-id="content.id" />
+  <component
+    :is="component"
+    v-if="component"
+    :values="content.values"
+    :content-id="content.id"
+  />
 </template>

@@ -128,6 +128,7 @@
   --color-header: var(--inkp-header-bg);
   --color-header-fg: var(--inkp-header-fg);
 
+
   /* Status */
   --color-link: var(--inkp-link);
   --color-success: var(--inkp-status-success);
@@ -227,6 +228,31 @@ body {
 }
 .dragging {
   opacity: 0.9;
+}
+
+/* Hover tooltip (rendered to <body> by v-tooltip) */
+.app-tooltip {
+  position: fixed;
+  z-index: 1000;
+  pointer-events: none;
+  background: var(--inkp-text);
+  color: var(--inkp-bg);
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1;
+  padding: 5px 8px;
+  border-radius: 6px;
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+  opacity: 0;
+  transform: translateY(2px);
+  transition:
+    opacity 0.12s ease,
+    transform 0.12s ease;
+}
+.app-tooltip.is-visible {
+  opacity: 1;
+  transform: none;
 }
 
 /* The transparent checkerboard backdrop behind the email canvas */

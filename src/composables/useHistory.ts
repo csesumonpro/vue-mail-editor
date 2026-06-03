@@ -42,6 +42,13 @@ export function useHistoryShortcuts() {
       if (removable && sel.id) {
         e.preventDefault()
         store.removeNode(sel.kind as 'row' | 'content', sel.id)
+      } else if (sel.kind === 'column' && sel.id) {
+        // Deleting a column removes its parent row (the container).
+        const found = store.findColumn(sel.id)
+        if (found) {
+          e.preventDefault()
+          store.removeNode('row', found.row.id)
+        }
       }
     } else if (e.key === 'Escape') {
       store.selectBody()

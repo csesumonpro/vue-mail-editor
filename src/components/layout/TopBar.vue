@@ -79,7 +79,7 @@ async function onImport(e: Event) {
         v-for="d in devices"
         :key="d.id"
         type="button"
-        :title="d.label"
+        v-tooltip="d.label"
         class="flex h-8 w-8 items-center justify-center rounded-md transition"
         :class="
           store.device === d.id
@@ -96,7 +96,7 @@ async function onImport(e: Event) {
     <div class="flex items-center gap-1.5">
       <button
         type="button"
-        title="Undo"
+        v-tooltip="'Undo'"
         class="flex h-8 w-8 items-center justify-center rounded-md text-faint transition hover:bg-ink/10 hover:text-header-fg disabled:opacity-40 disabled:hover:bg-transparent"
         :disabled="!store.canUndo"
         @click="store.undo()"
@@ -105,7 +105,7 @@ async function onImport(e: Event) {
       </button>
       <button
         type="button"
-        title="Redo"
+        v-tooltip="'Redo'"
         class="flex h-8 w-8 items-center justify-center rounded-md text-faint transition hover:bg-ink/10 hover:text-header-fg disabled:opacity-40 disabled:hover:bg-transparent"
         :disabled="!store.canRedo"
         @click="store.redo()"
@@ -114,7 +114,7 @@ async function onImport(e: Event) {
       </button>
       <button
         type="button"
-        :title="store.previewMode ? 'Exit preview' : 'Preview'"
+        v-tooltip="store.previewMode ? 'Exit preview' : 'Preview'"
         class="flex h-8 w-8 items-center justify-center rounded-md transition"
         :class="
           store.previewMode
@@ -127,7 +127,7 @@ async function onImport(e: Event) {
       </button>
       <button
         type="button"
-        :title="isDark ? 'Light mode' : 'Dark mode'"
+        v-tooltip="isDark ? 'Light mode' : 'Dark mode'"
         class="flex h-8 w-8 items-center justify-center rounded-md text-faint transition hover:bg-ink/10 hover:text-header-fg"
         @click="toggleTheme"
       >
@@ -138,7 +138,7 @@ async function onImport(e: Event) {
 
       <button
         type="button"
-        title="Templates"
+        v-tooltip="'Templates'"
         class="flex h-8 w-8 items-center justify-center rounded-md text-faint transition hover:bg-ink/10 hover:text-header-fg"
         @click="emit('templates')"
       >
@@ -146,7 +146,7 @@ async function onImport(e: Event) {
       </button>
       <button
         type="button"
-        title="New design"
+        v-tooltip="'New design'"
         class="flex h-8 w-8 items-center justify-center rounded-md text-faint transition hover:bg-ink/10 hover:text-header-fg"
         @click="onNew"
       >
@@ -154,7 +154,7 @@ async function onImport(e: Event) {
       </button>
       <button
         type="button"
-        title="Import design JSON"
+        v-tooltip="'Import design JSON'"
         class="flex h-8 w-8 items-center justify-center rounded-md text-faint transition hover:bg-ink/10 hover:text-header-fg"
         @click="fileInput?.click()"
       >

@@ -3,6 +3,8 @@ import vue from '@vitejs/plugin-vue'
 import tailwindcss from '@tailwindcss/vite'
 import { fileURLToPath, URL } from 'node:url'
 
+// Library build config: bundles src/index.ts into dist/ as an ESM package.
+// `vue` is externalized (peer dependency). Declaration files are emitted in P8.
 export default defineConfig({
   plugins: [vue(), tailwindcss()],
   resolve: {
@@ -11,16 +13,17 @@ export default defineConfig({
     },
   },
   build: {
+    lib: {
+      entry: fileURLToPath(new URL('./src/index.ts', import.meta.url)),
+      name: 'VueEmailEditor',
+      formats: ['es'],
+      fileName: () => 'vue-email-editor.js',
+    },
     rollupOptions: {
+      external: ['vue'],
       output: {
-        manualChunks(id) {
-          if (!id.includes('node_modules')) return
-          if (id.includes('tiptap') || id.includes('prosemirror')) return 'editor'
-          if (id.includes('sortable') || id.includes('vuedraggable')) return 'dnd'
-          if (id.includes('lucide')) return 'icons'
-          if (id.includes('@vue') || id.includes('/vue/') || id.includes('pinia'))
-            return 'vue'
-        },
+        assetFileNames: (asset) =>
+          asset.names?.[0]?.endsWith('.css') ? 'style.css' : '[name][extname]',
       },
     },
   },

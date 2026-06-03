@@ -28,7 +28,7 @@ useHistoryShortcuts()
 </script>
 
 <template>
-  <div class="flex h-full flex-col overflow-hidden bg-app">
+  <div class="vue-email-editor flex h-full flex-col overflow-hidden bg-app">
     <TopBar @export="showExport = true" @templates="showTemplates = true" />
     <div class="relative flex min-h-0 flex-1">
       <LeftPanel v-show="!store.previewMode" />

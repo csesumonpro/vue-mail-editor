@@ -218,6 +218,15 @@
   background: var(--cvee-accent-hover);
 }
 
+/* Rich-text bubble toolbar (replaces tippy/popper). `coordsAtPos` returns
+   viewport coordinates, so we anchor with position: fixed and lift the menu
+   above the selection, horizontally centered. */
+.bubble-menu {
+  position: fixed;
+  z-index: 2147483600;
+  transform: translate(-50%, calc(-100% - 8px));
+}
+
 /* Drag & drop: placeholder shown where the item will land */
 .drop-ghost {
   opacity: 0.5;

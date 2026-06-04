@@ -21,6 +21,16 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
+      // We ship a custom bubble toolbar, so stub out Tiptap's menu plugins to
+      // drop tippy.js + @popperjs/core from the bundle (rollup can't tree-shake
+      // them via @tiptap/vue-3's barrel). Library build only — dev/playground
+      // still uses the real packages.
+      '@tiptap/extension-bubble-menu': fileURLToPath(
+        new URL('./build/tiptap-menu-stub.js', import.meta.url),
+      ),
+      '@tiptap/extension-floating-menu': fileURLToPath(
+        new URL('./build/tiptap-menu-stub.js', import.meta.url),
+      ),
     },
   },
   build: {

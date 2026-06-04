@@ -1,6 +1,6 @@
 {
   "name": "@csesumonpro/vue-email-editor",
-  "version": "0.1.12",
+  "version": "0.1.13",
   "type": "module",
   "description": "A customizable, extensible drag-and-drop email template editor for Vue 3.",
   "license": "MIT",
@@ -34,8 +34,8 @@
     "vue": "^3.4.0"
   },
   "dependencies": {
+    "@tiptap/core": "^2.27.2",
     "@tiptap/extension-color": "^2.27.2",
-    "@tiptap/extension-link": "^2.27.2",
     "@tiptap/extension-placeholder": "^2.27.2",
     "@tiptap/extension-text-style": "^2.27.2",
     "@tiptap/extension-underline": "^2.27.2",

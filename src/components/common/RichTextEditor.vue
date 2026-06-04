@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { ref, watch, onBeforeUnmount } from 'vue'
-import { useEditor, EditorContent, BubbleMenu } from '@tiptap/vue-3'
+import { ref, watch, onMounted, onBeforeUnmount, nextTick } from 'vue'
+import { useEditor, EditorContent } from '@tiptap/vue-3'
 import StarterKit from '@tiptap/starter-kit'
 import Underline from '@tiptap/extension-underline'
-import Link from '@tiptap/extension-link'
 import TextStyle from '@tiptap/extension-text-style'
 import Color from '@tiptap/extension-color'
 import Placeholder from '@tiptap/extension-placeholder'
+import { LinkMark } from './LinkMark'
 import {
   Bold,
   Italic,
@@ -29,13 +29,6 @@ const props = withDefaults(
 const emit = defineEmits<{ 'update:modelValue': [string]; focus: []; blur: [] }>()
 
 const root = ref<HTMLElement | null>(null)
-// Render the bubble toolbar inside the editor root so it inherits theme/dark
-// tokens; `strategy: 'fixed'` keeps it from being clipped by panel overflow.
-const tippyOptions = {
-  duration: 100,
-  appendTo: () => root.value?.closest('.vue-email-editor') ?? document.body,
-  popperOptions: { strategy: 'fixed' as const },
-}
 
 const editor = useEditor({
   editable: props.editable,
@@ -43,7 +36,7 @@ const editor = useEditor({
   extensions: [
     StarterKit.configure({ heading: false }),
     Underline,
-    Link.configure({ openOnClick: false, autolink: false }),
+    LinkMark,
     TextStyle,
     Color,
     Placeholder.configure({ placeholder: props.placeholder }),
@@ -51,9 +44,60 @@ const editor = useEditor({
   editorProps: {
     attributes: { class: 'rte-content' },
   },
-  onUpdate: ({ editor }) => emit('update:modelValue', editor.getHTML()),
-  onFocus: () => emit('focus'),
-  onBlur: () => emit('blur'),
+  onUpdate: ({ editor }) => {
+    emit('update:modelValue', editor.getHTML())
+    updateMenu()
+  },
+  onSelectionUpdate: () => updateMenu(),
+  onFocus: () => {
+    emit('focus')
+    updateMenu()
+  },
+  onBlur: () => {
+    emit('blur')
+    menuVisible.value = false
+  },
+})
+
+/* Lightweight bubble menu ------------------------------------------- */
+// Replaces @tiptap/vue-3's <BubbleMenu> (which bundles tippy.js + @popperjs/core,
+// ~34 KB gzip) with a `position: fixed` toolbar positioned from the selection's
+// own client rect — no extra deps, same behaviour.
+const menuVisible = ref(false)
+const menuTop = ref(0)
+const menuLeft = ref(0)
+
+function updateMenu() {
+  const ed = editor.value
+  if (!ed || !ed.isEditable || !ed.isFocused) {
+    menuVisible.value = false
+    return
+  }
+  const { from, to, empty } = ed.state.selection
+  if (empty) {
+    menuVisible.value = false
+    return
+  }
+  // Bounding box of the selection across its start/end positions.
+  const start = ed.view.coordsAtPos(from)
+  const end = ed.view.coordsAtPos(to)
+  menuLeft.value = (Math.min(start.left, end.left) + Math.max(start.right, end.right)) / 2
+  menuTop.value = Math.min(start.top, end.top)
+  menuVisible.value = true
+}
+
+function onScrollOrResize() {
+  if (menuVisible.value) updateMenu()
+}
+
+onMounted(() => {
+  window.addEventListener('scroll', onScrollOrResize, true)
+  window.addEventListener('resize', onScrollOrResize)
+})
+onBeforeUnmount(() => {
+  window.removeEventListener('scroll', onScrollOrResize, true)
+  window.removeEventListener('resize', onScrollOrResize)
+  editor.value?.destroy()
 })
 
 watch(
@@ -63,6 +107,7 @@ watch(
     if (v && editor.value && !editor.value.isFocused) {
       editor.value.commands.focus()
     }
+    if (!v) menuVisible.value = false
   },
 )
 watch(
@@ -74,8 +119,6 @@ watch(
   },
 )
 
-onBeforeUnmount(() => editor.value?.destroy())
-
 function setLink() {
   const prev = editor.value?.getAttributes('link').href ?? ''
   const url = window.prompt('Link URL', prev)
@@ -85,6 +128,7 @@ function setLink() {
   } else {
     editor.value?.chain().focus().extendMarkRange('link').setLink({ href: url }).run()
   }
+  nextTick(updateMenu)
 }
 
 function setColor(e: Event) {
@@ -94,11 +138,14 @@ function setColor(e: Event) {
 
 <template>
   <div ref="root">
-    <BubbleMenu
-      v-if="editor"
-      :editor="editor"
-      :tippy-options="tippyOptions"
-      class="flex items-center gap-0.5 rounded-lg border border-line bg-surface p-1 shadow-lg"
+    <!-- Bubble toolbar: fixed-positioned, kept inside the themed root so tokens
+         and dark mode resolve. @mousedown.prevent keeps the editor selection
+         from collapsing when a button is pressed. -->
+    <div
+      v-if="editor && menuVisible"
+      class="bubble-menu flex items-center gap-0.5 rounded-lg border border-line bg-surface p-1 shadow-lg"
+      :style="{ top: menuTop + 'px', left: menuLeft + 'px' }"
+      @mousedown.prevent
     >
       <button
         type="button"
@@ -163,7 +210,7 @@ function setColor(e: Event) {
           <ListOrdered class="h-3.5 w-3.5" />
         </button>
       </template>
-    </BubbleMenu>
+    </div>
 
     <EditorContent :editor="editor" />
   </div>

@@ -1,6 +1,6 @@
 # Custom blocks
 
-A block is defined with `defineBlock()`. It bundles four things:
+A block is defined with `defineBlock()`. It bundles five things:
 
 1. **metadata** (`type`, `label`, `icon`),
 2. **default values** for a new instance,
@@ -13,7 +13,9 @@ A block is defined with `defineBlock()`. It bundles four things:
 The component receives `values`, `selected`, and `editing` props and emits
 `update` with a partial patch.
 
-```vue
+::: code-group
+
+```vue [TS]
 <!-- RatingBlock.vue -->
 <script setup lang="ts">
 defineProps<{ values: { stars: number; color: string }; editing?: boolean }>()
@@ -27,9 +29,27 @@ defineEmits<{ update: [patch: Partial<{ stars: number; color: string }>] }>()
 </template>
 ```
 
+```vue [JS]
+<!-- RatingBlock.vue -->
+<script setup>
+defineProps({ values: Object, editing: Boolean })
+defineEmits(['update'])
+</script>
+
+<template>
+  <div :style="{ textAlign: 'center', fontSize: '26px', color: values.color }">
+    <span v-for="n in values.stars" :key="n">★</span>
+  </div>
+</template>
+```
+
+:::
+
 ## 2. The block definition
 
-```ts
+::: code-group
+
+```ts [TS]
 import { defineBlock } from '@csesumonpro/vue-email-editor'
 import { Star } from 'lucide-vue-next'
 import RatingBlock from './RatingBlock.vue'
@@ -54,6 +74,33 @@ export const rating = defineBlock<{ stars: number; color: string }>({
 })
 ```
 
+```js [JS]
+import { defineBlock } from '@csesumonpro/vue-email-editor'
+import { Star } from 'lucide-vue-next'
+import RatingBlock from './RatingBlock.vue'
+
+export const rating = defineBlock({
+  type: 'rating',
+  label: 'Rating',
+  icon: Star,
+  defaultValues: () => ({ stars: 5, color: '#f59e0b' }),
+  render: RatingBlock,
+  inspector: [
+    {
+      title: 'Rating',
+      controls: [
+        { type: 'number', key: 'stars', label: 'Stars', min: 1, max: 5 },
+        { type: 'color', key: 'color', label: 'Color' },
+      ],
+    },
+  ],
+  toHtml: (v) =>
+    `<div style="text-align:center;color:${v.color}">${'★'.repeat(v.stars)}</div>`,
+})
+```
+
+:::
+
 ## 3. Register it
 
 ```vue
@@ -74,8 +121,10 @@ Every control has a `type`, a `key` (the value it edits — dotted keys like
 `padding.top` are supported), and a `label`. See the full catalog in
 [Inspector controls](/reference/controls).
 
-```ts
-inspector: [
+::: code-group
+
+```ts [TS]
+const inspector = [
   {
     title: 'Style',
     controls: [
@@ -87,6 +136,22 @@ inspector: [
   },
 ]
 ```
+
+```js [JS]
+const inspector = [
+  {
+    title: 'Style',
+    controls: [
+      { type: 'font',   key: 'fontFamily', label: 'Font' },
+      { type: 'number', key: 'fontSize',   label: 'Size', unit: 'px', min: 8, max: 80 },
+      { type: 'color',  key: 'color',      label: 'Color' },
+      { type: 'align',  key: 'align',      label: 'Align' },
+    ],
+  },
+]
+```
+
+:::
 
 ## Writing email-safe `toHtml`
 

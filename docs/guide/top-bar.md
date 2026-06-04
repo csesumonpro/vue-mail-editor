@@ -56,7 +56,9 @@ Every label is optional. `brand` only applies when you haven't overridden the
 
 Your buttons render next to the built-ins; wire them via the imperative API:
 
-```vue
+::: code-group
+
+```vue [TS]
 <script setup lang="ts">
 import { ref } from 'vue'
 import { EmailEditor } from '@csesumonpro/vue-email-editor'
@@ -76,6 +78,28 @@ function publish() {
   </EmailEditor>
 </template>
 ```
+
+```vue [JS]
+<script setup>
+import { ref } from 'vue'
+import { EmailEditor } from '@csesumonpro/vue-email-editor'
+
+const api = ref()
+function publish() {
+  myBackend.publish(api.value.exportHtml())
+}
+</script>
+
+<template>
+  <EmailEditor @ready="api = $event">
+    <template #header-actions>
+      <button @click="publish">Publish</button>
+    </template>
+  </EmailEditor>
+</template>
+```
+
+:::
 
 ## Fully custom toolbar — `#header`
 

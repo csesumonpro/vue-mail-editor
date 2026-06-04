@@ -17,7 +17,9 @@ npm install vue
 Import the component **and its stylesheet**, then give it a sized container —
 the editor fills 100% of its parent's height.
 
-```vue
+::: code-group
+
+```vue [TS]
 <script setup lang="ts">
 import { ref } from 'vue'
 import { EmailEditor } from '@csesumonpro/vue-email-editor'
@@ -33,6 +35,24 @@ const design = ref<Design>()
   </div>
 </template>
 ```
+
+```vue [JS]
+<script setup>
+import { ref } from 'vue'
+import { EmailEditor } from '@csesumonpro/vue-email-editor'
+import '@csesumonpro/vue-email-editor/style.css'
+
+const design = ref()
+</script>
+
+<template>
+  <div style="height: 100vh">
+    <EmailEditor v-model="design" />
+  </div>
+</template>
+```
+
+:::
 
 That's it. With no extra props the editor autosaves to `localStorage` and lets
 the user export HTML and download the design.
@@ -55,7 +75,9 @@ See [Server-side & database](/guide/server-side) for the backend pattern.
 
 ## TypeScript
 
-All public types are exported from the package root:
+TypeScript is **optional** — the package is plain compiled JS and works in JS
+projects as-is (use the **JS** tab on any example). If you do use TS, all public
+types are exported from the package root:
 
 ```ts
 import type {
@@ -63,6 +85,7 @@ import type {
   BlockDefinition,
   EditorApi,
   EditorConfig,
+  EditorLabels,
   ThemeTokens,
 } from '@csesumonpro/vue-email-editor'
 ```

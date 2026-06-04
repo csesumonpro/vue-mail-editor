@@ -41,6 +41,7 @@ export default defineConfig({
         {
           text: 'Reference',
           items: [
+            { text: 'Built-in blocks', link: '/reference/blocks' },
             { text: 'Imperative API', link: '/reference/api' },
             { text: 'Inspector controls', link: '/reference/controls' },
           ],

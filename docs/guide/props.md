@@ -32,14 +32,52 @@
 | `select` | `selection` | The current selection changes. |
 | `ready` | `api` | The editor is mounted; gives you the [imperative API](/reference/api). |
 
-```vue
-<EmailEditor
-  v-model="design"
-  @change="onChange"
-  @export="(html) => send(html)"
-  @ready="(api) => (editor = api)"
-/>
+::: code-group
+
+```vue [TS]
+<script setup lang="ts">
+import { ref } from 'vue'
+import { EmailEditor } from '@csesumonpro/vue-email-editor'
+import type { Design, EditorApi } from '@csesumonpro/vue-email-editor'
+
+const design = ref<Design>()
+const editor = ref<EditorApi>()
+function onChange(d: Design) {/* persist */}
+function send(html: string) {/* send */}
+</script>
+
+<template>
+  <EmailEditor
+    v-model="design"
+    @change="onChange"
+    @export="(html) => send(html)"
+    @ready="(api) => (editor = api)"
+  />
+</template>
 ```
+
+```vue [JS]
+<script setup>
+import { ref } from 'vue'
+import { EmailEditor } from '@csesumonpro/vue-email-editor'
+
+const design = ref()
+const editor = ref()
+function onChange(d) {/* persist */}
+function send(html) {/* send */}
+</script>
+
+<template>
+  <EmailEditor
+    v-model="design"
+    @change="onChange"
+    @export="(html) => send(html)"
+    @ready="(api) => (editor = api)"
+  />
+</template>
+```
+
+:::
 
 ::: info `change` vs `update:modelValue`
 `update:modelValue` fires on every edit (to keep `v-model` in sync).

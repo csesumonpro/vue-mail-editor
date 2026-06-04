@@ -3,7 +3,9 @@
 Pass an `EditorConfig` object to the `config` prop to toggle features, rename
 actions, set the default content width, and provide starter templates.
 
-```ts
+::: code-group
+
+```ts [TS]
 import type { EditorConfig } from '@csesumonpro/vue-email-editor'
 
 const config: EditorConfig = {
@@ -15,6 +17,19 @@ const config: EditorConfig = {
   autosaveMs: 1000, // localStorage debounce only; ignored when storage="none"
 }
 ```
+
+```js [JS]
+const config = {
+  contentWidth: 640,
+  devices: ['desktop', 'mobile'],
+  actions: { import: false, saveTemplate: true },
+  labels: { save: 'Publish', export: 'Get HTML' },
+  templates: [ /* your starter templates */ ],
+  autosaveMs: 1000, // localStorage debounce only; ignored when storage="none"
+}
+```
+
+:::
 
 ```vue
 <EmailEditor :config="config" />
@@ -36,7 +51,9 @@ const config: EditorConfig = {
 Every action defaults to `true` **except `saveTemplate`** (defaults `false`).
 Set a flag to `false` to hide that control.
 
-```ts
+::: code-group
+
+```ts [TS]
 const config: EditorConfig = {
   actions: {
     undo: true, preview: true, theme: true,
@@ -46,12 +63,26 @@ const config: EditorConfig = {
 }
 ```
 
+```js [JS]
+const config = {
+  actions: {
+    undo: true, preview: true, theme: true,
+    templates: false, new: false, import: false,
+    save: true, saveTemplate: true, export: true,
+  },
+}
+```
+
+:::
+
 ## `labels` — rename built-ins
 
 Relabel button text and tooltips without replacing the top bar. Every key is
 optional; unset keys keep their defaults.
 
-```ts
+::: code-group
+
+```ts [TS]
 const config: EditorConfig = {
   labels: {
     brand: 'Acme Mailer',
@@ -63,6 +94,21 @@ const config: EditorConfig = {
   },
 }
 ```
+
+```js [JS]
+const config = {
+  labels: {
+    brand: 'Acme Mailer',
+    save: 'Publish',
+    export: 'Get HTML',
+    saveTemplate: 'Save template',
+    undo: 'Undo', redo: 'Redo', preview: 'Preview',
+    templates: 'Templates', new: 'New design', import: 'Import JSON',
+  },
+}
+```
+
+:::
 
 `brand` only applies when you have **not** overridden the `#header-brand` slot.
 

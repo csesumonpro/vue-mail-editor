@@ -30,7 +30,9 @@ set and read. See [Theming](/guide/theming#color-mode) and
 
 ### Via the `ready` event
 
-```vue
+::: code-group
+
+```vue [TS]
 <script setup lang="ts">
 import { ref } from 'vue'
 import { EmailEditor } from '@csesumonpro/vue-email-editor'
@@ -46,9 +48,28 @@ const api = ref<EditorApi>()
 </template>
 ```
 
+```vue [JS]
+<script setup>
+import { ref } from 'vue'
+import { EmailEditor } from '@csesumonpro/vue-email-editor'
+
+const api = ref()
+</script>
+
+<template>
+  <EmailEditor @ready="api = $event" />
+  <button @click="api?.undo()">Undo</button>
+  <button @click="downloadHtml(api.exportHtml())">Export</button>
+</template>
+```
+
+:::
+
 ### Via a template ref
 
-```vue
+::: code-group
+
+```vue [TS]
 <script setup lang="ts">
 import { ref } from 'vue'
 import { EmailEditor } from '@csesumonpro/vue-email-editor'
@@ -63,6 +84,24 @@ function save() {
   <EmailEditor ref="editor" />
 </template>
 ```
+
+```vue [JS]
+<script setup>
+import { ref } from 'vue'
+import { EmailEditor } from '@csesumonpro/vue-email-editor'
+
+const editor = ref()
+function save() {
+  myBackend.save(editor.value.getDesign())
+}
+</script>
+
+<template>
+  <EmailEditor ref="editor" />
+</template>
+```
+
+:::
 
 ## Methods
 

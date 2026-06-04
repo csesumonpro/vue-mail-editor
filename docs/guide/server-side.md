@@ -3,13 +3,22 @@
 By default the editor autosaves to `localStorage`. To make **your database** the
 source of truth, set `storage="none"` and wire the load/save hooks.
 
-```vue
+::: code-group
+
+```vue [TS]
 <script setup lang="ts">
 import { EmailEditor } from '@csesumonpro/vue-email-editor'
+import type { Design } from '@csesumonpro/vue-email-editor'
 
-async function load()       { return (await api.get('/designs/1')).data.design }
-async function save(design) { await api.put('/designs/1', { design }) }
-async function upload(file) { return (await api.upload(file)).url }
+async function load(): Promise<Design> {
+  return (await api.get('/designs/1')).data.design
+}
+async function save(design: Design) {
+  await api.put('/designs/1', { design })
+}
+async function upload(file: File): Promise<string> {
+  return (await api.upload(file)).url
+}
 </script>
 
 <template>
@@ -26,6 +35,38 @@ async function upload(file) { return (await api.upload(file)).url }
   </EmailEditor>
 </template>
 ```
+
+```vue [JS]
+<script setup>
+import { EmailEditor } from '@csesumonpro/vue-email-editor'
+
+async function load() {
+  return (await api.get('/designs/1')).data.design
+}
+async function save(design) {
+  await api.put('/designs/1', { design })
+}
+async function upload(file) {
+  return (await api.upload(file)).url
+}
+</script>
+
+<template>
+  <EmailEditor
+    storage="none"
+    :on-load="load"
+    :on-save="save"
+    :on-image-upload="upload"
+    @export="(html) => api.post('/render', { html })"
+  >
+    <template #header-actions>
+      <button @click="publish">Publish</button>
+    </template>
+  </EmailEditor>
+</template>
+```
+
+:::
 
 With `storage="none"` nothing is written to `localStorage` — your database is the
 single source of truth.
@@ -65,12 +106,15 @@ cadence.
 
 For continuous save-to-database, debounce the `change` event yourself:
 
-```vue
+::: code-group
+
+```vue [TS]
 <script setup lang="ts">
 import { debounce } from 'lodash-es'
+import { EmailEditor } from '@csesumonpro/vue-email-editor'
 import type { Design } from '@csesumonpro/vue-email-editor'
 
-async function load() {
+async function load(): Promise<Design> {
   return (await api.get('/designs/1')).data.design
 }
 
@@ -84,6 +128,28 @@ const autosave = debounce((design: Design) => {
   <EmailEditor storage="none" :on-load="load" @change="autosave" />
 </template>
 ```
+
+```vue [JS]
+<script setup>
+import { debounce } from 'lodash-es'
+import { EmailEditor } from '@csesumonpro/vue-email-editor'
+
+async function load() {
+  return (await api.get('/designs/1')).data.design
+}
+
+// this 1000ms is your real-DB "autosaveMs" — tune it freely
+const autosave = debounce((design) => {
+  api.put('/designs/1', { design })
+}, 1000)
+</script>
+
+<template>
+  <EmailEditor storage="none" :on-load="load" @change="autosave" />
+</template>
+```
+
+:::
 
 `change` already fires debounced (~300ms) on every edit; the extra `debounce`
 batches DB writes. Use `onSave` for an explicit **Save** button on top of (or

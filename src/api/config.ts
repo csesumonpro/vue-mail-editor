@@ -16,6 +16,20 @@ export interface EditorActions {
   export?: boolean
 }
 
+/** Text/tooltip labels for built-in actions (rename without replacing the bar). */
+export interface EditorLabels {
+  brand?: string
+  save?: string
+  export?: string
+  saveTemplate?: string
+  undo?: string
+  redo?: string
+  preview?: string
+  templates?: string
+  new?: string
+  import?: string
+}
+
 export interface EditorConfig {
   /** Default email content width for new designs. */
   contentWidth?: number
@@ -23,6 +37,8 @@ export interface EditorConfig {
   devices?: Device[]
   /** Show/hide built-in actions. */
   actions?: EditorActions
+  /** Rename built-in action labels/tooltips. */
+  labels?: EditorLabels
   /** Starter templates (replaces the built-ins). */
   templates?: TemplateDef[]
   /** Autosave debounce in ms (local storage mode). */
@@ -33,6 +49,7 @@ export interface ResolvedConfig {
   contentWidth?: number
   devices: Device[]
   actions: Required<EditorActions>
+  labels: Required<EditorLabels>
   templates?: TemplateDef[]
   autosaveMs: number
 }
@@ -51,6 +68,18 @@ export function resolveConfig(c?: EditorConfig): ResolvedConfig {
       save: c?.actions?.save ?? true,
       saveTemplate: c?.actions?.saveTemplate ?? false,
       export: c?.actions?.export ?? true,
+    },
+    labels: {
+      brand: c?.labels?.brand ?? 'Vue Email Editor',
+      save: c?.labels?.save ?? 'Save Design',
+      export: c?.labels?.export ?? 'Export HTML',
+      saveTemplate: c?.labels?.saveTemplate ?? 'Save as template',
+      undo: c?.labels?.undo ?? 'Undo',
+      redo: c?.labels?.redo ?? 'Redo',
+      preview: c?.labels?.preview ?? 'Preview',
+      templates: c?.labels?.templates ?? 'Templates',
+      new: c?.labels?.new ?? 'New design',
+      import: c?.labels?.import ?? 'Import design JSON',
     },
     templates: c?.templates,
     autosaveMs: c?.autosaveMs ?? 800,

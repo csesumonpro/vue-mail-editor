@@ -183,6 +183,7 @@ show/hide built-in actions, add your own buttons, or replace the bar entirely.
 | Goal | How |
 | ---- | --- |
 | Show/hide a built-in action | `config.actions.<name>` (boolean) |
+| Rename a built-in label/tooltip | `config.labels.<name>` (string) |
 | Replace the logo / brand | `#header-brand` slot |
 | Add custom buttons (keep built-ins) | `#header-actions` slot |
 | Fully custom toolbar (own labels/layout) | `#header` slot |
@@ -201,6 +202,25 @@ show/hide built-in actions, add your own buttons, or replace the bar entirely.
 />
 ```
 All default to `true` except `saveTemplate` (defaults `false`). Set `false` to hide.
+
+### Rename built-in labels — `config.labels`
+Relabel the built-in actions (button text + tooltips) without replacing the bar:
+```vue
+<EmailEditor
+  :config="{
+    labels: {
+      brand: 'Acme Mailer',
+      save: 'Publish',
+      export: 'Get HTML',
+      saveTemplate: 'Save template',
+      undo: 'Undo', redo: 'Redo', preview: 'Preview',
+      templates: 'Templates', new: 'New design', import: 'Import JSON',
+    },
+  }"
+/>
+```
+Every label is optional — unset keys keep their defaults. `brand` only applies
+when you haven't overridden the `#header-brand` slot.
 
 ### Replace the logo — `#header-brand`
 ```vue

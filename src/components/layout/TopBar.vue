@@ -74,7 +74,7 @@ async function onImport(e: Event) {
     <slot name="brand">
       <div class="flex items-center gap-2">
         <Mail class="h-5 w-5" />
-        <span class="text-sm font-semibold tracking-tight">Vue Email Editor</span>
+        <span class="text-sm font-semibold tracking-tight">{{ config.labels.brand }}</span>
       </div>
     </slot>
 
@@ -102,7 +102,7 @@ async function onImport(e: Event) {
       <template v-if="config.actions.undo">
         <button
           type="button"
-          v-tooltip="'Undo'"
+          v-tooltip="config.labels.undo"
           class="flex h-8 w-8 items-center justify-center rounded-md text-faint transition hover:bg-ink/10 hover:text-header-fg disabled:opacity-40 disabled:hover:bg-transparent"
           :disabled="!store.canUndo"
           @click="store.undo()"
@@ -111,7 +111,7 @@ async function onImport(e: Event) {
         </button>
         <button
           type="button"
-          v-tooltip="'Redo'"
+          v-tooltip="config.labels.redo"
           class="flex h-8 w-8 items-center justify-center rounded-md text-faint transition hover:bg-ink/10 hover:text-header-fg disabled:opacity-40 disabled:hover:bg-transparent"
           :disabled="!store.canRedo"
           @click="store.redo()"
@@ -122,7 +122,7 @@ async function onImport(e: Event) {
       <button
         v-if="config.actions.preview"
         type="button"
-        v-tooltip="store.previewMode ? 'Exit preview' : 'Preview'"
+        v-tooltip="store.previewMode ? 'Exit preview' : config.labels.preview"
         class="flex h-8 w-8 items-center justify-center rounded-md transition"
         :class="
           store.previewMode
@@ -148,7 +148,7 @@ async function onImport(e: Event) {
       <button
         v-if="config.actions.templates"
         type="button"
-        v-tooltip="'Templates'"
+        v-tooltip="config.labels.templates"
         class="flex h-8 w-8 items-center justify-center rounded-md text-faint transition hover:bg-ink/10 hover:text-header-fg"
         @click="emit('templates')"
       >
@@ -157,7 +157,7 @@ async function onImport(e: Event) {
       <button
         v-if="config.actions.new"
         type="button"
-        v-tooltip="'New design'"
+        v-tooltip="config.labels.new"
         class="flex h-8 w-8 items-center justify-center rounded-md text-faint transition hover:bg-ink/10 hover:text-header-fg"
         @click="onNew"
       >
@@ -166,7 +166,7 @@ async function onImport(e: Event) {
       <button
         v-if="config.actions.import"
         type="button"
-        v-tooltip="'Import design JSON'"
+        v-tooltip="config.labels.import"
         class="flex h-8 w-8 items-center justify-center rounded-md text-faint transition hover:bg-ink/10 hover:text-header-fg"
         @click="fileInput?.click()"
       >
@@ -185,7 +185,7 @@ async function onImport(e: Event) {
       <button
         v-if="config.actions.saveTemplate"
         type="button"
-        v-tooltip="'Save as template'"
+        v-tooltip="config.labels.saveTemplate"
         class="flex h-8 w-8 items-center justify-center rounded-md text-faint transition hover:bg-ink/10 hover:text-header-fg"
         @click="actions.saveTemplate()"
       >
@@ -198,7 +198,7 @@ async function onImport(e: Event) {
         @click="actions.save()"
       >
         <Save class="h-4 w-4" />
-        Save Design
+        {{ config.labels.save }}
       </button>
       <button
         v-if="config.actions.export"
@@ -207,7 +207,7 @@ async function onImport(e: Event) {
         @click="emit('export')"
       >
         <Code2 class="h-4 w-4" />
-        Export HTML
+        {{ config.labels.export }}
       </button>
 
       <!-- Host-injected actions -->

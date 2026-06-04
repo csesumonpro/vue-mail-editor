@@ -8,7 +8,8 @@
 | `blocks`         | `BlockDefinition[]`                             | `[]`      | Custom blocks (merged with built-ins). |
 | `disabledBlocks` | `string[]`                                       | `[]`      | Hide built-in block types. |
 | `theme`          | `ThemeTokens`                                    | —         | Color/typography overrides (light + dark). |
-| `colorMode`      | `'light' \| 'dark' \| 'auto'`                    | `'light'` | Theme mode (per instance). |
+| `colorMode`      | `'light' \| 'dark' \| 'auto'`                    | `'light'` | Theme mode — two-way via `v-model:colorMode`. |
+| `preview`        | `boolean`                                        | —         | Preview mode — two-way via `v-model:preview`. |
 | `config`         | `EditorConfig`                                   | —         | Feature flags (devices, actions, labels, templates…). |
 | `storage`        | `'local' \| 'none'`                              | `'local'` | `local` = localStorage autosave; `none` = host owns persistence. |
 | `onImageUpload`  | `(file: File) => Promise<string>`               | base64    | Upload an image, return its URL. |
@@ -22,6 +23,8 @@
 | Event | Payload | Fires when |
 | ----- | ------- | ---------- |
 | `update:modelValue` | `design` | The design changes (for `v-model`). |
+| `update:colorMode` | `'light' \| 'dark'` | The user toggles the theme (for `v-model:colorMode`). |
+| `update:preview` | `boolean` | Preview mode toggles (for `v-model:preview`). |
 | `change` | `design` | The design changes — **debounced (~300ms)**. |
 | `save` | `design` | The user clicks Save. |
 | `save-template` | `payload` | The user saves a template. |

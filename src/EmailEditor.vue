@@ -39,6 +39,8 @@ const props = withDefaults(
     disabledBlocks?: string[]
     theme?: ThemeTokens
     colorMode?: 'light' | 'dark' | 'auto'
+    /** Two-way preview state (use with `v-model:preview`). */
+    preview?: boolean
     config?: EditorConfig
     storage?: StorageMode
     onImageUpload?: (file: File) => Promise<string>
@@ -52,6 +54,8 @@ const props = withDefaults(
 
 const emit = defineEmits<{
   'update:modelValue': [design: Design]
+  'update:colorMode': [mode: 'light' | 'dark']
+  'update:preview': [preview: boolean]
   change: [design: Design]
   save: [design: Design]
   'save-template': [payload: TemplatePayload]
@@ -103,16 +107,42 @@ async function onExportClick() {
   if (props.onExport) await props.onExport(html, store.design)
 }
 
-/* Color mode -------------------------------------------------------- */
+/* Color mode (two-way via v-model:colorMode) ------------------------ */
 function resolveDark(mode: string): boolean {
   if (mode === 'dark') return true
   if (mode === 'light') return false
   return window.matchMedia?.('(prefers-color-scheme: dark)').matches ?? false
 }
+// Prop drives the store…
 watch(
   () => props.colorMode,
   (mode) => store.setDark(resolveDark(mode)),
   { immediate: true },
+)
+// …and a user toggle (built-in theme button) syncs back to the prop. We only
+// emit when the store diverges from what the prop resolves to, so the
+// prop-driven sync above never causes a spurious emit (single source of truth).
+watch(
+  () => store.isDark,
+  (dark) => {
+    if (dark === resolveDark(props.colorMode)) return
+    emit('update:colorMode', dark ? 'dark' : 'light')
+  },
+)
+
+/* Preview (two-way via v-model:preview) ----------------------------- */
+watch(
+  () => props.preview,
+  (v) => {
+    if (v != null && v !== store.previewMode) store.togglePreview(v)
+  },
+  { immediate: true },
+)
+watch(
+  () => store.previewMode,
+  (v) => {
+    if (v !== props.preview) emit('update:preview', v)
+  },
 )
 
 /* Theme overrides: a scoped <style> tag, instance-classed -------------- */
@@ -191,7 +221,10 @@ watch(
 const api: EditorApi = {
   getDesign: () => deepClone(store.design),
   loadDesign: (d) => store.loadDesign(d),
+  newDesign: () => store.resetDesign(),
   exportHtml: () => exportHtml(store.design, registry),
+  save: () => doSave(),
+  export: () => onExportClick(),
   undo: () => store.undo(),
   redo: () => store.redo(),
   registerBlock: (def) => registry.register(def),

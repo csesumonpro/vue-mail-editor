@@ -32,6 +32,29 @@ on one page. There are two ways to theme: the `theme` prop (typed) and
 `auto` follows the user's OS preference. The mode is per-instance, and the
 built-in theme toggle (when enabled) switches it at runtime.
 
+### Two-way with `v-model:colorMode`
+
+Color mode is **state**, so it's controlled — not driven by an imperative
+method. Bind it two-way to both set it and read the user's toggle:
+
+```vue
+<script setup>
+import { ref } from 'vue'
+const mode = ref('light')
+</script>
+
+<template>
+  <EmailEditor v-model:colorMode="mode" />
+  <p>Current mode: {{ mode }}</p>
+  <button @click="mode = mode === 'dark' ? 'light' : 'dark'">Toggle</button>
+</template>
+```
+
+When the user clicks the built-in theme button, `mode` updates; when you set
+`mode`, the editor follows. One source of truth.
+
+Preview mode works the same way via **`v-model:preview`** (a boolean).
+
 ## CSS variables — `--cvee-*`
 
 For full control, override the `--cvee-*` custom properties on a

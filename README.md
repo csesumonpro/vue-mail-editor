@@ -47,7 +47,8 @@ registration. You can mount several independent instances on one page.
 | `blocks`         | `BlockDefinition[]`                              | `[]`      | Custom blocks (merged with built-ins). |
 | `disabledBlocks` | `string[]`                                       | `[]`      | Hide built-in block types. |
 | `theme`          | `ThemeTokens`                                    | —         | Color/typography overrides (light + dark). |
-| `colorMode`      | `'light' \| 'dark' \| 'auto'`                    | `'light'` | Theme mode (per instance). |
+| `colorMode`      | `'light' \| 'dark' \| 'auto'`                    | `'light'` | Theme mode — two-way via `v-model:colorMode`. |
+| `preview`        | `boolean`                                        | —         | Preview mode — two-way via `v-model:preview`. |
 | `config`         | `EditorConfig`                                   | —         | Feature flags (devices, actions, templates…). |
 | `storage`        | `'local' \| 'none'`                              | `'local'` | `local` = localStorage autosave; `none` = host owns persistence. |
 | `onImageUpload`  | `(file: File) => Promise<string>`               | base64    | Upload an image, return its URL. |
@@ -57,8 +58,9 @@ registration. You can mount several independent instances on one page.
 | `onLoad`         | `() => Design \| Promise<Design>`               | —         | Initial design (e.g. server fetch). |
 
 ### Events
-`update:modelValue`, `change(design)`, `save(design)`, `save-template(payload)`,
-`export(html, design)`, `select(selection)`, `ready(api)`.
+`update:modelValue`, `update:colorMode`, `update:preview`, `change(design)`,
+`save(design)`, `save-template(payload)`, `export(html, design)`,
+`select(selection)`, `ready(api)`.
 
 ### Slots
 `#header` (replace top bar), `#header-brand`, `#header-actions` (inject buttons),
@@ -69,12 +71,19 @@ registration. You can mount several independent instances on one page.
 interface EditorApi {
   getDesign(): Design          // deep-cloned snapshot
   loadDesign(design: Design): void
-  exportHtml(): string
+  newDesign(): void            // clear to a fresh, empty design (no prompt)
+  exportHtml(): string         // returns email-safe HTML
+  save(): void | Promise       // fire Save flow (emit `save` + onSave)
+  export(): void | Promise     // fire Export flow (emit `export` + onExport)
   undo(): void; redo(): void
   registerBlock(def: BlockDefinition): void
   selectBody(): void
 }
 ```
+
+> Commands live on the API; UI **state** (dark/light, preview) is controlled via
+> `v-model:colorMode` and `v-model:preview` — one source of truth you can set
+> and read.
 
 ## Build your own block
 

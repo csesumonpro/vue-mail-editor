@@ -57,7 +57,14 @@ export interface EditorApi {
   /** A deep-cloned snapshot of the current design. */
   getDesign(): import('@/types/schema').Design
   loadDesign(design: import('@/types/schema').Design): void
+  /** Clear to a fresh, empty design (no confirm prompt — that's the UI's job). */
+  newDesign(): void
+  /** Render the current design to email-safe HTML and return it. */
   exportHtml(): string
+  /** Trigger the Save flow (emits `save` + runs the `onSave` prop, if any). */
+  save(): void | Promise<void>
+  /** Trigger the Export flow (emits `export` + runs the `onExport` prop, if any). */
+  export(): void | Promise<void>
   undo(): void
   redo(): void
   registerBlock(def: AnyBlockDefinition): void

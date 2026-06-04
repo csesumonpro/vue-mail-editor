@@ -15,7 +15,7 @@ const emit = defineEmits<{ 'update:modelValue': [string] }>()
       type="url"
       :value="modelValue"
       :placeholder="placeholder ?? 'https://'"
-      class="w-full bg-transparent py-1.5 text-xs text-ink outline-none"
+      class="w-full border-0 bg-transparent py-1.5 text-xs text-ink outline-none"
       @input="emit('update:modelValue', ($event.target as HTMLInputElement).value)"
     />
   </div>

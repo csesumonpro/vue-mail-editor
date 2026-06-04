@@ -1,4 +1,12 @@
-@import 'tailwindcss';
+/* Host-CSS hardening for hostile embeds (e.g. WordPress admin). Host form styles
+   use attribute selectors like `input[type=text]` (specificity 0,1,1) that
+   outrank our single-class utilities (0,1,0), so they'd override the editor's
+   look. `important` marks every utility `!important`, so they win over any
+   NORMAL host rule regardless of specificity. (Rules that themselves use
+   !important still can't be beaten without Shadow DOM, but WordPress's form CSS
+   doesn't.) Consumers customize via the `theme` prop / `--cvee-*` variables
+   (token values), not by overriding utility declarations. */
+@import 'tailwindcss' important;
 
 /* Dark mode is driven by a `.dark` class on <html>. */
 @custom-variant dark (&:where(.dark, .dark *));
@@ -301,4 +309,49 @@
     0 10px,
     10px -10px,
     -10px 0;
+}
+
+/* ------------------------------------------------------------------ */
+/* v-show compatibility under Tailwind important mode.                  */
+/* Utilities are emitted as !important (to beat hostile host CSS like   */
+/* WordPress admin). But Vue's `v-show` hides elements via an inline    */
+/* `display:none`, which a `.flex`/`.block` !important utility would    */
+/* override — leaving panels/toolbars stuck visible. Re-assert the      */
+/* inline hide with higher specificity so v-show keeps working.        */
+/* ------------------------------------------------------------------ */
+.vue-email-editor [style*="display: none"],
+.vue-email-editor[style*="display: none"],
+.vue-email-editor [style*="display:none"],
+.vue-email-editor[style*="display:none"] {
+  display: none !important;
+}
+
+/* ------------------------------------------------------------------ */
+/* Neutralize host (e.g. WordPress admin) focus glow on our form        */
+/* controls. WP adds `input:focus{box-shadow:0 0 0 1px #2271b1}` which   */
+/* shows a stray blue ring. We indicate focus via border, so kill any    */
+/* inherited box-shadow/outline. Doubled class for specificity.         */
+/* ------------------------------------------------------------------ */
+.vue-email-editor.vue-email-editor input,
+.vue-email-editor.vue-email-editor select,
+.vue-email-editor.vue-email-editor textarea {
+  box-shadow: none !important;
+}
+/* Pin background/text to our tokens so dark-mode inputs stay dark even when a
+   host rule forces a light background with its own !important (the doubled
+   class out-specifies element/single-class host selectors). The native color
+   swatch is excluded so its preview isn't tinted. */
+.vue-email-editor.vue-email-editor input:not([type='color']),
+.vue-email-editor.vue-email-editor select,
+.vue-email-editor.vue-email-editor textarea {
+  background-color: var(--cvee-bg-input) !important;
+  color: var(--cvee-text) !important;
+}
+.vue-email-editor.vue-email-editor input:focus,
+.vue-email-editor.vue-email-editor input:focus-visible,
+.vue-email-editor.vue-email-editor select:focus,
+.vue-email-editor.vue-email-editor textarea:focus {
+  box-shadow: none !important;
+  outline: 2px solid transparent !important;
+  outline-offset: 2px !important;
 }

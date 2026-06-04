@@ -175,6 +175,26 @@
 .rte-content {
   outline: none;
 }
+
+/* Typography is set as an inline style on each block's wrapper <div>; the
+   visible text lives in `.rte-content p/li`, which only INHERITS that style.
+   Inheritance has zero specificity, so a host global rule like `p{font-size:16px}`
+   (common in WordPress themes) would override it and "font-size change" appears
+   broken in consumer apps. Force these properties to inherit with enough
+   specificity (.vue-email-editor .rte-content p) to beat host element rules. */
+.vue-email-editor .rte-content,
+.vue-email-editor .rte-content p,
+.vue-email-editor .rte-content ul,
+.vue-email-editor .rte-content ol,
+.vue-email-editor .rte-content li {
+  font-size: inherit;
+  font-family: inherit;
+  font-weight: inherit;
+  line-height: inherit;
+  letter-spacing: inherit;
+  color: inherit;
+  text-align: inherit;
+}
 .rte-content p {
   margin: 0;
 }

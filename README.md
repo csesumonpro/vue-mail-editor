@@ -163,6 +163,50 @@ async function upload(file)  { return (await api.upload(file)).url }
 With `storage="none"` nothing is written to localStorage — your database is the
 single source of truth.
 
+### What to persist
+
+The **`design` is plain JSON** — store it in one column (`jsonb`/`json`/`text`).
+The exported `html` is derived; only persist it if you want a ready-to-send
+render cache.
+
+```
+designs:  id | name | design (jsonb) | html (text, optional) | updated_at
+```
+
+- `onLoad()` runs on mount → fetch and return the design JSON from your DB.
+- `onSave(design)` runs when the user clicks **Save** → write the JSON to your DB.
+- `exportHtml()` (via `@ready`) or `@export` gives you the final email HTML.
+
+### Server-side autosave
+
+> `config.autosaveMs` only debounces the built-in **localStorage** autosave
+> (`storage="local"`). With `storage="none"` it does nothing — you own the
+> save cadence.
+
+For continuous save-to-database, debounce the `change` event yourself:
+
+```vue
+<script setup lang="ts">
+import { debounce } from 'lodash-es'
+import type { Design } from '@csesumonpro/vue-email-editor'
+
+async function load() { return (await api.get('/designs/1')).data.design }
+
+// this 1000ms is your real-DB "autosaveMs" — tune it freely
+const autosave = debounce((design: Design) => {
+  api.put('/designs/1', { design })
+}, 1000)
+</script>
+
+<template>
+  <EmailEditor storage="none" :on-load="load" @change="autosave" />
+</template>
+```
+
+`change` already fires debounced (~300ms) on every edit; the extra `debounce`
+batches DB writes. Use `onSave` for an explicit "Save" button on top of (or
+instead of) this.
+
 ## Config (feature flags)
 
 ```ts
@@ -171,7 +215,7 @@ const config: EditorConfig = {
   devices: ['desktop', 'mobile'],
   actions: { import: false, saveTemplate: true },
   templates: [ /* your starter templates */ ],
-  autosaveMs: 1000,
+  autosaveMs: 1000, // localStorage debounce only; ignored when storage="none"
 }
 ```
 

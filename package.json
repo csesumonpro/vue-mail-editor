@@ -1,6 +1,6 @@
 {
   "name": "@csesumonpro/vue-email-editor",
-  "version": "0.1.10",
+  "version": "0.1.11",
   "type": "module",
   "description": "A customizable, extensible drag-and-drop email template editor for Vue 3.",
   "license": "MIT",
@@ -25,6 +25,9 @@
     "build": "vue-tsc --noEmit && vite build",
     "build:playground": "vue-tsc --noEmit && vite build --config vite.playground.config.ts",
     "preview": "vite preview --config vite.playground.config.ts",
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs",
     "typecheck": "vue-tsc --noEmit"
   },
   "peerDependencies": {
@@ -52,6 +55,7 @@
     "typescript": "~5.7.2",
     "vite": "^6.0.5",
     "vite-plugin-dts": "^4.5.4",
+    "vitepress": "^1.6.4",
     "vue": "^3.5.13",
     "vue-tsc": "^2.2.0"
   }

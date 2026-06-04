@@ -5,3 +5,5 @@ dist/
 .vite/
 *.tsbuildinfo
 *.tgz
+docs/.vitepress/dist/
+docs/.vitepress/cache/

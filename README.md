@@ -4,6 +4,9 @@ A customizable, extensible drag-and-drop **email template editor** for Vue 3.
 Theme it, register your own blocks and inspector panels, and delegate all
 persistence/actions to your backend.
 
+📖 **Full documentation:** run `npm run docs:dev` (or browse the deployed site at
+`/docs`). The `docs/` directory is a [VitePress](https://vitepress.dev) site.
+
 ```bash
 npm install @csesumonpro/vue-email-editor
 ```

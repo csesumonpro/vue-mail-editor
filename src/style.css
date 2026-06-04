@@ -157,21 +157,6 @@
   -webkit-font-smoothing: antialiased;
 }
 
-/* Resist host-app bleed onto form controls: a host's global `input`/`select`
-   element rules (unlayered) beat our layered utilities, distorting the box
-   model. `.vue-email-editor X` outspecifies bare `X`, so re-assert the basics.
-   (Padding/colors stay on the utility classes.) */
-.vue-email-editor :where(input, select, textarea, button) {
-  box-sizing: border-box;
-  font-family: inherit;
-  margin: 0;
-  min-height: 0;
-  min-width: 0;
-}
-.vue-email-editor :where(input, select, textarea) {
-  height: auto;
-}
-
 /* Thin scrollbars for editor panels */
 .scroll-thin {
   scrollbar-width: thin;

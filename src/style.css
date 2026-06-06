@@ -318,12 +318,21 @@
 /* `display:none`, which a `.flex`/`.block` !important utility would    */
 /* override — leaving panels/toolbars stuck visible. Re-assert the      */
 /* inline hide with higher specificity so v-show keeps working.        */
+/*                                                                      */
+/* This MUST live inside `@layer utilities` (same layer Tailwind emits  */
+/* `.flex`/`.block` into). For `!important` declarations the cascade    */
+/* REVERSES layer order, so a layered `!important` (Tailwind's `.flex`) */
+/* beats an UNLAYERED `!important` rule regardless of specificity. By   */
+/* sharing the layer, specificity decides instead — and our            */
+/* `.vue-email-editor [style*=…]` (0,2,0) outranks `.flex` (0,1,0).     */
 /* ------------------------------------------------------------------ */
-.vue-email-editor [style*="display: none"],
-.vue-email-editor[style*="display: none"],
-.vue-email-editor [style*="display:none"],
-.vue-email-editor[style*="display:none"] {
-  display: none !important;
+@layer utilities {
+  .vue-email-editor [style*="display: none"],
+  .vue-email-editor[style*="display: none"],
+  .vue-email-editor [style*="display:none"],
+  .vue-email-editor[style*="display:none"] {
+    display: none !important;
+  }
 }
 
 /* ------------------------------------------------------------------ */

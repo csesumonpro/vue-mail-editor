@@ -1,7 +1,8 @@
-import type { InjectionKey } from 'vue'
+import type { ComputedRef, InjectionKey } from 'vue'
 import type { Editor } from './createEditor'
 import type { BlockRegistry } from './registry'
 import type { ResolvedConfig } from '@/api/config'
+import type { DesignVariable } from '@/types/schema'
 
 /** Injection key for the per-instance editor context. */
 export const EDITOR_KEY: InjectionKey<Editor> = Symbol('vue-email-editor')
@@ -11,6 +12,23 @@ export const BLOCKS_KEY: InjectionKey<BlockRegistry> = Symbol('vue-email-editor-
 
 /** Injection key for the resolved editor config. */
 export const CONFIG_KEY: InjectionKey<ResolvedConfig> = Symbol('vue-email-editor-config')
+
+/**
+ * A variable registry controller. Provided by the host (the email editor backs
+ * it with the design store; the standalone TextEditor backs it with a prop), so
+ * the shared variable UI works in either context.
+ */
+export interface VariablesController {
+  list: ComputedRef<DesignVariable[]>
+  get(name: string): DesignVariable | undefined
+  exists(name: string): boolean
+  create(variable: DesignVariable): void
+  update(name: string, patch: Partial<DesignVariable>): void
+  remove(name: string): void
+}
+
+/** Injection key for the variable registry controller. */
+export const VARIABLES_KEY: InjectionKey<VariablesController> = Symbol('vue-email-editor-variables')
 
 /** Host-delegated actions (save, image upload, …). */
 export interface EditorActionsContext {

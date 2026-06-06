@@ -5,6 +5,7 @@
 import './style.css'
 
 export { default as EmailEditor } from './EmailEditor.vue'
+export { default as TextEditor } from './components/common/TextEditor.vue'
 export { defineBlock } from './api/defineBlock'
 export { vTooltip } from './directives/tooltip'
 

@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick } from 'vue'
+import { ref, computed, watch, inject, onMounted, onBeforeUnmount, nextTick } from 'vue'
 import { useEditor, EditorContent } from '@tiptap/vue-3'
+import type { Extensions } from '@tiptap/core'
 import StarterKit from '@tiptap/starter-kit'
 import Underline from '@tiptap/extension-underline'
 import TextStyle from '@tiptap/extension-text-style'
@@ -9,20 +10,12 @@ import Placeholder from '@tiptap/extension-placeholder'
 import { LinkMark } from './LinkMark'
 import { VariableNode, type VariableEditRequest } from './VariableNode'
 import VariablePopover from './VariablePopover.vue'
-import { useEditor as useEditorStore } from '@/core/useEditor'
+import RteToolbarButtons from './RteToolbarButtons.vue'
+import { EDITOR_KEY } from '@/core/keys'
 import { useVariables } from '@/composables/useVariables'
 import { placeAnchored } from '@/utils/popover'
 import type { DesignVariable } from '@/types/schema'
-import {
-  Bold,
-  Italic,
-  Underline as UnderlineIcon,
-  Strikethrough,
-  Link2,
-  List,
-  ListOrdered,
-  Plus,
-} from 'lucide-vue-next'
+import { Plus } from 'lucide-vue-next'
 
 const props = withDefaults(
   defineProps<{
@@ -30,33 +23,51 @@ const props = withDefaults(
     editable?: boolean
     lists?: boolean
     placeholder?: string
-    /** Single-line mode (e.g. buttons): no formatting toolbar, no newlines. */
+    /** Single-line mode (e.g. buttons): no toolbar, no newlines. */
     plain?: boolean
+    /** Formatting toolbar style. */
+    toolbar?: 'bubble' | 'fixed' | false
+    /** Enable the `{{` template-variable system. */
+    enableVariables?: boolean
   }>(),
-  { editable: false, lists: false, placeholder: 'Type here…', plain: false },
+  {
+    editable: false,
+    lists: false,
+    placeholder: 'Type here…',
+    plain: false,
+    toolbar: 'bubble',
+    enableVariables: true,
+  },
 )
 const emit = defineEmits<{ 'update:modelValue': [string]; focus: []; blur: [] }>()
 
 const root = ref<HTMLElement | null>(null)
-const store = useEditorStore()
-const variables = useVariables(store)
+// Optional: present inside <EmailEditor> (drives preview mode); null when standalone.
+const store = inject(EDITOR_KEY, null)
+const variables = useVariables()
+
+const extensions: Extensions = [
+  StarterKit.configure({ heading: false }),
+  Underline,
+  LinkMark,
+  TextStyle,
+  Color,
+  Placeholder.configure({ placeholder: props.placeholder }),
+]
+if (props.enableVariables) {
+  extensions.push(
+    VariableNode.configure({
+      getVariable: (name) => variables.get(name),
+      isPreview: () => store?.previewMode ?? false,
+      onEdit: (req) => openEdit(req),
+    }),
+  )
+}
 
 const editor = useEditor({
   editable: props.editable,
   content: props.modelValue,
-  extensions: [
-    StarterKit.configure({ heading: false }),
-    Underline,
-    LinkMark,
-    TextStyle,
-    Color,
-    Placeholder.configure({ placeholder: props.placeholder }),
-    VariableNode.configure({
-      getVariable: (name) => variables.get(name),
-      isPreview: () => store.previewMode,
-      onEdit: (req) => openEdit(req),
-    }),
-  ],
+  extensions,
   editorProps: {
     attributes: { class: 'rte-content' },
     // Drive the `{{` popover from the keyboard when it is open.
@@ -105,30 +116,31 @@ const editor = useEditor({
   },
 })
 
-/* Lightweight bubble menu ------------------------------------------- */
-// Replaces @tiptap/vue-3's <BubbleMenu> (which bundles tippy.js + @popperjs/core,
-// ~34 KB gzip) with a `position: fixed` toolbar positioned from the selection's
-// own client rect — no extra deps, same behaviour.
+const showFixedToolbar = computed(
+  () => props.toolbar === 'fixed' && !props.plain && props.editable,
+)
+
+/* Bubble menu ------------------------------------------------------- */
+// `position: fixed` toolbar positioned from the selection's client rect — no
+// extra deps (avoids @tiptap/vue-3's tippy.js + @popperjs/core BubbleMenu).
 const menuVisible = ref(false)
 const menuTop = ref(0)
 const menuLeft = ref(0)
 
 function updateMenu() {
   const ed = editor.value
-  // Plain (single-line) fields never show the formatting toolbar.
-  if (props.plain || !ed || !ed.isEditable || !ed.isFocused) {
+  // Only the bubble toolbar uses this floating layer.
+  if (props.plain || props.toolbar !== 'bubble' || !ed || !ed.isEditable || !ed.isFocused) {
     menuVisible.value = false
     return
   }
   const sel = ed.state.selection
   const { from, to, empty } = sel
-  // A NodeSelection (e.g. a clicked variable chip / image) is not a text range —
-  // don't pop the formatting toolbar over it.
+  // A NodeSelection (e.g. a clicked variable chip / image) is not a text range.
   if (empty || (sel as { node?: unknown }).node) {
     menuVisible.value = false
     return
   }
-  // Bounding box of the selection across its start/end positions.
   const start = ed.view.coordsAtPos(from)
   const end = ed.view.coordsAtPos(to)
   menuLeft.value = (Math.min(start.left, end.left) + Math.max(start.right, end.right)) / 2
@@ -142,14 +154,15 @@ function onScrollOrResize() {
 }
 
 /* `{{` variable autocomplete ---------------------------------------- */
-// A second floating layer (parallel to the bubble menu) listing template
-// variables when the user types `{{`. Hand-rolled to avoid @tiptap/suggestion.
 const varMenuVisible = ref(false)
 const varMenuTop = ref(0)
 const varMenuLeft = ref(0)
 const varQuery = ref('')
 const varActive = ref(0)
 const varAnchor = ref(0)
+// true when opened by typing `{{` (the typed text is replaced on pick);
+// false when opened from the toolbar button (insert at the cursor).
+const varTriggered = ref(false)
 const varListEl = ref<HTMLElement | null>(null)
 const varMenuEl = ref<HTMLElement | null>(null)
 // Caret rect edges (for flip-aware placement of the list + popover).
@@ -202,6 +215,7 @@ function placeVarMenu() {
 }
 
 function detectTrigger() {
+  if (!props.enableVariables) return hideVarMenu()
   const ed = editor.value
   if (!ed || !ed.isEditable || !ed.isFocused) return hideVarMenu()
   const sel = ed.state.selection
@@ -217,7 +231,22 @@ function detectTrigger() {
   varQuery.value = m[1]
   varActive.value = 0
   varAnchor.value = sel.from
+  varTriggered.value = true
   positionVarMenu(sel.from)
+  varMenuVisible.value = true
+}
+
+// Open the same variable list from the toolbar button (insert at the cursor).
+function openVariablesFromToolbar() {
+  const ed = editor.value
+  if (!ed) return
+  ed.chain().focus().run()
+  varQuery.value = ''
+  varActive.value = 0
+  varTriggered.value = false
+  const { from } = ed.state.selection
+  varAnchor.value = from
+  positionVarMenu(from)
   varMenuVisible.value = true
 }
 
@@ -225,8 +254,12 @@ function pickVariable(name: string) {
   const ed = editor.value
   if (!ed) return
   const { from } = ed.state.selection
-  const start = from - (varQuery.value.length + 2) // 2 = the leading "{{"
-  ed.chain().focus().deleteRange({ from: start, to: from }).insertVariable(name).run()
+  const chain = ed.chain().focus()
+  // `{{`-triggered: replace the typed `{{query`; toolbar: just insert at cursor.
+  if (varTriggered.value) {
+    chain.deleteRange({ from: from - (varQuery.value.length + 2), to: from })
+  }
+  chain.insertVariable(name).run()
   hideVarMenu()
 }
 
@@ -310,26 +343,20 @@ watch(
     }
   },
 )
-
-function setLink() {
-  const prev = editor.value?.getAttributes('link').href ?? ''
-  const url = window.prompt('Link URL', prev)
-  if (url === null) return
-  if (url === '') {
-    editor.value?.chain().focus().extendMarkRange('link').unsetLink().run()
-  } else {
-    editor.value?.chain().focus().extendMarkRange('link').setLink({ href: url }).run()
-  }
-  nextTick(updateMenu)
-}
-
-function setColor(e: Event) {
-  editor.value?.chain().focus().setColor((e.target as HTMLInputElement).value).run()
-}
 </script>
 
 <template>
   <div ref="root">
+    <!-- Fixed toolbar bar (standalone / TinyMCE-like): persistent above content. -->
+    <div v-if="editor && showFixedToolbar" class="rte-toolbar">
+      <RteToolbarButtons
+        :editor="editor"
+        :lists="lists"
+        :show-variables="enableVariables"
+        @variable="openVariablesFromToolbar"
+      />
+    </div>
+
     <!-- Bubble toolbar: fixed-positioned, kept inside the themed root so tokens
          and dark mode resolve. @mousedown.prevent keeps the editor selection
          from collapsing when a button is pressed. -->
@@ -339,69 +366,12 @@ function setColor(e: Event) {
       :style="{ top: menuTop + 'px', left: menuLeft + 'px' }"
       @mousedown.prevent
     >
-      <button
-        type="button"
-        class="rte-btn"
-        :class="{ 'rte-active': editor.isActive('bold') }"
-        @click="editor.chain().focus().toggleBold().run()"
-      >
-        <Bold class="h-3.5 w-3.5" />
-      </button>
-      <button
-        type="button"
-        class="rte-btn"
-        :class="{ 'rte-active': editor.isActive('italic') }"
-        @click="editor.chain().focus().toggleItalic().run()"
-      >
-        <Italic class="h-3.5 w-3.5" />
-      </button>
-      <button
-        type="button"
-        class="rte-btn"
-        :class="{ 'rte-active': editor.isActive('underline') }"
-        @click="editor.chain().focus().toggleUnderline().run()"
-      >
-        <UnderlineIcon class="h-3.5 w-3.5" />
-      </button>
-      <button
-        type="button"
-        class="rte-btn"
-        :class="{ 'rte-active': editor.isActive('strike') }"
-        @click="editor.chain().focus().toggleStrike().run()"
-      >
-        <Strikethrough class="h-3.5 w-3.5" />
-      </button>
-      <button
-        type="button"
-        class="rte-btn"
-        :class="{ 'rte-active': editor.isActive('link') }"
-        @click="setLink"
-      >
-        <Link2 class="h-3.5 w-3.5" />
-      </button>
-      <label class="rte-btn relative cursor-pointer">
-        <span class="h-3.5 w-3.5 rounded-sm border border-line bg-gradient-to-br from-red-500 via-green-500 to-blue-500" />
-        <input type="color" class="absolute inset-0 cursor-pointer opacity-0" @input="setColor" />
-      </label>
-      <template v-if="lists">
-        <span class="mx-0.5 h-4 w-px bg-line" />
-        <button
-          type="button"
-          class="rte-btn"
-          :class="{ 'rte-active': editor.isActive('bulletList') }"
-          @click="editor.chain().focus().toggleBulletList().run()"
-        >
-          <List class="h-3.5 w-3.5" />
-        </button>
-        <button
-          type="button"
-          class="rte-btn"
-          :class="{ 'rte-active': editor.isActive('orderedList') }"
-          @click="editor.chain().focus().toggleOrderedList().run()"
-        >
-          <ListOrdered class="h-3.5 w-3.5" />
-        </button>
-      </template>
+      <RteToolbarButtons
+        :editor="editor"
+        :lists="lists"
+        :show-variables="enableVariables"
+        @variable="openVariablesFromToolbar"
+      />
     </div>
 
     <!-- `{{` variable autocomplete: anchored to the caret (flips up if needed). -->

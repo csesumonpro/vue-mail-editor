@@ -255,6 +255,23 @@
   transform: translate(-50%, calc(-100% - 8px));
 }
 
+/* Fixed (persistent) RTE toolbar — used by the standalone TextEditor. */
+.rte-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex-wrap: wrap;
+  padding: 4px 6px;
+  border-bottom: 1px solid var(--cvee-border);
+  background: var(--cvee-bg-surface);
+}
+
+/* Standalone TextEditor: give the editing area room and padding. */
+.cvee-text-editor .rte-content {
+  padding: 8px 10px;
+  min-height: 120px;
+}
+
 /* Inline template-variable chip (Tiptap NodeView) */
 .cvee-var {
   white-space: nowrap;

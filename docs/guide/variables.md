@@ -1,12 +1,12 @@
 # Template variables
 
-Template variables are merge tags (e.g. `{{{first_name}}}`) that you author
+Template variables are merge tags (e.g. <code v-pre>{{{first_name}}}</code>) that you author
 inside text and heading blocks and resolve at send time. Each variable is
 defined once at the **design level** and reused across the whole template.
 
 ## Authoring
 
-Inside any **Text** or **Heading** block, type `{{` to open the variable
+Inside any **Text** or **Heading** block, type <code v-pre>{{</code> to open the variable
 autocomplete:
 
 - Existing variables are listed and filtered as you type.
@@ -15,8 +15,8 @@ autocomplete:
 The variable is inserted as a styled inline **chip**. Click a chip to edit its
 type / fallback or delete it.
 
-> Typing a literal `{{{...}}}` (three braces) does **not** trigger the
-> autocomplete — only the two-brace `{{` prefix does.
+> Typing a literal <code v-pre>{{{...}}}</code> (three braces) does **not** trigger the
+> autocomplete — only the two-brace <code v-pre>{{</code> prefix does.
 
 ## What a variable is
 
@@ -33,7 +33,7 @@ variable registry, so editing one variable updates every place it appears.
 
 ## Export
 
-On export, chips become `{{{name}}}` tokens by default — your server-side merge
+On export, chips become <code v-pre>{{{name}}}</code> tokens by default — your server-side merge
 engine replaces them with real values at send time.
 
 ::: code-group
@@ -113,16 +113,16 @@ api.setVariables([...vars, { name: 'city', type: 'string', fallback: '' }])
 | --- | ----------- |
 | `getVariables()` | Returns a snapshot of the variable registry. |
 | `setVariables(vars)` | Replaces the registry (recorded in undo history). |
-| `exportHtml(mode?)` | `'token'` (default) keeps `{{{name}}}`; `'fallback'` substitutes fallback values. |
+| `exportHtml(mode?)` | `'token'` (default) keeps <code v-pre>{{{name}}}</code>; `'fallback'` substitutes fallback values. |
 
 ## Notes & limits
 
-- Variables are authored in **Text** and **Heading** blocks. The `{{{name}}}`
+- Variables are authored in **Text** and **Heading** blocks. The <code v-pre>{{{name}}}</code>
   token is plain text, so it also survives export from other fields if typed
   manually.
 - Variable **names** allow letters, numbers and underscores only (no dots or
-  spaces) — dots would clash with the `{{{a.b}}}` token grammar.
+  spaces) — dots would clash with the <code v-pre>{{{a.b}}}</code> token grammar.
 - A variable's **name is fixed at creation** (rename is not supported in this
   version) — this keeps existing chips from pointing at a missing name.
 - If a variable is deleted while chips remain, those chips render in a muted
-  "unknown" state and export as a bare `{{{name}}}` token.
+  "unknown" state and export as a bare <code v-pre>{{{name}}}</code> token.

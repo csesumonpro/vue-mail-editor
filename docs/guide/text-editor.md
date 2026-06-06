@@ -63,7 +63,7 @@ and lists).
 
 ## Template variables (opt-in)
 
-Provide the `variables` prop to enable the same `{{` autocomplete + chips as the
+Provide the `variables` prop to enable the same <code v-pre>{{</code> autocomplete + chips as the
 email editor. Use `v-model:variables` to keep the registry in sync.
 
 ::: code-group
@@ -101,16 +101,16 @@ const vars = ref([{ name: 'first_name', type: 'string', fallback: 'there' }])
 
 :::
 
-When variables are enabled, you can insert one **two ways**: type `{{` for the
+When variables are enabled, you can insert one **two ways**: type <code v-pre>{{</code> for the
 autocomplete, or click the **`{}` button** in the toolbar — both open the same
 list-with-Create popover and drop the chip at the cursor.
 
-Without the `variables` prop, the editor is a plain rich-text field (no `{{`,
+Without the `variables` prop, the editor is a plain rich-text field (no <code v-pre>{{</code>,
 no `{}` button). See [Template variables](/guide/variables) for how chips and
 fallbacks work.
 
-> The HTML keeps variable chips as `<span data-variable="name">{{{name}}}</span>`.
-> To turn them into `{{{name}}}` tokens (or fallback values) for sending, run it
+> The HTML keeps variable chips as <code v-pre><span data-variable="name">{{{name}}}</span></code>.
+> To turn them into <code v-pre>{{{name}}}</code> tokens (or fallback values) for sending, run it
 > through your own merge step, or compose the design with the email editor's
 > export.
 

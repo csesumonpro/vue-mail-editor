@@ -73,3 +73,430 @@
   border-color: var(--vp-c-brand-1);
   transform: translateY(-2px);
 }
+
+/* ================================================================== */
+/* Marketing site (landing / features / showcase)                      */
+/* Scoped under .vee-page / .vee-* so docs pages are untouched.         */
+/* ================================================================== */
+:root {
+  --vee-accent: #10b981;
+  --vee-accent-d: #059669;
+  --vee-ink: #0b0f1a;
+}
+
+/* Let marketing pages go full-bleed (the page-top slot lives in VPPage). */
+.VPContent:has(.vee-page),
+.VPPage:has(.vee-page) {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+.vee-page {
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+.vee-container {
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+.vee-section {
+  padding: 88px 0;
+}
+.vee-section--tight {
+  padding: 56px 0;
+}
+.vee-eyebrow {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--vee-accent);
+  margin-bottom: 14px;
+}
+.vee-h2 {
+  font-size: clamp(28px, 4vw, 40px);
+  line-height: 1.1;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin: 0 0 14px;
+  color: var(--vp-c-text-1);
+}
+.vee-sub {
+  font-size: 17px;
+  color: var(--vp-c-text-2);
+  max-width: 640px;
+  margin: 0 0 8px;
+}
+.vee-center {
+  text-align: center;
+}
+.vee-center .vee-sub {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Buttons --------------------------------------------------------- */
+.vee-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: 10px;
+  padding: 11px 20px;
+  transition:
+    transform 0.18s,
+    background-color 0.18s,
+    border-color 0.18s,
+    opacity 0.18s;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+.vee-btn:hover {
+  transform: translateY(-1px);
+}
+.vee-btn-primary {
+  background: var(--vee-accent);
+  color: #04130d;
+}
+.vee-btn-primary:hover {
+  background: var(--vee-accent-d);
+}
+.vee-btn-ghost {
+  background: transparent;
+  color: var(--vp-c-text-1);
+  border-color: var(--vp-c-divider);
+}
+.vee-btn-ghost:hover {
+  border-color: var(--vp-c-text-1);
+}
+/* Ghost buttons on the always-dark hero / CTA bands need light text. */
+.vee-hero .vee-btn-ghost,
+.vee-cta .vee-btn-ghost {
+  color: #e2e8f0;
+  border-color: rgba(148, 163, 184, 0.4);
+}
+.vee-hero .vee-btn-ghost:hover,
+.vee-cta .vee-btn-ghost:hover {
+  color: #fff;
+  border-color: #e2e8f0;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+/* Hero (always-dark band) ---------------------------------------- */
+.vee-hero {
+  position: relative;
+  overflow: hidden;
+  background: var(--vee-ink);
+  color: #e2e8f0;
+  padding: 96px 0 72px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.16);
+}
+.vee-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(60% 50% at 50% -8%, rgba(16, 185, 129, 0.22), transparent 70%),
+    radial-gradient(40% 40% at 85% 10%, rgba(56, 189, 248, 0.1), transparent 70%);
+  pointer-events: none;
+}
+.vee-hero-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(148, 163, 184, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(148, 163, 184, 0.06) 1px, transparent 1px);
+  background-size: 44px 44px;
+  mask-image: radial-gradient(70% 60% at 50% 0%, #000, transparent 75%);
+  pointer-events: none;
+}
+.vee-hero .vee-container {
+  position: relative;
+}
+.vee-hero h1 {
+  font-size: clamp(36px, 6vw, 62px);
+  line-height: 1.05;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  margin: 0 0 18px;
+  max-width: 18ch;
+}
+.vee-hero h1 .vee-grad {
+  background: linear-gradient(90deg, #fff, #9ff5d3 60%, var(--vee-accent));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.vee-hero p.vee-lede {
+  font-size: clamp(17px, 2.4vw, 21px);
+  color: #94a3b8;
+  max-width: 60ch;
+  margin: 0 0 30px;
+}
+.vee-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+.vee-pill-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  margin-top: 30px;
+  color: #64748b;
+  font-size: 13px;
+  font-weight: 500;
+}
+.vee-pill-badges b {
+  color: #cbd5e1;
+}
+
+/* Install command pill */
+.vee-install {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 26px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: rgba(148, 163, 184, 0.1);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  font-family: var(--vp-font-family-mono);
+  font-size: 13.5px;
+  color: #e2e8f0;
+}
+.vee-install .vee-prompt {
+  color: var(--vee-accent);
+}
+.vee-copy {
+  cursor: pointer;
+  color: #94a3b8;
+  background: none;
+  border: 0;
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 6px;
+}
+.vee-copy:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* Live editor frame ---------------------------------------------- */
+.vee-demo-frame {
+  height: 660px;
+  max-height: 78vh;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid var(--vp-c-divider);
+  box-shadow: 0 24px 60px -28px rgba(2, 6, 23, 0.5);
+  background: var(--vp-c-bg);
+}
+.vee-demo-skeleton {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--vp-c-text-3);
+  font-size: 14px;
+  background:
+    linear-gradient(90deg, transparent, rgba(148, 163, 184, 0.08), transparent);
+  background-size: 200% 100%;
+  animation: vee-shimmer 1.4s infinite;
+}
+@keyframes vee-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Card grids ------------------------------------------------------ */
+.vee-grid {
+  display: grid;
+  gap: 18px;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+.vee-card {
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 14px;
+  padding: 24px;
+  background: var(--vp-c-bg-soft);
+  transition:
+    border-color 0.2s,
+    transform 0.2s;
+}
+.vee-card:hover {
+  border-color: var(--vee-accent);
+  transform: translateY(-3px);
+}
+.vee-card-icon {
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--vee-accent) 14%, transparent);
+  color: var(--vee-accent);
+  margin-bottom: 14px;
+}
+.vee-card h3 {
+  font-size: 17px;
+  font-weight: 700;
+  margin: 0 0 8px;
+  letter-spacing: -0.01em;
+}
+.vee-card p {
+  font-size: 14.5px;
+  color: var(--vp-c-text-2);
+  margin: 0;
+  line-height: 1.55;
+}
+
+/* Block chips (showcase) ----------------------------------------- */
+.vee-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+.vee-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: 999px;
+  border: 1px solid var(--vp-c-divider);
+  background: var(--vp-c-bg-soft);
+  font-size: 14px;
+  font-weight: 600;
+}
+.vee-chip svg {
+  color: var(--vee-accent);
+}
+.vee-layouts {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 14px;
+  max-width: 720px;
+  margin: 0 auto;
+}
+.vee-layout {
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 12px;
+  padding: 14px;
+  background: var(--vp-c-bg-soft);
+  text-align: center;
+}
+.vee-layout-bars {
+  display: flex;
+  gap: 6px;
+  height: 34px;
+  margin-bottom: 10px;
+}
+.vee-layout-bars i {
+  background: color-mix(in srgb, var(--vee-accent) 22%, var(--vp-c-bg));
+  border: 1px solid color-mix(in srgb, var(--vee-accent) 30%, transparent);
+  border-radius: 6px;
+}
+.vee-layout span {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--vp-c-text-2);
+}
+
+/* Split highlight rows ------------------------------------------- */
+.vee-split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  align-items: center;
+}
+@media (max-width: 860px) {
+  .vee-split {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+}
+.vee-band {
+  background: var(--vp-c-bg-soft);
+  border-top: 1px solid var(--vp-c-divider);
+  border-bottom: 1px solid var(--vp-c-divider);
+}
+
+/* API list -------------------------------------------------------- */
+.vee-api {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 10px;
+}
+.vee-api code {
+  display: block;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--vp-c-divider);
+  background: var(--vp-c-bg-soft);
+  font-size: 13px;
+}
+
+/* Final CTA ------------------------------------------------------- */
+.vee-cta {
+  background: var(--vee-ink);
+  color: #e2e8f0;
+  border-radius: 20px;
+  padding: 56px 32px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.vee-cta::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(50% 80% at 50% 0%, rgba(16, 185, 129, 0.22), transparent 70%);
+}
+.vee-cta > * {
+  position: relative;
+}
+.vee-cta h2 {
+  color: #fff;
+  font-size: clamp(26px, 4vw, 36px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin: 0 0 12px;
+  border: 0;
+  padding: 0;
+}
+.vee-cta p {
+  color: #94a3b8;
+  margin: 0 0 26px;
+}
+
+/* Footer ---------------------------------------------------------- */
+.vee-footer {
+  border-top: 1px solid var(--vp-c-divider);
+  padding: 40px 0;
+  color: var(--vp-c-text-2);
+  font-size: 14px;
+}
+.vee-footer .vee-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: space-between;
+  align-items: center;
+}
+.vee-footer a {
+  color: var(--vp-c-text-2);
+  font-weight: 500;
+}
+.vee-footer a:hover {
+  color: var(--vee-accent);
+}

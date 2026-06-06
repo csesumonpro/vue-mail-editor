@@ -1,65 +1,120 @@
 import { defineConfig } from 'vitepress'
+import { fileURLToPath, URL } from 'node:url'
+import { REPO, NPM } from './theme/links'
 
-// Served under siteurl/docs — change `base` if you mount it elsewhere.
+// GitHub Pages base path.
+//  - Project page (default here): '/vue-email-editor/'
+//  - User/org page OR a custom domain (add docs/public/CNAME): '/'
+const BASE = '/vue-email-editor/'
+
 export default defineConfig({
-  base: '/docs/',
+  base: BASE,
   lang: 'en-US',
   title: 'Vue Email Editor',
   description:
     'A customizable, extensible drag-and-drop email template editor for Vue 3.',
   cleanUrls: true,
   lastUpdated: true,
-  themeConfig: {
-    nav: [
-      { text: 'Guide', link: '/guide/getting-started' },
-      { text: 'API', link: '/reference/api' },
+
+  head: [
+    ['link', { rel: 'icon', type: 'image/svg+xml', href: `${BASE}favicon.svg` }],
+    ['meta', { name: 'theme-color', content: '#10b981' }],
+    ['meta', { property: 'og:type', content: 'website' }],
+    ['meta', { property: 'og:title', content: 'Vue Email Editor' }],
+    [
+      'meta',
       {
-        text: 'npm',
-        link: 'https://www.npmjs.com/package/@csesumonpro/vue-email-editor',
+        property: 'og:description',
+        content: 'A customizable, extensible drag-and-drop email template editor for Vue 3.',
       },
     ],
+    ['meta', { property: 'og:image', content: `${BASE}og.png` }],
+    ['meta', { name: 'twitter:card', content: 'summary_large_image' }],
+    ['meta', { name: 'twitter:title', content: 'Vue Email Editor' }],
+    [
+      'meta',
+      {
+        name: 'twitter:description',
+        content: 'A customizable, extensible drag-and-drop email template editor for Vue 3.',
+      },
+    ],
+    ['meta', { name: 'twitter:image', content: `${BASE}og.png` }],
+  ],
+
+  themeConfig: {
+    logo: '/logo.svg',
+    siteTitle: 'Vue Email Editor',
+    nav: [
+      { text: 'Features', link: '/features' },
+      { text: 'Showcase', link: '/showcase' },
+      { text: 'Guide', link: '/guide/getting-started' },
+      { text: 'API', link: '/reference/api' },
+    ],
     sidebar: {
-      '/': [
-        {
-          text: 'Introduction',
-          items: [
-            { text: 'What is it?', link: '/guide/introduction' },
-            { text: 'Getting started', link: '/guide/getting-started' },
-          ],
-        },
-        {
-          text: 'Usage',
-          items: [
-            { text: 'Props & events', link: '/guide/props' },
-            { text: 'Configuration', link: '/guide/configuration' },
-            { text: 'Template variables', link: '/guide/variables' },
-            { text: 'Standalone text editor', link: '/guide/text-editor' },
-            { text: 'Customizing the top bar', link: '/guide/top-bar' },
-            { text: 'Theming', link: '/guide/theming' },
-            { text: 'Custom blocks', link: '/guide/custom-blocks' },
-            { text: 'Server-side & database', link: '/guide/server-side' },
-          ],
-        },
-        {
-          text: 'Reference',
-          items: [
-            { text: 'Built-in blocks', link: '/reference/blocks' },
-            { text: 'Imperative API', link: '/reference/api' },
-            { text: 'Inspector controls', link: '/reference/controls' },
-          ],
-        },
-      ],
+      // Scope the sidebar to docs only — marketing pages get no sidebar.
+      '/guide/': sidebarDocs(),
+      '/reference/': sidebarDocs(),
     },
     search: { provider: 'local' },
     socialLinks: [
-      {
-        icon: 'npm',
-        link: 'https://www.npmjs.com/package/@csesumonpro/vue-email-editor',
-      },
+      { icon: 'github', link: REPO },
+      { icon: 'npm', link: NPM },
     ],
     footer: {
       message: 'Released under the MIT License.',
       copyright: 'Copyright © 2026',
     },
   },
+
+  vite: {
+    resolve: {
+      // The live demo imports the BUILT library (dist) — its CSS already has
+      // Tailwind compiled, which the docs Vite build can't do from src.
+      // Run `npm run build` before `npm run docs:dev` / `docs:build`.
+      // (More specific /style.css alias must come first.)
+      alias: [
+        {
+          find: '@csesumonpro/vue-email-editor/style.css',
+          replacement: fileURLToPath(new URL('../../dist/style.css', import.meta.url)),
+        },
+        {
+          find: '@csesumonpro/vue-email-editor',
+          replacement: fileURLToPath(new URL('../../dist/vue-email-editor.js', import.meta.url)),
+        },
+      ],
+    },
+  },
 })
+
+function sidebarDocs() {
+  return [
+    {
+      text: 'Introduction',
+      items: [
+        { text: 'What is it?', link: '/guide/introduction' },
+        { text: 'Getting started', link: '/guide/getting-started' },
+      ],
+    },
+    {
+      text: 'Usage',
+      items: [
+        { text: 'Props & events', link: '/guide/props' },
+        { text: 'Configuration', link: '/guide/configuration' },
+        { text: 'Template variables', link: '/guide/variables' },
+        { text: 'Standalone text editor', link: '/guide/text-editor' },
+        { text: 'Customizing the top bar', link: '/guide/top-bar' },
+        { text: 'Theming', link: '/guide/theming' },
+        { text: 'Custom blocks', link: '/guide/custom-blocks' },
+        { text: 'Server-side & database', link: '/guide/server-side' },
+      ],
+    },
+    {
+      text: 'Reference',
+      items: [
+        { text: 'Built-in blocks', link: '/reference/blocks' },
+        { text: 'Imperative API', link: '/reference/api' },
+        { text: 'Inspector controls', link: '/reference/controls' },
+      ],
+    },
+  ]
+}

@@ -1,4 +1,4 @@
-import type { Device } from '@/types/schema'
+import type { Device, DesignVariable } from '@/types/schema'
 import type { TemplateDef } from '@/config/templates'
 
 export type { TemplateDef }
@@ -43,6 +43,8 @@ export interface EditorConfig {
   templates?: TemplateDef[]
   /** Autosave debounce in ms (local storage mode). */
   autosaveMs?: number
+  /** Predefined template variables (seeded into new/empty designs). */
+  variables?: DesignVariable[]
 }
 
 export interface ResolvedConfig {
@@ -52,6 +54,7 @@ export interface ResolvedConfig {
   labels: Required<EditorLabels>
   templates?: TemplateDef[]
   autosaveMs: number
+  variables: DesignVariable[]
 }
 
 export function resolveConfig(c?: EditorConfig): ResolvedConfig {
@@ -83,5 +86,6 @@ export function resolveConfig(c?: EditorConfig): ResolvedConfig {
     },
     templates: c?.templates,
     autosaveMs: c?.autosaveMs ?? 800,
+    variables: c?.variables ?? [],
   }
 }

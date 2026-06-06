@@ -18,9 +18,16 @@ type Tab = 'preview' | 'code'
 const tab = ref<Tab>('preview')
 const copied = ref(false)
 
+// Whether the design defines any template variables (gates the fallback toggle).
+const hasVariables = computed(() => (store.design.variables?.length ?? 0) > 0)
+// When on, `{{{name}}}` tokens are replaced with each variable's fallback value.
+const useFallback = ref(false)
+
 // Raw, email-safe HTML — used for copy/download (compact keeps inline-block
 // social icons / menu links from gaining whitespace gaps).
-const html = computed(() => (props.open ? exportHtml(store.design, blocks) : ''))
+const html = computed(() =>
+  props.open ? exportHtml(store.design, blocks, useFallback.value ? 'fallback' : 'token') : '',
+)
 
 // Pretty-printed version, lazily beautified, shown only in the Code tab.
 const formatted = ref('')
@@ -72,6 +79,13 @@ function download() {
         <div class="flex items-center justify-between border-b border-line px-5 py-3">
           <h2 class="text-sm font-semibold text-ink">Export HTML</h2>
           <div class="flex items-center gap-2">
+            <label
+              v-if="hasVariables"
+              class="flex cursor-pointer items-center gap-1.5 text-xs text-subtle"
+            >
+              <input v-model="useFallback" type="checkbox" class="accent-black" />
+              Show fallback values
+            </label>
             <div class="flex rounded-md border border-line p-0.5 text-xs">
               <button
                 type="button"

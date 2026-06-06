@@ -255,6 +255,32 @@
   transform: translate(-50%, calc(-100% - 8px));
 }
 
+/* Inline template-variable chip (Tiptap NodeView) */
+.cvee-var {
+  white-space: nowrap;
+}
+.cvee-var-chip {
+  display: inline-block;
+  padding: 0 4px;
+  border-radius: 4px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.92em;
+  line-height: 1.4;
+  cursor: pointer;
+  color: var(--cvee-accent);
+  background: color-mix(in srgb, var(--cvee-accent) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--cvee-accent) 24%, transparent);
+}
+.cvee-var-chip:hover,
+.cvee-var-chip[data-selected='true'] {
+  background: color-mix(in srgb, var(--cvee-accent) 22%, transparent);
+}
+.cvee-var-chip--unknown {
+  color: var(--cvee-status-danger);
+  background: color-mix(in srgb, var(--cvee-status-danger) 12%, transparent);
+  border-color: color-mix(in srgb, var(--cvee-status-danger) 24%, transparent);
+}
+
 /* Drag & drop: placeholder shown where the item will land */
 .drop-ghost {
   opacity: 0.5;

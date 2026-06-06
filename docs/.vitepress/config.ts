@@ -32,6 +32,7 @@ export default defineConfig({
           items: [
             { text: 'Props & events', link: '/guide/props' },
             { text: 'Configuration', link: '/guide/configuration' },
+            { text: 'Template variables', link: '/guide/variables' },
             { text: 'Customizing the top bar', link: '/guide/top-bar' },
             { text: 'Theming', link: '/guide/theming' },
             { text: 'Custom blocks', link: '/guide/custom-blocks' },

@@ -167,6 +167,10 @@ const rootClass = computed(() => [instanceClass, { dark: store.isDark }])
 /* Lifecycle --------------------------------------------------------- */
 function applyContentWidth() {
   if (config.contentWidth) store.design.body.values.contentWidth = config.contentWidth
+  // Seed predefined variables only into a fresh design (never clobber a loaded one).
+  if (config.variables.length && !store.design.variables?.length) {
+    store.design.variables = config.variables
+  }
 }
 
 if (controlled) {
@@ -222,7 +226,9 @@ const api: EditorApi = {
   getDesign: () => deepClone(store.design),
   loadDesign: (d) => store.loadDesign(d),
   newDesign: () => store.resetDesign(),
-  exportHtml: () => exportHtml(store.design, registry),
+  exportHtml: (mode) => exportHtml(store.design, registry, mode),
+  getVariables: () => deepClone(store.design.variables ?? []),
+  setVariables: (vars) => store.updateVariables(vars),
   save: () => doSave(),
   export: () => onExportClick(),
   undo: () => store.undo(),

@@ -15,12 +15,12 @@ export function createDesign(): Design {
   ]
 
   body.rows = [row]
-  return { schemaVersion: SCHEMA_VERSION, body }
+  return { schemaVersion: SCHEMA_VERSION, variables: [], body }
 }
 
 /** A completely empty design: body with one empty 1-column row. */
 export function createEmptyDesign(): Design {
   const body = createBody()
   body.rows = [createRow([12])]
-  return { schemaVersion: SCHEMA_VERSION, body }
+  return { schemaVersion: SCHEMA_VERSION, variables: [], body }
 }

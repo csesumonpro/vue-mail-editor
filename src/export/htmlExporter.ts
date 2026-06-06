@@ -14,7 +14,9 @@ import {
   borderCss,
   bgColor,
   bgImageCss,
+  resolveVariables,
   type ExportContext,
+  type VariableMode,
 } from './helpers'
 
 function renderContent(content: Content, blocks: BlockRegistry, ctx: ExportContext): string {
@@ -85,10 +87,19 @@ function renderRow(row: Row, ctx: ExportContext, blocks: BlockRegistry): string 
   return `<tr><td class="${cls}" style="${tdStyle}">${colsWrap}</td></tr>`
 }
 
-export function exportHtml(design: Design, blocks: BlockRegistry): string {
+export function exportHtml(
+  design: Design,
+  blocks: BlockRegistry,
+  mode: VariableMode = 'token',
+): string {
   const body = design.body
   const v = body.values
-  const ctx: ExportContext = { contentWidth: v.contentWidth, linkColor: v.linkColor }
+  const ctx: ExportContext = {
+    contentWidth: v.contentWidth,
+    linkColor: v.linkColor,
+    variables: design.variables,
+    variableMode: mode,
+  }
 
   const rows = body.rows.map((r) => renderRow(r, ctx, blocks)).join('')
 
@@ -103,7 +114,7 @@ export function exportHtml(design: Design, blocks: BlockRegistry): string {
     `</table>` +
     `<!--[if mso]></td></tr></table><![endif]-->`
 
-  return `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+  const doc = `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="${v.language}" dir="${v.direction}">
 <head>
 <meta charset="utf-8" />
@@ -140,4 +151,9 @@ ${container}
 </table>
 </body>
 </html>`
+
+  // In fallback mode, resolve any remaining raw `{{{name}}}` tokens left in plain
+  // fields (preheader, button text/href, etc.) that don't pass through a block's
+  // variable-aware toHtml. In token mode the document is returned untouched.
+  return mode === 'fallback' ? resolveVariables(doc, design.variables, 'fallback') : doc
 }

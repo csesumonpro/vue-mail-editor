@@ -9,7 +9,8 @@ import type {
 import type { ExportContext } from '@/export/helpers'
 
 export type { ControlDef, ControlType, SelectOption, ExportContext }
-export type { Design } from '@/types/schema'
+export type { VariableMode } from '@/export/helpers'
+export type { Design, DesignVariable } from '@/types/schema'
 
 /** Payload emitted/handled when saving the design as a template. */
 export interface TemplatePayload {
@@ -59,8 +60,16 @@ export interface EditorApi {
   loadDesign(design: import('@/types/schema').Design): void
   /** Clear to a fresh, empty design (no confirm prompt — that's the UI's job). */
   newDesign(): void
-  /** Render the current design to email-safe HTML and return it. */
-  exportHtml(): string
+  /**
+   * Render the current design to email-safe HTML and return it.
+   * `mode` defaults to `'token'` (keep `{{{name}}}`); pass `'fallback'` to
+   * substitute each variable's fallback value for static HTML.
+   */
+  exportHtml(mode?: import('@/export/helpers').VariableMode): string
+  /** Read the template variable registry. */
+  getVariables(): import('@/types/schema').DesignVariable[]
+  /** Replace the template variable registry. */
+  setVariables(variables: import('@/types/schema').DesignVariable[]): void
   /** Trigger the Save flow (emits `save` + runs the `onSave` prop, if any). */
   save(): void | Promise<void>
   /** Trigger the Export flow (emits `export` + runs the `onExport` prop, if any). */

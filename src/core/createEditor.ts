@@ -4,6 +4,7 @@ import type {
   Content,
   ContentType,
   Design,
+  DesignVariable,
   Device,
   Row,
   Selection,
@@ -200,6 +201,11 @@ export function createEditor(opts: CreateEditorOptions) {
     Object.assign(found.content.values, patch)
   }
 
+  function updateVariables(next: DesignVariable[], key?: string) {
+    record(key)
+    design.value.variables = next
+  }
+
   /* Structure mutations ----------------------------------------------- */
   function addRow(cells: number[] = [12], atIndex?: number): Row {
     record()
@@ -362,6 +368,7 @@ export function createEditor(opts: CreateEditorOptions) {
     updateRowValues,
     updateColumnValues,
     updateContentValues,
+    updateVariables,
     // structure
     addRow,
     addContent,

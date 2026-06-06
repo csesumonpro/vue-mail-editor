@@ -240,8 +240,17 @@ export interface Body {
   rows: Row[]
 }
 
+/** A template-level merge variable, reusable across the whole design. */
+export interface DesignVariable {
+  name: string
+  type: 'string' | 'number'
+  fallback: string
+}
+
 export interface Design {
   schemaVersion: number
+  /** Template merge variables (optional — old designs parse without it). */
+  variables?: DesignVariable[]
   body: Body
 }
 

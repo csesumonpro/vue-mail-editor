@@ -9,11 +9,12 @@ import type {
   SocialValues,
   SpacerValues,
 } from '@/types/schema'
-import { esc, pad, borderCss, cell, inlineText } from '@/export/helpers'
+import type { ExportContext } from '@/export/helpers'
+import { esc, pad, borderCss, cell, inlineText, resolveVariables } from '@/export/helpers'
 import { resolveSocial } from '@/config/social'
 
-export function headingToHtml(v: HeadingValues): string {
-  const inner = inlineText(v.text)
+export function headingToHtml(v: HeadingValues, ctx: ExportContext): string {
+  const inner = inlineText(resolveVariables(v.text, ctx.variables, ctx.variableMode))
   const text = v.href
     ? `<a href="${esc(v.href)}" style="color:inherit;text-decoration:none;">${inner}</a>`
     : inner
@@ -24,17 +25,18 @@ export function headingToHtml(v: HeadingValues): string {
   )
 }
 
-export function paragraphToHtml(v: ParagraphValues): string {
+export function paragraphToHtml(v: ParagraphValues, ctx: ExportContext): string {
   return cell(
     v.align,
     pad(v.padding),
-    `<div style="font-family:${v.fontFamily.value};font-size:${v.fontSize}px;color:${v.color};line-height:${v.lineHeight};">${v.text}</div>`,
+    `<div style="font-family:${v.fontFamily.value};font-size:${v.fontSize}px;color:${v.color};line-height:${v.lineHeight};">${resolveVariables(v.text, ctx.variables, ctx.variableMode)}</div>`,
   )
 }
 
-export function buttonToHtml(v: ButtonValues): string {
+export function buttonToHtml(v: ButtonValues, ctx: ExportContext): string {
   const b = borderCss(v.border)
-  const a = `<a href="${esc(v.href)}" target="${v.target}" style="display:inline-block;background:${v.backgroundColor};color:${v.color};font-family:${v.fontFamily.value};font-size:${v.fontSize}px;font-weight:${v.fontWeight};text-decoration:none;border-radius:${v.borderRadius}px;${b ? `border:${b};` : ''}padding:${pad(v.innerPadding)};mso-padding-alt:0;${v.fullWidth ? 'width:100%;text-align:center;box-sizing:border-box;' : ''}">${esc(v.text)}</a>`
+  const label = inlineText(resolveVariables(v.text, ctx.variables, ctx.variableMode))
+  const a = `<a href="${esc(v.href)}" target="${v.target}" style="display:inline-block;background:${v.backgroundColor};color:${v.color};font-family:${v.fontFamily.value};font-size:${v.fontSize}px;font-weight:${v.fontWeight};text-decoration:none;border-radius:${v.borderRadius}px;${b ? `border:${b};` : ''}padding:${pad(v.innerPadding)};mso-padding-alt:0;${v.fullWidth ? 'width:100%;text-align:center;box-sizing:border-box;' : ''}">${label}</a>`
   return cell(v.align, pad(v.containerPadding), a)
 }
 

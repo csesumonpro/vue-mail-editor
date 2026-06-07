@@ -16,6 +16,14 @@ export interface EditorActions {
   export?: boolean
 }
 
+/** Which fields the email metadata header shows (subject, from, reply-to, preview). */
+export interface MetaFields {
+  from?: boolean
+  replyTo?: boolean
+  subject?: boolean
+  preview?: boolean
+}
+
 /** Text/tooltip labels for built-in actions (rename without replacing the bar). */
 export interface EditorLabels {
   brand?: string
@@ -45,6 +53,11 @@ export interface EditorConfig {
   autosaveMs?: number
   /** Predefined template variables (seeded into new/empty designs). */
   variables?: DesignVariable[]
+  /**
+   * Email metadata header (subject / from / reply-to / preview text) above the
+   * canvas. `true`/omit → all fields; `false` → hidden; or pick fields.
+   */
+  meta?: boolean | MetaFields
 }
 
 export interface ResolvedConfig {
@@ -55,6 +68,7 @@ export interface ResolvedConfig {
   templates?: TemplateDef[]
   autosaveMs: number
   variables: DesignVariable[]
+  meta: Required<MetaFields>
 }
 
 export function resolveConfig(c?: EditorConfig): ResolvedConfig {
@@ -87,5 +101,18 @@ export function resolveConfig(c?: EditorConfig): ResolvedConfig {
     templates: c?.templates,
     autosaveMs: c?.autosaveMs ?? 800,
     variables: c?.variables ?? [],
+    meta: resolveMeta(c?.meta),
+  }
+}
+
+/** Resolve the metadata-header config to a concrete per-field flag set. */
+function resolveMeta(m: EditorConfig['meta']): Required<MetaFields> {
+  if (m === false) return { from: false, replyTo: false, subject: false, preview: false }
+  if (m === undefined || m === true) return { from: true, replyTo: true, subject: true, preview: true }
+  return {
+    from: m.from ?? true,
+    replyTo: m.replyTo ?? true,
+    subject: m.subject ?? true,
+    preview: m.preview ?? true,
   }
 }

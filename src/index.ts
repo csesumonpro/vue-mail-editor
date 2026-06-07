@@ -21,10 +21,17 @@ export type {
   VariableMode,
   Design,
   DesignVariable,
+  DesignMeta,
   TemplatePayload,
   StorageMode,
   EditorApi,
 } from './api/types'
 export type { ThemeTokens, ThemeColors, ThemeFont } from './api/theme'
-export type { EditorConfig, EditorActions, EditorLabels, TemplateDef } from './api/config'
+export type {
+  EditorConfig,
+  EditorActions,
+  EditorLabels,
+  MetaFields,
+  TemplateDef,
+} from './api/config'
 export type { ContentType } from './types/schema'

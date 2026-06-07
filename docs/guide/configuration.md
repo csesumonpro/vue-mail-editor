@@ -45,6 +45,24 @@ const config = {
 | `labels` | `EditorLabels` | English defaults | Rename built-in action labels & tooltips. |
 | `templates` | `TemplateDef[]` | built-ins | Replace the starter-template gallery. |
 | `autosaveMs` | `number` | `800` | localStorage autosave debounce (ms). |
+| `meta` | `boolean \| MetaFields` | all shown | Email metadata header (subject/from/reply-to/preview). |
+
+## `meta` — email header fields
+
+A Resend-style header above the canvas with **From**, **Reply-To**, **Subject**,
+and **Preview text** (Reply-To and Preview collapse to chips until used). Pass
+`false` to hide it, or an object to pick fields:
+
+```ts
+const config: EditorConfig = {
+  meta: { from: true, replyTo: false, subject: true, preview: true },
+  // meta: false  // hide the header entirely
+}
+```
+
+Subject/from/reply-to are stored on `design.meta` (not in the exported HTML);
+read them from the saved design when you send. The **Preview text** maps to
+`body.values.preheaderText`, which IS rendered as the email's hidden preheader.
 
 ## `actions` — show / hide built-ins
 

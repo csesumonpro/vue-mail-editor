@@ -247,10 +247,23 @@ export interface DesignVariable {
   fallback: string
 }
 
+/**
+ * Email sending metadata (subject, sender, reply-to). Not part of the rendered
+ * HTML — your app reads it from the design for sending. The "preview text"
+ * (preheader) lives in `body.values.preheaderText` since it IS in the export.
+ */
+export interface DesignMeta {
+  subject?: string
+  from?: string
+  replyTo?: string
+}
+
 export interface Design {
   schemaVersion: number
   /** Template merge variables (optional — old designs parse without it). */
   variables?: DesignVariable[]
+  /** Sending metadata (subject/from/reply-to), optional. */
+  meta?: DesignMeta
   body: Body
 }
 

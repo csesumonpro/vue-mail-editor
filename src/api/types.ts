@@ -10,7 +10,7 @@ import type { ExportContext } from '@/export/helpers'
 
 export type { ControlDef, ControlType, SelectOption, ExportContext }
 export type { VariableMode } from '@/export/helpers'
-export type { Design, DesignVariable } from '@/types/schema'
+export type { Design, DesignVariable, DesignMeta } from '@/types/schema'
 
 /** Payload emitted/handled when saving the design as a template. */
 export interface TemplatePayload {

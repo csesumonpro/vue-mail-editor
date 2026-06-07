@@ -4,6 +4,7 @@ import type {
   Content,
   ContentType,
   Design,
+  DesignMeta,
   DesignVariable,
   Device,
   Row,
@@ -206,6 +207,11 @@ export function createEditor(opts: CreateEditorOptions) {
     design.value.variables = next
   }
 
+  function updateMeta(patch: Partial<DesignMeta>, key?: string) {
+    record(key)
+    design.value.meta = { ...design.value.meta, ...patch }
+  }
+
   /* Structure mutations ----------------------------------------------- */
   function addRow(cells: number[] = [12], atIndex?: number): Row {
     record()
@@ -369,6 +375,7 @@ export function createEditor(opts: CreateEditorOptions) {
     updateColumnValues,
     updateContentValues,
     updateVariables,
+    updateMeta,
     // structure
     addRow,
     addContent,

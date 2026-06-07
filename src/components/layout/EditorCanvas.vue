@@ -1,9 +1,16 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useEditor } from "@/core/useEditor"
+import { useConfig } from '@/core/useConfig'
 import BodyRenderer from '@/components/canvas/BodyRenderer.vue'
+import MetaHeader from './MetaHeader.vue'
 
 const store = useEditor()
+const config = useConfig()
+// Show the metadata header when any field is enabled (and not in preview).
+const showMeta = computed(
+  () => config.meta.from || config.meta.replyTo || config.meta.subject || config.meta.preview,
+)
 
 // Canvas frame width per device (email content width caps the desktop view).
 const frameWidth = computed(() => {
@@ -25,6 +32,7 @@ function onBackdropClick() {
     :style="{ backgroundColor: store.previewMode ? store.design.body.values.backgroundColor : undefined }"
     @click="onBackdropClick"
   >
+    <MetaHeader v-if="showMeta && !store.previewMode" @click.stop />
     <div class="flex min-h-full justify-center p-8">
       <div
         class="h-fit min-h-[400px] w-full shadow-xl ring-1 ring-black/5 transition-[max-width] duration-200"

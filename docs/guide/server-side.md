@@ -11,8 +11,9 @@ rendering HTML, and personalizing per recipient at send time.
   email (every block, style, and merge variable lives inside it).
 - **The HTML is *derived*** from the design via `exportHtml()` — it's what you
   actually send, not what you store-to-edit.
-- **Your app owns** the subject line, recipients, scheduling, and analytics —
-  those live *outside* the editor.
+- **Subject / from / reply-to** can be authored in the editor's metadata header
+  and are stored on `design.meta` (not in the HTML) — read them when you send.
+  Recipients, scheduling, and analytics still live in *your* app.
 
 ```
  ┌─ create / edit ─────────────┐      ┌─ send ──────────────────────┐
@@ -81,7 +82,7 @@ templates (
 -- the actual emails / campaigns (Save)
 emails (
   id          uuid primary key,
-  subject     text,                  -- your app owns the subject
+  subject     text,                  -- from design.meta.subject (or your own)
   design      jsonb not null,        -- editable source of truth
   html        text,                  -- OPTIONAL: cached exportHtml() for sending
   updated_at  timestamptz default now()

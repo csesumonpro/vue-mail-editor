@@ -2,6 +2,10 @@
 import { ref } from 'vue'
 import { useEditor } from '@/core/useEditor'
 import { useConfig } from '@/core/useConfig'
+import VariableInput from '@/components/common/VariableInput.vue'
+
+const FIELD_CLASS =
+  'min-w-0 flex-1 border-0 bg-transparent py-2.5 text-sm text-ink outline-none placeholder:text-faint'
 
 const store = useEditor()
 const meta = useConfig().meta
@@ -64,11 +68,11 @@ function setPreview(v: string) {
         class="flex min-h-[46px] items-center gap-3 border-b border-line-subtle last:border-b-0"
       >
         <label class="w-[84px] shrink-0 text-sm text-subtle">Subject</label>
-        <input
-          class="min-w-0 flex-1 border-0 bg-transparent py-2.5 text-sm text-ink outline-none placeholder:text-faint"
+        <VariableInput
+          :model-value="store.design.meta?.subject ?? ''"
+          :input-class="FIELD_CLASS"
           placeholder="Subject"
-          :value="store.design.meta?.subject"
-          @input="setMeta({ subject: ($event.target as HTMLInputElement).value }, 'subject')"
+          @update:model-value="setMeta({ subject: $event }, 'subject')"
         />
         <button
           v-if="meta.preview && !previewOpen"
@@ -86,11 +90,11 @@ function setPreview(v: string) {
         class="flex min-h-[46px] items-center gap-3 border-b border-line-subtle last:border-b-0"
       >
         <label class="w-[84px] shrink-0 text-sm text-subtle">Preview</label>
-        <input
-          class="min-w-0 flex-1 border-0 bg-transparent py-2.5 text-sm text-ink outline-none placeholder:text-faint"
+        <VariableInput
+          :model-value="store.design.body.values.preheaderText"
+          :input-class="FIELD_CLASS"
           placeholder="Inbox preview text"
-          :value="store.design.body.values.preheaderText"
-          @input="setPreview(($event.target as HTMLInputElement).value)"
+          @update:model-value="setPreview($event)"
         />
       </div>
     </div>

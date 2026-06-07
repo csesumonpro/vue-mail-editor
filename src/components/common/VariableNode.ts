@@ -1,6 +1,7 @@
 import { Node, mergeAttributes } from '@tiptap/core'
 import { VueNodeViewRenderer } from '@tiptap/vue-3'
 import type { DesignVariable } from '@/types/schema'
+import { formatToken } from '@/utils/variableToken'
 import VariableChip from './VariableChip.vue'
 
 /**
@@ -71,7 +72,7 @@ export const VariableNode = Node.create<VariableOptions>({
   // Keep this byte-stable: the RTE's modelValue watcher compares against
   // getHTML(), so unstable attribute order would loop setContent ↔ onUpdate.
   renderHTML({ node, HTMLAttributes }) {
-    return ['span', mergeAttributes(HTMLAttributes), `{{{${node.attrs.name}}}}`]
+    return ['span', mergeAttributes(HTMLAttributes), formatToken(node.attrs.name)]
   },
 
   addNodeView() {

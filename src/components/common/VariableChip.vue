@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import { NodeViewWrapper, nodeViewProps } from '@tiptap/vue-3'
 import type { DesignVariable } from '@/types/schema'
+import { formatToken } from '@/utils/variableToken'
 import type { VariableOptions } from './VariableNode'
 
 const props = defineProps(nodeViewProps)
@@ -12,7 +13,7 @@ const variable = computed<DesignVariable | undefined>(() => opts.value.getVariab
 const isPreview = computed(() => opts.value.isPreview())
 const known = computed(() => !!variable.value)
 // `{{{…}}}` literal built in script (a template interpolation can't hold one).
-const display = computed(() => `{{{${name.value}}}}`)
+const display = computed(() => formatToken(name.value))
 
 // Defer the edit UI to RichTextEditor (rendered outside the contenteditable DOM
 // so its buttons aren't swallowed by ProseMirror). Pass our position + doc pos.

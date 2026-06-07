@@ -1,11 +1,33 @@
 {
   "name": "@csesumonpro/vue-email-editor",
-  "version": "0.1.27",
+  "version": "0.1.28",
   "type": "module",
   "description": "A customizable, extensible drag-and-drop email template editor for Vue 3.",
   "license": "MIT",
+  "author": "csesumonpro <csesumonpro@gmail.com>",
+  "homepage": "https://csesumonpro.github.io/vue-email-editor/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/csesumonpro/vue-email-editor.git"
+  },
+  "bugs": {
+    "url": "https://github.com/csesumonpro/vue-email-editor/issues"
+  },
+  "keywords": [
+    "vue",
+    "vue3",
+    "email",
+    "email-editor",
+    "email-template",
+    "email-builder",
+    "drag-and-drop",
+    "wysiwyg",
+    "html-email",
+    "newsletter"
+  ],
   "files": [
-    "dist"
+    "dist",
+    "LICENSE"
   ],
   "main": "./dist/vue-email-editor.js",
   "module": "./dist/vue-email-editor.js",

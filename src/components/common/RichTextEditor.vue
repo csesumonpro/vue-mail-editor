@@ -14,6 +14,7 @@ import RteToolbarButtons from './RteToolbarButtons.vue'
 import { EDITOR_KEY } from '@/core/keys'
 import { useVariables } from '@/composables/useVariables'
 import { placeAnchored } from '@/utils/popover'
+import { formatToken } from '@/utils/variableToken'
 import type { DesignVariable } from '@/types/schema'
 import { Plus } from 'lucide-vue-next'
 
@@ -309,12 +310,6 @@ function onPopoverDelete() {
   popoverOpen.value = false
 }
 
-// Build the display token in script — a `{{{…}}}` literal in a template
-// interpolation confuses Vue's mustache parser.
-function token(name: string): string {
-  return `{{{${name}}}}`
-}
-
 onMounted(() => {
   window.addEventListener('scroll', onScrollOrResize, true)
   window.addEventListener('resize', onScrollOrResize)
@@ -394,7 +389,7 @@ watch(
           :class="i === varActive ? 'bg-hover' : ''"
           @click="pickVariable(v.name)"
           @mouseenter="varActive = i"
-        >{{ token(v.name) }}</button>
+        >{{ formatToken(v.name) }}</button>
       </div>
       <button
         type="button"

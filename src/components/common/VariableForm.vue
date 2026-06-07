@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import type { DesignVariable } from '@/types/schema'
+import { formatToken } from '@/utils/variableToken'
 
 const props = withDefaults(
   defineProps<{
@@ -20,7 +21,7 @@ const emit = defineEmits<{
 }>()
 
 // `{{{…}}}` literal built in script (a template interpolation can't hold one).
-const display = computed(() => `{{{${props.name}}}}`)
+const display = computed(() => formatToken(props.name))
 </script>
 
 <template>

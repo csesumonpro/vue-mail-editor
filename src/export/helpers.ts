@@ -1,4 +1,5 @@
 import type { BgImage, BorderValue, BoxValue, DesignVariable } from '@/types/schema'
+import { formatToken, tokenRe, chipRe } from '@/utils/variableToken'
 
 /** How template variables are emitted on export. */
 export type VariableMode = 'token' | 'fallback'
@@ -19,6 +20,24 @@ export function esc(s: string): string {
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+}
+
+/**
+ * Allow only safe URL schemes in exported `href`/`src` values. Relative and
+ * anchor URLs pass through; `javascript:`, `data:text/html`, `vbscript:` etc.
+ * are dropped (returns ''). Set `allowDataImage` for `<img src>` to permit
+ * inline `data:image/*` (used by the base64 upload fallback).
+ */
+const SAFE_SCHEME = /^(https?|mailto|tel):/i
+export function safeUrl(url: string | null | undefined, allowDataImage = false): string {
+  const u = (url ?? '').trim()
+  if (!u) return ''
+  // No scheme at all → relative path / anchor / query → safe.
+  if (!/^[a-z][a-z0-9+.-]*:/i.test(u)) return u
+  if (SAFE_SCHEME.test(u)) return u
+  if (allowDataImage && /^data:image\//i.test(u)) return u
+  return ''
 }
 
 export function pad(b: BoxValue): string {
@@ -34,8 +53,11 @@ export function bgColor(c: string | undefined): string {
 }
 
 export function bgImageCss(b: BgImage): string {
-  if (!b.url) return ''
-  return `background-image:url('${b.url}');background-repeat:${b.repeat};background-size:${b.size};background-position:${b.position};`
+  const url = safeUrl(b.url, true)
+  if (!url) return ''
+  // Inside url('…') — neutralize chars that could break out of the declaration.
+  const safe = url.replace(/['"()\\\n\r]/g, encodeURIComponent)
+  return `background-image:url('${safe}');background-repeat:${b.repeat};background-size:${b.size};background-position:${b.position};`
 }
 
 /**
@@ -53,19 +75,16 @@ export function resolveVariables(
   mode: VariableMode = 'token',
 ): string {
   // 1) Chip spans → token or fallback. Atoms never nest, so non-greedy is safe.
-  let out = html.replace(
-    /<span[^>]*\bdata-variable="([^"]*)"[^>]*>.*?<\/span>/gi,
-    (_m, name: string) => {
-      if (mode === 'token') return `{{{${name}}}}`
-      const v = variables?.find((x) => x.name === name)
-      return esc(v?.fallback ?? '')
-    },
-  )
+  let out = html.replace(chipRe(), (_m, name: string) => {
+    if (mode === 'token') return formatToken(name)
+    const v = variables?.find((x) => x.name === name)
+    return esc(v?.fallback ?? '')
+  })
   // 2) Fallback mode also resolves raw typed `{{{name}}}` tokens.
   if (mode === 'fallback') {
-    out = out.replace(/\{\{\{(\w+)\}\}\}/g, (_m, name: string) => {
+    out = out.replace(tokenRe(), (_m, name: string) => {
       const v = variables?.find((x) => x.name === name)
-      return v ? esc(v.fallback) : `{{{${name}}}}`
+      return v ? esc(v.fallback) : formatToken(name)
     })
   }
   return out

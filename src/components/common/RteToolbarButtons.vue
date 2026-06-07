@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, onBeforeUnmount } from 'vue'
 import type { Editor } from '@tiptap/vue-3'
+import { safeUrl } from '@/export/helpers'
 import {
   Bold,
   Italic,
@@ -33,9 +34,11 @@ function setLink() {
   if (url === null) return
   if (url === '') {
     props.editor.chain().focus().extendMarkRange('link').unsetLink().run()
-  } else {
-    props.editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run()
+    return
   }
+  const href = safeUrl(url) // drop javascript:/data:text etc.
+  if (!href) return
+  props.editor.chain().focus().extendMarkRange('link').setLink({ href }).run()
 }
 function setColor(e: Event) {
   props.editor.chain().focus().setColor((e.target as HTMLInputElement).value).run()

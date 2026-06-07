@@ -1,11 +1,8 @@
 import type { Design } from '@/types/schema'
 import { SCHEMA_VERSION } from '@/types/schema'
 
-/** Trigger a download of the design as a pretty-printed JSON file. */
-export function downloadDesign(design: Design, filename = 'email-design.json') {
-  const blob = new Blob([JSON.stringify(design, null, 2)], {
-    type: 'application/json',
-  })
+/** Download a blob as `filename` (create → click → revoke). */
+function triggerDownload(blob: Blob, filename: string) {
   const url = URL.createObjectURL(blob)
   const a = document.createElement('a')
   a.href = url
@@ -14,15 +11,17 @@ export function downloadDesign(design: Design, filename = 'email-design.json') {
   URL.revokeObjectURL(url)
 }
 
+/** Trigger a download of the design as a pretty-printed JSON file. */
+export function downloadDesign(design: Design, filename = 'email-design.json') {
+  triggerDownload(
+    new Blob([JSON.stringify(design, null, 2)], { type: 'application/json' }),
+    filename,
+  )
+}
+
 /** Trigger a download of arbitrary text (used for HTML export). */
 export function downloadText(text: string, filename: string, mime = 'text/plain') {
-  const blob = new Blob([text], { type: mime })
-  const url = URL.createObjectURL(blob)
-  const a = document.createElement('a')
-  a.href = url
-  a.download = filename
-  a.click()
-  URL.revokeObjectURL(url)
+  triggerDownload(new Blob([text], { type: mime }), filename)
 }
 
 /** Parse and validate a design JSON file chosen by the user. */

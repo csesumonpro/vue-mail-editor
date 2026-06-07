@@ -24,10 +24,6 @@ export function loadAutosave(): Design | null {
   }
 }
 
-export function clearAutosave() {
-  localStorage.removeItem(STORAGE_KEY)
-}
-
 /**
  * Persist the design to localStorage, debounced, whenever it changes.
  * Call once from a setup context (e.g. App.vue).

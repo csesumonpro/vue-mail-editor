@@ -1,4 +1,4 @@
-import type { BgImage, BorderValue, BoxValue, DesignVariable } from '@/types/schema'
+import type { BgImage, BorderValue, DesignVariable } from '@/types/schema'
 import { formatToken, tokenRe, chipRe } from '@/utils/variableToken'
 
 /** How template variables are emitted on export. */
@@ -40,9 +40,8 @@ export function safeUrl(url: string | null | undefined, allowDataImage = false):
   return ''
 }
 
-export function pad(b: BoxValue): string {
-  return `${b.top}px ${b.right}px ${b.bottom}px ${b.left}px`
-}
+// `pad()` is the same box→shorthand as the canvas `padding()` — single source.
+export { padding as pad } from '@/utils/style'
 
 export function borderCss(b: BorderValue): string {
   return b.width > 0 ? `${b.width}px ${b.style} ${b.color}` : ''

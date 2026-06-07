@@ -1,14 +1,12 @@
 <script setup lang="ts">
 defineOptions({ inheritAttrs: false })
 import type { BorderValue } from '@/types/schema'
+import { usePatch } from '@/composables/usePatch'
 import ColorControl from './ColorControl.vue'
 
 const props = defineProps<{ modelValue: BorderValue }>()
 const emit = defineEmits<{ 'update:modelValue': [BorderValue] }>()
-
-function patch(p: Partial<BorderValue>) {
-  emit('update:modelValue', { ...props.modelValue, ...p })
-}
+const patch = usePatch(props, emit)
 </script>
 
 <template>

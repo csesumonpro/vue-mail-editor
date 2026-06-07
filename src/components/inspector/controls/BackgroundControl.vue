@@ -1,14 +1,12 @@
 <script setup lang="ts">
 defineOptions({ inheritAttrs: false })
 import type { BgImage } from '@/types/schema'
+import { usePatch } from '@/composables/usePatch'
 import ImageControl from './ImageControl.vue'
 
 const props = defineProps<{ modelValue: BgImage }>()
 const emit = defineEmits<{ 'update:modelValue': [BgImage] }>()
-
-function patch(p: Partial<BgImage>) {
-  emit('update:modelValue', { ...props.modelValue, ...p })
-}
+const patch = usePatch(props, emit)
 </script>
 
 <template>

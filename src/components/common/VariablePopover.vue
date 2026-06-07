@@ -135,7 +135,7 @@ function create() {
   <div
     v-if="open"
     ref="popoverEl"
-    class="fixed z-[2147483601] w-64 rounded-lg border border-line bg-surface p-3 text-left shadow-xl"
+    class="fixed z-[var(--cvee-z-popover)] w-64 rounded-lg border border-line bg-surface p-3 text-left shadow-xl"
     :style="{ top: pos.top + 'px', left: pos.left + 'px' }"
   >
     <p

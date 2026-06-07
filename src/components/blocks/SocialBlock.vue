@@ -1,9 +1,18 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import type { SocialValues } from '@/types/schema'
 import { padding, justify } from '@/utils/style'
 import { resolveSocial } from '@/config/social'
 
-defineProps<{ values: SocialValues }>()
+const props = defineProps<{ values: SocialValues }>()
+
+// Resolve each icon once per render instead of 6× in the template.
+const resolved = computed(() =>
+  props.values.icons.map((item) => {
+    const s = resolveSocial(item)
+    return { color: s.color, image: s.image, label: s.label, isCustom: s.isCustom, network: item.network }
+  }),
+)
 </script>
 
 <template>
@@ -16,13 +25,13 @@ defineProps<{ values: SocialValues }>()
     }"
   >
     <span
-      v-for="(item, i) in values.icons"
+      v-for="(s, i) in resolved"
       :key="i"
       :style="{
         width: values.size + 'px',
         height: values.size + 'px',
         borderRadius: values.iconStyle === 'rounded' ? '50%' : '6px',
-        background: resolveSocial(item).color,
+        background: s.color,
         display: 'inline-flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -30,12 +39,12 @@ defineProps<{ values: SocialValues }>()
       }"
     >
       <img
-        v-if="resolveSocial(item).image"
-        :src="resolveSocial(item).image"
-        :alt="resolveSocial(item).label"
+        v-if="s.image"
+        :src="s.image"
+        :alt="s.label"
         :style="{
-          width: resolveSocial(item).isCustom ? '100%' : values.size * 0.55 + 'px',
-          height: resolveSocial(item).isCustom ? '100%' : values.size * 0.55 + 'px',
+          width: s.isCustom ? '100%' : values.size * 0.55 + 'px',
+          height: s.isCustom ? '100%' : values.size * 0.55 + 'px',
           objectFit: 'cover',
         }"
       />
@@ -47,7 +56,7 @@ defineProps<{ values: SocialValues }>()
           fontSize: values.size * 0.4 + 'px',
           textTransform: 'capitalize',
         }"
-        >{{ (item.network[0] || '?').toUpperCase() }}</span
+        >{{ (s.network[0] || '?').toUpperCase() }}</span
       >
     </span>
   </div>

@@ -373,7 +373,7 @@ watch(
     <div
       v-if="editor && varMenuVisible"
       ref="varMenuEl"
-      class="fixed z-[2147483600] w-60 overflow-hidden rounded-lg border border-line bg-surface p-1 text-xs shadow-xl"
+      class="fixed z-[var(--cvee-z-overlay)] w-60 overflow-hidden rounded-lg border border-line bg-surface p-1 text-xs shadow-xl"
       :style="{ top: varMenuTop + 'px', left: varMenuLeft + 'px' }"
       @mousedown.prevent
     >

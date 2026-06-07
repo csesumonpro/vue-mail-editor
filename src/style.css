@@ -18,6 +18,11 @@
 /* overrides + dark mode are scoped to .vue-email-editor below.        */
 /* ------------------------------------------------------------------ */
 :root {
+  /* Overlay stacking — above host page chrome. The popover sits one above the
+     menu/tooltip layer; keep this +1 relationship intact. */
+  --cvee-z-overlay: 2147483600;
+  --cvee-z-popover: 2147483601;
+
   --cvee-bg: #f8fafc;
   --cvee-bg-sidebar: #ffffff;
   --cvee-bg-surface: #ffffff;
@@ -251,7 +256,7 @@
    above the selection, horizontally centered. */
 .bubble-menu {
   position: fixed;
-  z-index: 2147483600;
+  z-index: var(--cvee-z-overlay);
   transform: translate(-50%, calc(-100% - 8px));
 }
 
@@ -315,7 +320,7 @@
 /* Hover tooltip (rendered to <body> by v-tooltip) */
 .app-tooltip {
   position: fixed;
-  z-index: 2147483600; /* above host stacking contexts */
+  z-index: var(--cvee-z-overlay); /* above host stacking contexts */
   box-sizing: border-box;
   pointer-events: none;
   background: var(--cvee-text);

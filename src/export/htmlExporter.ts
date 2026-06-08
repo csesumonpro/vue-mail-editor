@@ -103,8 +103,11 @@ export function exportHtml(
 
   const rows = body.rows.map((r) => renderRow(r, ctx, blocks)).join('')
 
-  const preheader = v.preheaderText
-    ? `<div style="display:none;max-height:0;overflow:hidden;mso-hide:all;font-size:1px;line-height:1px;color:${v.contentBackground};">${esc(v.preheaderText)}</div>`
+  // Preview text moved into design.meta.preview; fall back to the older
+  // body.values.preheaderText for designs authored before that.
+  const previewText = design.meta?.preview || v.preheaderText
+  const preheader = previewText
+    ? `<div style="display:none;max-height:0;overflow:hidden;mso-hide:all;font-size:1px;line-height:1px;color:${v.contentBackground};">${esc(previewText)}</div>`
     : ''
 
   const container =

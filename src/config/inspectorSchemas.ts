@@ -48,7 +48,6 @@ export const bodyInspector: InspectorSchema = [
       { type: 'number', key: 'contentWidth', label: 'Content width', unit: 'px', min: 320, max: 900 },
       { type: 'font', key: 'fontFamily', label: 'Font' },
       { type: 'color', key: 'textColor', label: 'Text color' },
-      { type: 'text', key: 'preheaderText', label: 'Preheader', placeholder: 'Inbox preview text' },
       {
         type: 'select',
         key: 'direction',

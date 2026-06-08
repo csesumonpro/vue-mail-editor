@@ -256,6 +256,11 @@ export interface DesignMeta {
   subject?: string
   from?: string
   replyTo?: string
+  /** Inbox preview text (the email's hidden preheader). */
+  preview?: string
+  /** Custom fields (e.g. a campaign id) set via the `#meta` slot — they
+   *  round-trip in the design and are readable server-side. */
+  [key: string]: string | undefined
 }
 
 export interface Design {

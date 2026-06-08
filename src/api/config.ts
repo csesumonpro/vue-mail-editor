@@ -55,7 +55,9 @@ export interface EditorConfig {
   variables?: DesignVariable[]
   /**
    * Email metadata header (subject / from / reply-to / preview text) above the
-   * canvas. `true`/omit → all fields; `false` → hidden; or pick fields.
+   * canvas. Off by default — `true` shows all fields, or pass an object to pick
+   * fields. For a fully custom header (e.g. a domain-validated From), use the
+   * `#meta` slot instead.
    */
   meta?: boolean | MetaFields
 }
@@ -107,8 +109,10 @@ export function resolveConfig(c?: EditorConfig): ResolvedConfig {
 
 /** Resolve the metadata-header config to a concrete per-field flag set. */
 function resolveMeta(m: EditorConfig['meta']): Required<MetaFields> {
-  if (m === false) return { from: false, replyTo: false, subject: false, preview: false }
-  if (m === undefined || m === true) return { from: true, replyTo: true, subject: true, preview: true }
+  // Off by default — opt in with `meta: true` / a field object, or use the
+  // `#meta` slot for a fully custom header.
+  if (!m) return { from: false, replyTo: false, subject: false, preview: false }
+  if (m === true) return { from: true, replyTo: true, subject: true, preview: true }
   return {
     from: m.from ?? true,
     replyTo: m.replyTo ?? true,

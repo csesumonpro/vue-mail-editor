@@ -32,6 +32,18 @@
 | `select` | `selection` | The current selection changes. |
 | `ready` | `api` | The editor is mounted; gives you the [imperative API](/reference/api). |
 
+::: warning Event **or** prop — not both
+The `save` / `save-template` / `export` flows both **emit the event** and **call
+the matching `on*` prop**. Wire up **one** — using both `@save` and `:on-save`
+for the same handler runs it **twice**.
+:::
+
+::: tip Where the metadata lives
+All four header fields save to **`design.meta`** — `subject`, `from`, `replyTo`,
+and `preview`. The `preview` is *also* rendered as the email's hidden preheader
+in the exported HTML.
+:::
+
 ::: code-group
 
 ```vue [TS]
@@ -92,5 +104,6 @@ function send(html) {/* send */}
 | `#header-brand` | Replace just the logo / brand area. |
 | `#header-actions` | Inject your own buttons next to the built-in actions. |
 | `#empty` | Custom empty-canvas state. |
+| `#meta` | Custom email metadata header above the canvas. Scoped: `{ meta, setMeta }` — see [Configuration › meta](/guide/configuration#meta-email-header-fields). |
 
 See [Customizing the top bar](/guide/top-bar) for slot examples.

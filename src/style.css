@@ -305,6 +305,70 @@
   box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--cvee-status-danger) 28%, transparent);
 }
 
+/* Email metadata header (From / Reply-To / Subject / Preview) */
+.cvee-meta-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 42px;
+}
+.cvee-meta-row:not(:last-child) {
+  border-bottom: 1px solid var(--cvee-border-subtle);
+}
+.cvee-meta-row:focus-within .cvee-meta-label {
+  color: var(--cvee-text);
+}
+.cvee-meta-label {
+  width: 74px;
+  flex-shrink: 0;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--cvee-text-secondary);
+  transition: color 0.12s;
+}
+.cvee-meta-label--toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0;
+  background: none;
+  border: 0;
+  text-align: left;
+  cursor: pointer;
+}
+.cvee-meta-label--toggle svg {
+  opacity: 0.55;
+}
+.cvee-meta-label--toggle:hover {
+  color: var(--cvee-text);
+}
+.cvee-meta-pill {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px 3px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--cvee-border);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--cvee-text-secondary);
+  cursor: pointer;
+  transition:
+    color 0.12s,
+    border-color 0.12s,
+    background-color 0.12s;
+}
+.cvee-meta-pill:hover {
+  border-color: var(--cvee-accent);
+  color: var(--cvee-text);
+}
+.cvee-meta-pill--filled {
+  color: var(--cvee-accent);
+  border-color: color-mix(in srgb, var(--cvee-accent) 40%, transparent);
+  background: color-mix(in srgb, var(--cvee-accent) 8%, transparent);
+}
+
 /* Drag & drop: placeholder shown where the item will land */
 .drop-ghost {
   opacity: 0.5;

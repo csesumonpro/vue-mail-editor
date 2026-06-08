@@ -78,8 +78,10 @@ const showExport = ref(false)
 const showTemplates = ref(false)
 
 /* Action hooks (host-delegated; built-in fallbacks) ----------------- */
+// NOTE: `onSave`/`onSaveTemplate`/`onExport` are declared props, so Vue maps a
+// `@save` listener onto the `onSave` prop. We therefore call the prop only —
+// emitting the event too would invoke the handler twice.
 async function doSave() {
-  emit('save', store.design)
   if (props.onSave) await props.onSave(store.design)
   else downloadDesign(store.design)
 }
@@ -87,7 +89,6 @@ async function doSaveTemplate() {
   const name = window.prompt('Template name')
   if (!name) return
   const payload: TemplatePayload = { name, design: store.design }
-  emit('save-template', payload)
   if (props.onSaveTemplate) await props.onSaveTemplate(payload)
 }
 function doUpload(file: File) {
@@ -102,9 +103,7 @@ provide(ACTIONS_KEY, {
 
 async function onExportClick() {
   showExport.value = true
-  const html = exportHtml(store.design, registry)
-  emit('export', html, store.design)
-  if (props.onExport) await props.onExport(html, store.design)
+  if (props.onExport) await props.onExport(exportHtml(store.design, registry), store.design)
 }
 
 /* Color mode (two-way via v-model:colorMode) ------------------------ */
@@ -254,6 +253,7 @@ onMounted(() => emit('ready', api))
       <LeftPanel v-show="!store.previewMode" />
       <EditorCanvas>
         <template v-if="$slots.empty" #empty><slot name="empty" /></template>
+        <template v-if="$slots.meta" #meta="scope"><slot name="meta" v-bind="scope" /></template>
       </EditorCanvas>
 
       <button

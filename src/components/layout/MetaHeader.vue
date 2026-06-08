@@ -1,61 +1,56 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { ChevronUp, Plus } from 'lucide-vue-next'
 import { useEditor } from '@/core/useEditor'
 import { useConfig } from '@/core/useConfig'
 import VariableInput from '@/components/common/VariableInput.vue'
 
-const FIELD_CLASS =
-  'min-w-0 flex-1 border-0 bg-transparent py-2.5 text-sm text-ink outline-none placeholder:text-faint'
-
 const store = useEditor()
 const meta = useConfig().meta
 
-// Optional rows start collapsed (a chip on the right of From/Subject) but
-// auto-expand when they already carry a value, or when their parent row is off.
+// Reply-To / Preview start collapsed (a pill on the right) unless they already
+// carry a value, or their parent row is disabled.
 const replyToOpen = ref(!!store.design.meta?.replyTo || !meta.from)
-const previewOpen = ref(!!store.design.body.values.preheaderText || !meta.subject)
+const previewOpen = ref(!!store.design.meta?.preview || !meta.subject)
 
 function setMeta(patch: Record<string, string>, key: string) {
   store.updateMeta(patch, `meta:${key}`)
 }
-function setPreview(v: string) {
-  store.updateBodyValues({ preheaderText: v }, 'meta:preview')
-}
+
+const FIELD_CLASS =
+  'w-full min-w-0 border-0 bg-transparent text-sm text-ink outline-none placeholder:text-faint'
 </script>
 
 <template>
-  <div class="border-b border-line bg-surface">
-    <div class="mx-auto max-w-3xl px-8">
+  <div class="overflow-hidden rounded-xl border border-line bg-surface px-5 shadow-sm">
+    <div>
       <!-- From -->
-      <div
-        v-if="meta.from"
-        class="flex min-h-[46px] items-center gap-3 border-b border-line-subtle last:border-b-0"
-      >
-        <label class="w-[84px] shrink-0 text-sm text-subtle">From</label>
+      <div v-if="meta.from" class="cvee-meta-row">
+        <span class="cvee-meta-label">From</span>
         <input
-          class="min-w-0 flex-1 border-0 bg-transparent py-2.5 text-sm text-ink outline-none placeholder:text-faint"
-          placeholder="Acme <acme@example.com>"
+          :class="FIELD_CLASS"
+          placeholder="Acme &lt;acme@example.com&gt;"
           :value="store.design.meta?.from"
           @input="setMeta({ from: ($event.target as HTMLInputElement).value }, 'from')"
         />
         <button
           v-if="meta.replyTo && !replyToOpen"
           type="button"
-          class="shrink-0 text-sm text-subtle hover:text-ink"
+          class="cvee-meta-pill"
+          :class="store.design.meta?.replyTo ? 'cvee-meta-pill--filled' : ''"
           @click="replyToOpen = true"
         >
-          Reply-To
+          <Plus class="h-3 w-3" /> Reply-To
         </button>
       </div>
 
-      <!-- Reply-To -->
-      <div
-        v-if="meta.replyTo && replyToOpen"
-        class="flex min-h-[46px] items-center gap-3 border-b border-line-subtle last:border-b-0"
-      >
-        <label class="w-[84px] shrink-0 text-sm text-subtle">Reply-To</label>
+      <!-- Reply-To (collapsible) -->
+      <div v-if="meta.replyTo && replyToOpen" class="cvee-meta-row">
+        <button type="button" class="cvee-meta-label cvee-meta-label--toggle" @click="replyToOpen = false">
+          Reply-To <ChevronUp class="h-3 w-3" />
+        </button>
         <input
-          class="min-w-0 flex-1 border-0 bg-transparent py-2.5 text-sm text-ink outline-none placeholder:text-faint"
+          :class="FIELD_CLASS"
           placeholder="reply@example.com"
           :value="store.design.meta?.replyTo"
           @input="setMeta({ replyTo: ($event.target as HTMLInputElement).value }, 'replyTo')"
@@ -63,11 +58,8 @@ function setPreview(v: string) {
       </div>
 
       <!-- Subject -->
-      <div
-        v-if="meta.subject"
-        class="flex min-h-[46px] items-center gap-3 border-b border-line-subtle last:border-b-0"
-      >
-        <label class="w-[84px] shrink-0 text-sm text-subtle">Subject</label>
+      <div v-if="meta.subject" class="cvee-meta-row">
+        <span class="cvee-meta-label">Subject</span>
         <VariableInput
           :model-value="store.design.meta?.subject ?? ''"
           :input-class="FIELD_CLASS"
@@ -77,24 +69,24 @@ function setPreview(v: string) {
         <button
           v-if="meta.preview && !previewOpen"
           type="button"
-          class="shrink-0 text-sm text-subtle hover:text-ink"
+          class="cvee-meta-pill"
+          :class="store.design.meta?.preview ? 'cvee-meta-pill--filled' : ''"
           @click="previewOpen = true"
         >
-          Preview text
+          <Plus class="h-3 w-3" /> Preview
         </button>
       </div>
 
-      <!-- Preview text (preheader) -->
-      <div
-        v-if="meta.preview && previewOpen"
-        class="flex min-h-[46px] items-center gap-3 border-b border-line-subtle last:border-b-0"
-      >
-        <label class="w-[84px] shrink-0 text-sm text-subtle">Preview</label>
+      <!-- Preview / preheader (collapsible) -->
+      <div v-if="meta.preview && previewOpen" class="cvee-meta-row">
+        <button type="button" class="cvee-meta-label cvee-meta-label--toggle" @click="previewOpen = false">
+          Preview <ChevronUp class="h-3 w-3" />
+        </button>
         <VariableInput
-          :model-value="store.design.body.values.preheaderText"
+          :model-value="store.design.meta?.preview ?? ''"
           :input-class="FIELD_CLASS"
           placeholder="Inbox preview text"
-          @update:model-value="setPreview($event)"
+          @update:model-value="setMeta({ preview: $event }, 'preview')"
         />
       </div>
     </div>

@@ -49,20 +49,102 @@ const config = {
 
 ## `meta` — email header fields
 
-A Resend-style header above the canvas with **From**, **Reply-To**, **Subject**,
-and **Preview text** (Reply-To and Preview collapse to chips until used). Pass
-`false` to hide it, or an object to pick fields:
+A header card above the email with **From**, **Reply-To**, **Subject**, and
+**Preview text** (Reply-To and Preview collapse to chips until used; Subject and
+Preview support <code v-pre>{{</code> variables). It's **off by default** — opt in:
 
 ```ts
 const config: EditorConfig = {
-  meta: { from: true, replyTo: false, subject: true, preview: true },
-  // meta: false  // hide the header entirely
+  meta: true,                                 // show all four fields
+  // meta: { from: true, subject: true },     // or pick fields
 }
 ```
 
-Subject/from/reply-to are stored on `design.meta` (not in the exported HTML);
-read them from the saved design when you send. The **Preview text** maps to
-`body.values.preheaderText`, which IS rendered as the email's hidden preheader.
+All four fields are stored on **`design.meta`** (`subject`, `from`, `replyTo`,
+`preview`) — read them from the saved design when you send. Subject/from/reply-to
+aren't in the exported HTML; the **preview** (`design.meta.preview`) is also
+rendered as the email's hidden preheader.
+
+### Custom header — the `#meta` slot
+
+The built-in fields are plain inputs and **can't verify a sender domain** (that's
+a server-side concern). For a validated **From** — or any custom layout — replace
+the whole header with the `#meta` **scoped slot**.
+
+::: warning You own the styling
+The slot content is **fully custom** — the editor doesn't style it, and its CSS
+baseline strips the default border/padding from `<input>` / `<select>`. Style
+your fields (like the `<style>` below) or they'll render bare.
+:::
+
+```vue
+<script setup>
+import { ref, onMounted } from 'vue'
+import { EmailEditor } from '@csesumonpro/vue-email-editor'
+
+const design = ref()
+// Your verified senders — loaded from your backend (dynamic data).
+const verifiedSenders = ref([])
+onMounted(async () => {
+  verifiedSenders.value = await fetch('/api/verified-senders').then((r) => r.json())
+  // e.g. ['hello@acme.com', 'news@acme.com']
+})
+</script>
+
+<template>
+  <EmailEditor v-model="design">
+    <template #meta="{ meta, setMeta }">
+      <div class="meta-card">
+        <label class="meta-row">
+          <span>From</span>
+          <select :value="meta.from" @change="setMeta({ from: $event.target.value })">
+            <option value="">Select a verified sender…</option>
+            <option v-for="d in verifiedSenders" :key="d" :value="d" v-text="d" />
+          </select>
+        </label>
+        <label class="meta-row">
+          <span>Subject</span>
+          <input :value="meta.subject" @input="setMeta({ subject: $event.target.value })" />
+        </label>
+        <label class="meta-row">
+          <span>Preview</span>
+          <input :value="meta.preview" @input="setMeta({ preview: $event.target.value })" />
+        </label>
+      </div>
+    </template>
+  </EmailEditor>
+</template>
+
+<style scoped>
+.meta-card {
+  border: 1px solid #e2e8f0; border-radius: 12px; background: #fff; padding: 2px 16px;
+}
+.meta-row {
+  display: flex; align-items: center; gap: 12px;
+  min-height: 44px; border-bottom: 1px solid #f1f5f9;
+}
+.meta-row:last-child { border-bottom: 0; }
+.meta-row span { width: 72px; font-size: 13px; font-weight: 500; color: #64748b; }
+.meta-row input,
+.meta-row select {
+  flex: 1; border: 1px solid #e2e8f0; border-radius: 8px; padding: 6px 10px; font-size: 14px;
+}
+</style>
+```
+
+**Slot props:**
+
+- **`meta`** — read the current `subject`, `from`, `replyTo` and `preview`.
+- **`setMeta(patch)`** — write any of them; a `preview` key routes to the
+  preheader, and **any custom key** (e.g. `campaignId`) is stored on
+  `design.meta` and round-trips with the design.
+
+**`verifiedSenders` is your own data** — fetch it from your backend into a `ref`
+and `v-for` the `<option>`s. The editor isn't involved; when the user picks one,
+`setMeta({ from })` writes it to `design.meta.from`, which you read back on send.
+
+> Alternatively, keep the built-in header and **validate `design.meta.from`
+> server-side on save** — reject it if it isn't a verified domain.
 
 ## `actions` — show / hide built-ins
 

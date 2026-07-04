@@ -176,7 +176,7 @@ the matching `CHANGELOG.md` section as the release notes.
 ## Reporting security issues
 
 Please **do not** open a public issue for security vulnerabilities. Instead,
-email the maintainer at csesumonpro@gmail.com so it can be addressed privately.
+email the maintainer at hello@cleancodewithsumon.com so it can be addressed privately.
 
 ## License
 

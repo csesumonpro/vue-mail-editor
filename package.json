@@ -4,7 +4,7 @@
   "type": "module",
   "description": "A customizable, extensible drag-and-drop email template editor for Vue 3.",
   "license": "MIT",
-  "author": "csesumonpro <csesumonpro@gmail.com>",
+  "author": "csesumonpro <hello@cleancodewithsumon.com>",
   "homepage": "https://csesumonpro.github.io/vue-mail-editor/",
   "repository": {
     "type": "git",

@@ -61,8 +61,8 @@ Your buttons render next to the built-ins; wire them via the imperative API:
 ```vue [TS]
 <script setup lang="ts">
 import { ref } from 'vue'
-import { EmailEditor } from '@csesumonpro/vue-email-editor'
-import type { EditorApi } from '@csesumonpro/vue-email-editor'
+import { EmailEditor } from 'vue-mail-editor'
+import type { EditorApi } from 'vue-mail-editor'
 
 const api = ref<EditorApi>()
 function publish() {
@@ -82,7 +82,7 @@ function publish() {
 ```vue [JS]
 <script setup>
 import { ref } from 'vue'
-import { EmailEditor } from '@csesumonpro/vue-email-editor'
+import { EmailEditor } from 'vue-mail-editor'
 
 const api = ref()
 function publish() {

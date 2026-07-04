@@ -3,9 +3,9 @@ import { withBase } from 'vitepress'
 
 const code = `<script setup lang="ts">
 import { ref } from 'vue'
-import { EmailEditor } from '@csesumonpro/vue-email-editor'
-import '@csesumonpro/vue-email-editor/style.css'
-import type { Design } from '@csesumonpro/vue-email-editor'
+import { EmailEditor } from 'vue-mail-editor'
+import 'vue-mail-editor/style.css'
+import type { Design } from 'vue-mail-editor'
 
 const design = ref<Design>()
 <\/script>
@@ -29,7 +29,7 @@ const design = ref<Design>()
             That's a working email editor — drag, drop, style, and export.
           </p>
           <ul class="vee-steps">
-            <li><b>1.</b> <code>npm i @csesumonpro/vue-email-editor</code></li>
+            <li><b>1.</b> <code>npm i vue-mail-editor</code></li>
             <li><b>2.</b> Import the component and its stylesheet</li>
             <li><b>3.</b> Give it a sized container — it fills 100% height</li>
           </ul>

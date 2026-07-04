@@ -3,7 +3,7 @@
 ## Install
 
 ```bash
-npm install @csesumonpro/vue-email-editor
+npm install vue-mail-editor
 ```
 
 Vue 3 is a peer dependency:
@@ -22,9 +22,9 @@ the editor fills 100% of its parent's height.
 ```vue [TS]
 <script setup lang="ts">
 import { ref } from 'vue'
-import { EmailEditor } from '@csesumonpro/vue-email-editor'
-import '@csesumonpro/vue-email-editor/style.css'
-import type { Design } from '@csesumonpro/vue-email-editor'
+import { EmailEditor } from 'vue-mail-editor'
+import 'vue-mail-editor/style.css'
+import type { Design } from 'vue-mail-editor'
 
 const design = ref<Design>()
 </script>
@@ -39,8 +39,8 @@ const design = ref<Design>()
 ```vue [JS]
 <script setup>
 import { ref } from 'vue'
-import { EmailEditor } from '@csesumonpro/vue-email-editor'
-import '@csesumonpro/vue-email-editor/style.css'
+import { EmailEditor } from 'vue-mail-editor'
+import 'vue-mail-editor/style.css'
 
 const design = ref()
 </script>
@@ -87,7 +87,7 @@ import type {
   EditorConfig,
   EditorLabels,
   ThemeTokens,
-} from '@csesumonpro/vue-email-editor'
+} from 'vue-mail-editor'
 ```
 
 ## Next steps

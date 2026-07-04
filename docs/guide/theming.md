@@ -13,8 +13,8 @@ on one page. There are two ways to theme:
 
 ```vue [TS]
 <script setup lang="ts">
-import { EmailEditor } from '@csesumonpro/vue-email-editor'
-import type { ThemeTokens } from '@csesumonpro/vue-email-editor'
+import { EmailEditor } from 'vue-mail-editor'
+import type { ThemeTokens } from 'vue-mail-editor'
 
 const theme: ThemeTokens = {
   colors: { accent: '#10b981', primary: '#064e3b' },
@@ -30,7 +30,7 @@ const theme: ThemeTokens = {
 
 ```vue [JS]
 <script setup>
-import { EmailEditor } from '@csesumonpro/vue-email-editor'
+import { EmailEditor } from 'vue-mail-editor'
 
 const theme = {
   colors: { accent: '#10b981', primary: '#064e3b' },
@@ -71,7 +71,7 @@ method. Bind it two-way to both set it and read the user's toggle:
 ```vue [TS]
 <script setup lang="ts">
 import { ref } from 'vue'
-import { EmailEditor } from '@csesumonpro/vue-email-editor'
+import { EmailEditor } from 'vue-mail-editor'
 
 const mode = ref<'light' | 'dark' | 'auto'>('light')
 </script>
@@ -86,7 +86,7 @@ const mode = ref<'light' | 'dark' | 'auto'>('light')
 ```vue [JS]
 <script setup>
 import { ref } from 'vue'
-import { EmailEditor } from '@csesumonpro/vue-email-editor'
+import { EmailEditor } from 'vue-mail-editor'
 
 const mode = ref('light')
 </script>
@@ -250,13 +250,13 @@ package CSS. The editor reads the variables at runtime, so your values win.
 ::: code-group
 
 ```ts [main.ts / main.js]
-import '@csesumonpro/vue-email-editor/style.css'
+import 'vue-mail-editor/style.css'
 import './email-editor-theme.css' // ← after the package CSS
 ```
 
 ```vue [In a component]
 <style>
-@import '@csesumonpro/vue-email-editor/style.css';
+@import 'vue-mail-editor/style.css';
 @import './email-editor-theme.css';
 </style>
 ```

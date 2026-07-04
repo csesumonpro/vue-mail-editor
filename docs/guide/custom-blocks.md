@@ -50,7 +50,7 @@ defineEmits(['update'])
 ::: code-group
 
 ```ts [TS]
-import { defineBlock } from '@csesumonpro/vue-email-editor'
+import { defineBlock } from 'vue-mail-editor'
 import { Star } from 'lucide-vue-next'
 import RatingBlock from './RatingBlock.vue'
 
@@ -75,7 +75,7 @@ export const rating = defineBlock<{ stars: number; color: string }>({
 ```
 
 ```js [JS]
-import { defineBlock } from '@csesumonpro/vue-email-editor'
+import { defineBlock } from 'vue-mail-editor'
 import { Star } from 'lucide-vue-next'
 import RatingBlock from './RatingBlock.vue'
 

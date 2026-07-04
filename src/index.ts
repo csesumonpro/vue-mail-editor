@@ -1,5 +1,5 @@
 /**
- * Public entry for @csesumonpro/vue-email-editor.
+ * Public entry for vue-mail-editor.
  * (The public API surface grows across phases P3–P8.)
  */
 import './style.css'

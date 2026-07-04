@@ -35,8 +35,8 @@ set and read. See [Theming](/guide/theming#color-mode) and
 ```vue [TS]
 <script setup lang="ts">
 import { ref } from 'vue'
-import { EmailEditor } from '@csesumonpro/vue-email-editor'
-import type { EditorApi } from '@csesumonpro/vue-email-editor'
+import { EmailEditor } from 'vue-mail-editor'
+import type { EditorApi } from 'vue-mail-editor'
 
 const api = ref<EditorApi>()
 </script>
@@ -51,7 +51,7 @@ const api = ref<EditorApi>()
 ```vue [JS]
 <script setup>
 import { ref } from 'vue'
-import { EmailEditor } from '@csesumonpro/vue-email-editor'
+import { EmailEditor } from 'vue-mail-editor'
 
 const api = ref()
 </script>
@@ -72,7 +72,7 @@ const api = ref()
 ```vue [TS]
 <script setup lang="ts">
 import { ref } from 'vue'
-import { EmailEditor } from '@csesumonpro/vue-email-editor'
+import { EmailEditor } from 'vue-mail-editor'
 
 const editor = ref<InstanceType<typeof EmailEditor>>()
 function save() {
@@ -88,7 +88,7 @@ function save() {
 ```vue [JS]
 <script setup>
 import { ref } from 'vue'
-import { EmailEditor } from '@csesumonpro/vue-email-editor'
+import { EmailEditor } from 'vue-mail-editor'
 
 const editor = ref()
 function save() {

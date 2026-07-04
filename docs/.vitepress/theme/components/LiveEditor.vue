@@ -2,8 +2,8 @@
 // Loaded ONLY on the client, in an async chunk (see LiveDemo.vue). Imports the
 // BUILT library so its Tailwind-compiled CSS comes along.
 import { ref } from 'vue'
-import { EmailEditor } from '@csesumonpro/vue-email-editor'
-import '@csesumonpro/vue-email-editor/style.css'
+import { EmailEditor } from 'vue-mail-editor'
+import 'vue-mail-editor/style.css'
 
 const design = ref()
 </script>

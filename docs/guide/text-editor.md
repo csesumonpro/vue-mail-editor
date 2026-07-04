@@ -2,7 +2,7 @@
 
 The package also exports `TextEditor` — the same rich-text engine the email
 editor uses, usable on its own. If you already depend on
-`@csesumonpro/vue-email-editor`, you get a lightweight editor with **no extra
+`vue-mail-editor`, you get a lightweight editor with **no extra
 package** to install.
 
 ## Basic usage
@@ -12,8 +12,8 @@ package** to install.
 ```vue [TS]
 <script setup lang="ts">
 import { ref } from 'vue'
-import { TextEditor } from '@csesumonpro/vue-email-editor'
-import '@csesumonpro/vue-email-editor/style.css'
+import { TextEditor } from 'vue-mail-editor'
+import 'vue-mail-editor/style.css'
 
 const html = ref('<p>Hello <strong>world</strong></p>')
 </script>
@@ -26,8 +26,8 @@ const html = ref('<p>Hello <strong>world</strong></p>')
 ```vue [JS]
 <script setup>
 import { ref } from 'vue'
-import { TextEditor } from '@csesumonpro/vue-email-editor'
-import '@csesumonpro/vue-email-editor/style.css'
+import { TextEditor } from 'vue-mail-editor'
+import 'vue-mail-editor/style.css'
 
 const html = ref('<p>Hello <strong>world</strong></p>')
 </script>
@@ -71,8 +71,8 @@ email editor. Use `v-model:variables` to keep the registry in sync.
 ```vue [TS]
 <script setup lang="ts">
 import { ref } from 'vue'
-import { TextEditor } from '@csesumonpro/vue-email-editor'
-import type { DesignVariable } from '@csesumonpro/vue-email-editor'
+import { TextEditor } from 'vue-mail-editor'
+import type { DesignVariable } from 'vue-mail-editor'
 
 const html = ref('')
 const vars = ref<DesignVariable[]>([
@@ -88,7 +88,7 @@ const vars = ref<DesignVariable[]>([
 ```vue [JS]
 <script setup>
 import { ref } from 'vue'
-import { TextEditor } from '@csesumonpro/vue-email-editor'
+import { TextEditor } from 'vue-mail-editor'
 
 const html = ref('')
 const vars = ref([{ name: 'first_name', type: 'string', fallback: 'there' }])

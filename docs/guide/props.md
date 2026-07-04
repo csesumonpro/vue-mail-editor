@@ -49,8 +49,8 @@ in the exported HTML.
 ```vue [TS]
 <script setup lang="ts">
 import { ref } from 'vue'
-import { EmailEditor } from '@csesumonpro/vue-email-editor'
-import type { Design, EditorApi } from '@csesumonpro/vue-email-editor'
+import { EmailEditor } from 'vue-mail-editor'
+import type { Design, EditorApi } from 'vue-mail-editor'
 
 const design = ref<Design>()
 const editor = ref<EditorApi>()
@@ -71,7 +71,7 @@ function send(html: string) {/* send */}
 ```vue [JS]
 <script setup>
 import { ref } from 'vue'
-import { EmailEditor } from '@csesumonpro/vue-email-editor'
+import { EmailEditor } from 'vue-mail-editor'
 
 const design = ref()
 const editor = ref()

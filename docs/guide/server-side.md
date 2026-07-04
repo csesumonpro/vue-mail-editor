@@ -101,8 +101,8 @@ The `Design` JSON you saved is exactly what you load back. Two ways:
 ```vue [v-model]
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { EmailEditor } from '@csesumonpro/vue-email-editor'
-import type { Design } from '@csesumonpro/vue-email-editor'
+import { EmailEditor } from 'vue-mail-editor'
+import type { Design } from 'vue-mail-editor'
 
 const design = ref<Design>()
 
@@ -120,8 +120,8 @@ onMounted(async () => {
 
 ```vue [onLoad hook]
 <script setup lang="ts">
-import { EmailEditor } from '@csesumonpro/vue-email-editor'
-import type { Design } from '@csesumonpro/vue-email-editor'
+import { EmailEditor } from 'vue-mail-editor'
+import type { Design } from 'vue-mail-editor'
 
 // The editor calls this on mount and renders what you return.
 async function load(): Promise<Design> {
@@ -154,8 +154,8 @@ the editor renders exactly where they left off → on save you receive the updat
 ```vue [TS]
 <script setup lang="ts">
 import { ref } from 'vue'
-import { EmailEditor } from '@csesumonpro/vue-email-editor'
-import type { Design, EditorApi, TemplatePayload } from '@csesumonpro/vue-email-editor'
+import { EmailEditor } from 'vue-mail-editor'
+import type { Design, EditorApi, TemplatePayload } from 'vue-mail-editor'
 
 const api = ref<EditorApi>()
 
@@ -192,7 +192,7 @@ async function saveTemplate({ name, design }: TemplatePayload) {
 ```vue [JS]
 <script setup>
 import { ref } from 'vue'
-import { EmailEditor } from '@csesumonpro/vue-email-editor'
+import { EmailEditor } from 'vue-mail-editor'
 
 const api = ref()
 
@@ -243,8 +243,8 @@ batch DB writes:
 ```vue [TS]
 <script setup lang="ts">
 import { debounce } from 'lodash-es'
-import { EmailEditor } from '@csesumonpro/vue-email-editor'
-import type { Design } from '@csesumonpro/vue-email-editor'
+import { EmailEditor } from 'vue-mail-editor'
+import type { Design } from 'vue-mail-editor'
 
 // your real-DB "autosaveMs" — tune freely
 const autosave = debounce((design: Design) => {
@@ -264,7 +264,7 @@ const autosave = debounce((design: Design) => {
 ```vue [JS]
 <script setup>
 import { debounce } from 'lodash-es'
-import { EmailEditor } from '@csesumonpro/vue-email-editor'
+import { EmailEditor } from 'vue-mail-editor'
 
 const autosave = debounce((design) => {
   fetch(`/api/emails/${id}`, {

@@ -3,9 +3,9 @@ import { fileURLToPath, URL } from 'node:url'
 import { REPO, NPM } from './theme/links'
 
 // GitHub Pages base path.
-//  - Project page (default here): '/vue-email-editor/'
+//  - Project page (default here): '/vue-mail-editor/'
 //  - User/org page OR a custom domain (add docs/public/CNAME): '/'
-const BASE = '/vue-email-editor/'
+const BASE = '/vue-mail-editor/'
 
 export default defineConfig({
   base: BASE,
@@ -74,12 +74,12 @@ export default defineConfig({
       // (More specific /style.css alias must come first.)
       alias: [
         {
-          find: '@csesumonpro/vue-email-editor/style.css',
+          find: 'vue-mail-editor/style.css',
           replacement: fileURLToPath(new URL('../../dist/style.css', import.meta.url)),
         },
         {
-          find: '@csesumonpro/vue-email-editor',
-          replacement: fileURLToPath(new URL('../../dist/vue-email-editor.js', import.meta.url)),
+          find: 'vue-mail-editor',
+          replacement: fileURLToPath(new URL('../../dist/vue-mail-editor.js', import.meta.url)),
         },
       ],
     },

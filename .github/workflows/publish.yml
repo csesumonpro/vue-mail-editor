@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write # create the GitHub Release
   id-token: write # required for npm Trusted Publishing (OIDC) + provenance
 
 jobs:
@@ -37,3 +37,30 @@ jobs:
       # No NODE_AUTH_TOKEN: auth comes from OIDC (Trusted Publishing).
       # Provenance is attached automatically.
       - run: npm publish
+
+      # Publish a GitHub Release using the matching CHANGELOG.md section as the
+      # notes. Falls back to GitHub's auto-generated notes if no section exists.
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          # Extract the body under "## [VERSION]" up to the next "## [" heading
+          # (or the "[x]: url" link-reference footer at the end of the file).
+          awk -v ver="$VERSION" '
+            $0 ~ "^## \\[" ver "\\]" { flag = 1; next }
+            /^## \[/                 { flag = 0 }
+            /^\[[^]]+\]:/            { flag = 0 }
+            flag
+          ' CHANGELOG.md > RELEASE_NOTES.md
+          if [ -s RELEASE_NOTES.md ]; then
+            NOTES=(--notes-file RELEASE_NOTES.md)
+          else
+            echo "No CHANGELOG.md section for $VERSION; using auto-generated notes."
+            NOTES=(--generate-notes)
+          fi
+          if gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
+            gh release edit "$GITHUB_REF_NAME" --title "$GITHUB_REF_NAME" "${NOTES[@]}"
+          else
+            gh release create "$GITHUB_REF_NAME" --title "$GITHUB_REF_NAME" "${NOTES[@]}"
+          fi

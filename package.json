@@ -1,6 +1,6 @@
 {
   "name": "vue-mail-editor",
-  "version": "0.1.33",
+  "version": "1.0.0",
   "type": "module",
   "description": "A customizable, extensible drag-and-drop email template editor for Vue 3.",
   "license": "MIT",

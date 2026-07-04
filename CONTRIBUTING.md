@@ -121,6 +121,58 @@ Common types: `feat`, `fix`, `docs`, `refactor`, `chore`, `test`.
 A maintainer will review, may request changes, and merge once it's ready. CI must
 be green.
 
+## Releasing
+
+> For maintainers. Releases are automated via GitHub Actions — pushing a
+> `v*` tag publishes to npm (using [Trusted Publishing / OIDC](https://docs.npmjs.com/trusted-publishers),
+> no token) **and** creates a GitHub Release from the changelog.
+
+1. **Update `CHANGELOG.md`.** Add a new section at the **top**, above the
+   previous version, following [Keep a Changelog](https://keepachangelog.com):
+
+   ```markdown
+   ## [1.0.2] - 2026-07-10
+
+   ### Fixed
+
+   - Short, user-facing description of the change.
+   ```
+
+   Group entries under `Added` / `Changed` / `Fixed` / `Removed` as appropriate,
+   and add the compare link at the bottom of the file.
+
+2. **Bump the version** (must match the tag you'll push):
+
+   ```bash
+   npm version 1.0.2 --no-git-tag-version
+   ```
+
+3. **Commit and push to `main`:**
+
+   ```bash
+   git commit -am "chore(release): 1.0.2"
+   git push origin main
+   ```
+
+4. **Tag and push the tag** — this triggers the publish workflow:
+
+   ```bash
+   git tag v1.0.2
+   git push origin v1.0.2
+   ```
+
+The `.github/workflows/publish.yml` workflow then builds, verifies the tag
+matches `package.json`, publishes to npm, and creates the GitHub Release using
+the matching `CHANGELOG.md` section as the release notes.
+
+**Notes**
+
+- The tag **must** be `vX.Y.Z` and match the `version` in `package.json`, or the
+  workflow fails fast.
+- Always update `CHANGELOG.md` **before** pushing the tag — the workflow reads
+  the changelog at the tagged commit.
+- Never reuse a version number; npm publishes are immutable.
+
 ## Reporting security issues
 
 Please **do not** open a public issue for security vulnerabilities. Instead,

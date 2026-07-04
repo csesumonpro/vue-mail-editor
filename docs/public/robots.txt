@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://csesumonpro.github.io/vue-mail-editor/sitemap.xml

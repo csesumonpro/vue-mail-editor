@@ -7,6 +7,12 @@ import { REPO, NPM } from './theme/links'
 //  - User/org page OR a custom domain (add docs/public/CNAME): '/'
 const BASE = '/vue-mail-editor/'
 
+// Absolute origin + base of the deployed site. Used for the sitemap and the
+// per-page <link rel="canonical"> tags. Update the origin if you move to a
+// custom domain (and set BASE to '/').
+const ORIGIN = 'https://csesumonpro.github.io'
+const SITE_URL = `${ORIGIN}${BASE}` // https://csesumonpro.github.io/vue-mail-editor/
+
 export default defineConfig({
   base: BASE,
   lang: 'en-US',
@@ -15,6 +21,22 @@ export default defineConfig({
     'A customizable, extensible drag-and-drop email template editor for Vue 3.',
   cleanUrls: true,
   lastUpdated: true,
+
+  // Emits dist/sitemap.xml so search engines can discover every page.
+  sitemap: {
+    hostname: SITE_URL,
+  },
+
+  // Add a canonical URL to every page — tells search engines the one true URL
+  // for each doc and avoids duplicate-content penalties.
+  transformPageData(pageData) {
+    const path = pageData.relativePath
+      .replace(/(^|\/)index\.md$/, '$1') // index.md -> directory URL (cleanUrls)
+      .replace(/\.md$/, '')
+    const canonical = `${SITE_URL}${path}`
+    pageData.frontmatter.head ??= []
+    pageData.frontmatter.head.push(['link', { rel: 'canonical', href: canonical }])
+  },
 
   head: [
     ['link', { rel: 'icon', type: 'image/svg+xml', href: `${BASE}favicon.svg` }],

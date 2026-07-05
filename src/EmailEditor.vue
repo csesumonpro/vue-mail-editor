@@ -161,7 +161,21 @@ onBeforeUnmount(() => {
   styleEl = null
 })
 
-const rootClass = computed(() => [instanceClass, { dark: store.isDark }])
+// When fullscreen, the root becomes a fixed overlay covering the whole window
+// (100% viewport width/height), above host content — like a lightbox. The
+// `.cvee-fullscreen` rule (style.css) uses !important so it wins over any inline
+// dimensions the host set on the editor root.
+const rootClass = computed(() => [
+  instanceClass,
+  { dark: store.isDark, 'cvee-fullscreen': store.fullscreen },
+])
+
+// Escape exits fullscreen.
+function onKeydown(e: KeyboardEvent) {
+  if (e.key === 'Escape' && store.fullscreen) store.toggleFullscreen(false)
+}
+onMounted(() => window.addEventListener('keydown', onKeydown))
+onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown))
 
 /* Lifecycle --------------------------------------------------------- */
 function applyContentWidth() {

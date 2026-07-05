@@ -17,6 +17,8 @@ import {
   BookmarkPlus,
   Sun,
   Moon,
+  Maximize,
+  Minimize,
 } from 'lucide-vue-next'
 import { computed } from 'vue'
 import { useEditor } from '@/core/useEditor'
@@ -194,21 +196,42 @@ async function onImport(e: Event) {
       <button
         v-if="config.actions.save"
         type="button"
-        class="flex items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-xs font-semibold text-on-primary transition hover:opacity-90"
+        v-tooltip="config.labeledActions ? '' : config.labels.save"
+        class="flex items-center justify-center gap-1.5 rounded-md bg-primary font-semibold text-on-primary transition hover:opacity-90"
+        :class="config.labeledActions ? 'px-3 py-1.5 text-xs' : 'h-8 w-8'"
         @click="actions.save()"
       >
         <Save class="h-4 w-4" />
-        {{ config.labels.save }}
+        <span v-if="config.labeledActions">{{ config.labels.save }}</span>
       </button>
       <button
         v-if="config.actions.export"
         type="button"
-        class="flex items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-xs font-semibold text-on-primary transition hover:opacity-90"
+        v-tooltip="config.labeledActions ? '' : config.labels.export"
+        class="flex items-center justify-center gap-1.5 rounded-md bg-primary font-semibold text-on-primary transition hover:opacity-90"
+        :class="config.labeledActions ? 'px-3 py-1.5 text-xs' : 'h-8 w-8'"
         @click="emit('export')"
       >
         <Code2 class="h-4 w-4" />
-        {{ config.labels.export }}
+        <span v-if="config.labeledActions">{{ config.labels.export }}</span>
       </button>
+
+      <template v-if="config.actions.fullscreen">
+        <div class="mx-1 h-6 w-px bg-line" />
+        <button
+          type="button"
+          v-tooltip:left="store.fullscreen ? 'Exit fullscreen' : config.labels.fullscreen"
+          class="flex h-8 w-8 items-center justify-center rounded-md transition"
+          :class="
+            store.fullscreen
+              ? 'bg-brand text-on-accent'
+              : 'text-faint hover:bg-ink/10 hover:text-header-fg'
+          "
+          @click="store.toggleFullscreen()"
+        >
+          <component :is="store.fullscreen ? Minimize : Maximize" class="h-4 w-4" />
+        </button>
+      </template>
 
       <!-- Host-injected actions -->
       <slot name="actions" />

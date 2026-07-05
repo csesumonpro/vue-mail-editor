@@ -39,6 +39,7 @@ export function createEditor(opts: CreateEditorOptions) {
   const inspectorOpen = ref(false)
   const hoverId = ref<string | null>(null)
   const isDark = ref(false)
+  const fullscreen = ref(false)
 
   const past = ref<string[]>([])
   const future = ref<string[]>([])
@@ -168,6 +169,13 @@ export function createEditor(opts: CreateEditorOptions) {
   }
   function toggleDark() {
     isDark.value = !isDark.value
+  }
+
+  function setFullscreen(value: boolean) {
+    fullscreen.value = value
+  }
+  function toggleFullscreen(value?: boolean) {
+    fullscreen.value = value ?? !fullscreen.value
   }
 
   function selectAndInspect(kind: SelectionKind, id: string | null) {
@@ -344,6 +352,7 @@ export function createEditor(opts: CreateEditorOptions) {
     inspectorOpen,
     hoverId,
     isDark,
+    fullscreen,
     canUndo,
     canRedo,
     // history
@@ -368,6 +377,8 @@ export function createEditor(opts: CreateEditorOptions) {
     toggleInspector,
     setDark,
     toggleDark,
+    setFullscreen,
+    toggleFullscreen,
     selectAndInspect,
     // values
     updateBodyValues,

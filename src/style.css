@@ -170,6 +170,22 @@
   -webkit-font-smoothing: antialiased;
 }
 
+/* Fullscreen: cover the whole window, above host content. Uses !important so it
+   overrides any inline width/height/margin the host set on the editor root
+   (inline styles beat plain class utilities, so a class alone wouldn't win). */
+.vue-email-editor.cvee-fullscreen {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  height: 100dvh !important;
+  max-width: none !important;
+  max-height: none !important;
+  margin: 0 !important;
+  border-radius: 0 !important;
+  z-index: 9999 !important;
+}
+
 /* Thin scrollbars for editor panels */
 .scroll-thin {
   scrollbar-width: thin;

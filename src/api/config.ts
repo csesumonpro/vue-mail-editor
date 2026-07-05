@@ -8,6 +8,7 @@ export interface EditorActions {
   undo?: boolean
   preview?: boolean
   theme?: boolean
+  fullscreen?: boolean
   templates?: boolean
   new?: boolean
   import?: boolean
@@ -33,6 +34,7 @@ export interface EditorLabels {
   undo?: string
   redo?: string
   preview?: string
+  fullscreen?: string
   templates?: string
   new?: string
   import?: string
@@ -47,6 +49,12 @@ export interface EditorConfig {
   actions?: EditorActions
   /** Rename built-in action labels/tooltips. */
   labels?: EditorLabels
+  /**
+   * Show text labels on the primary Save/Export buttons. Off by default — they
+   * render icon-only (with the label as a tooltip). Set `true` for labeled
+   * buttons.
+   */
+  labeledActions?: boolean
   /** Starter templates (replaces the built-ins). */
   templates?: TemplateDef[]
   /** Autosave debounce in ms (local storage mode). */
@@ -71,6 +79,7 @@ export interface ResolvedConfig {
   autosaveMs: number
   variables: DesignVariable[]
   meta: Required<MetaFields>
+  labeledActions: boolean
 }
 
 export function resolveConfig(c?: EditorConfig): ResolvedConfig {
@@ -81,6 +90,7 @@ export function resolveConfig(c?: EditorConfig): ResolvedConfig {
       undo: c?.actions?.undo ?? true,
       preview: c?.actions?.preview ?? true,
       theme: c?.actions?.theme ?? true,
+      fullscreen: c?.actions?.fullscreen ?? true,
       templates: c?.actions?.templates ?? true,
       new: c?.actions?.new ?? true,
       import: c?.actions?.import ?? true,
@@ -96,6 +106,7 @@ export function resolveConfig(c?: EditorConfig): ResolvedConfig {
       undo: c?.labels?.undo ?? 'Undo',
       redo: c?.labels?.redo ?? 'Redo',
       preview: c?.labels?.preview ?? 'Preview',
+      fullscreen: c?.labels?.fullscreen ?? 'Fullscreen',
       templates: c?.labels?.templates ?? 'Templates',
       new: c?.labels?.new ?? 'New design',
       import: c?.labels?.import ?? 'Import design JSON',
@@ -104,6 +115,7 @@ export function resolveConfig(c?: EditorConfig): ResolvedConfig {
     autosaveMs: c?.autosaveMs ?? 800,
     variables: c?.variables ?? [],
     meta: resolveMeta(c?.meta),
+    labeledActions: c?.labeledActions ?? false,
   }
 }
 

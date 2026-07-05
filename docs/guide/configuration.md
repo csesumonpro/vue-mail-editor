@@ -43,6 +43,7 @@ const config = {
 | `devices` | `('desktop' \| 'tablet' \| 'mobile')[]` | all three | Which device-preview toggles to show. |
 | `actions` | `EditorActions` | all on (`saveTemplate` off) | Show/hide built-in top-bar actions. |
 | `labels` | `EditorLabels` | English defaults | Rename built-in action labels & tooltips. |
+| `labeledActions` | `boolean` | `false` | Show text labels on the Save/Export buttons (icon-only otherwise). |
 | `templates` | `TemplateDef[]` | built-ins | Replace the starter-template gallery. |
 | `autosaveMs` | `number` | `800` | localStorage autosave debounce (ms). |
 | `meta` | `boolean \| MetaFields` | all shown | Email metadata header (subject/from/reply-to/preview). |
@@ -156,7 +157,7 @@ Set a flag to `false` to hide that control.
 ```ts [TS]
 const config: EditorConfig = {
   actions: {
-    undo: true, preview: true, theme: true,
+    undo: true, preview: true, theme: true, fullscreen: true,
     templates: false, new: false, import: false,
     save: true, saveTemplate: true, export: true,
   },
@@ -166,7 +167,7 @@ const config: EditorConfig = {
 ```js [JS]
 const config = {
   actions: {
-    undo: true, preview: true, theme: true,
+    undo: true, preview: true, theme: true, fullscreen: true,
     templates: false, new: false, import: false,
     save: true, saveTemplate: true, export: true,
   },
@@ -174,6 +175,9 @@ const config = {
 ```
 
 :::
+
+The **fullscreen** action expands the editor to fill the whole window (a second
+click or <kbd>Esc</kbd> exits).
 
 ## `labels` — rename built-ins
 
@@ -189,7 +193,7 @@ const config: EditorConfig = {
     save: 'Publish',
     export: 'Get HTML',
     saveTemplate: 'Save template',
-    undo: 'Undo', redo: 'Redo', preview: 'Preview',
+    undo: 'Undo', redo: 'Redo', preview: 'Preview', fullscreen: 'Fullscreen',
     templates: 'Templates', new: 'New design', import: 'Import JSON',
   },
 }
@@ -202,7 +206,7 @@ const config = {
     save: 'Publish',
     export: 'Get HTML',
     saveTemplate: 'Save template',
-    undo: 'Undo', redo: 'Redo', preview: 'Preview',
+    undo: 'Undo', redo: 'Redo', preview: 'Preview', fullscreen: 'Fullscreen',
     templates: 'Templates', new: 'New design', import: 'Import JSON',
   },
 }
@@ -211,6 +215,16 @@ const config = {
 :::
 
 `brand` only applies when you have **not** overridden the `#header-brand` slot.
+
+## `labeledActions` — Save / Export button style
+
+The primary **Save** and **Export** buttons render icon-only by default, with
+their label shown as a tooltip. Set `labeledActions: true` to display the text
+label next to the icon.
+
+```ts
+const config: EditorConfig = { labeledActions: true }
+```
 
 ## `autosaveMs` — important caveat
 

@@ -19,7 +19,7 @@ entirely.
 <EmailEditor
   :config="{
     actions: {
-      undo: true, preview: true, theme: true,
+      undo: true, preview: true, theme: true, fullscreen: true,
       templates: false, new: false, import: false,
       save: true, saveTemplate: true, export: true,
     },
@@ -41,6 +41,20 @@ All default to `true` except `saveTemplate` (defaults `false`). Set `false` to h
 
 Every label is optional. `brand` only applies when you haven't overridden the
 `#header-brand` slot.
+
+## Save / Export button style — `config.labeledActions`
+
+The **Save** and **Export** buttons render icon-only by default (the label shows
+as a tooltip). Set `labeledActions: true` to show the text label alongside the
+icon.
+
+```vue
+<EmailEditor :config="{ labeledActions: true }" />
+```
+
+The **Fullscreen** button (right of the header) expands the editor to fill the
+whole window; a second click or <kbd>Esc</kbd> exits. Hide it with
+`actions.fullscreen: false`.
 
 ## Replace the logo — `#header-brand`
 

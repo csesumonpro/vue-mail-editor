@@ -7,11 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [1.0.2] - 2026-07-05
+## [1.0.2] - 2026-07-06
 
 ### Added
 
-- Added automatic release workflow
+- Fullscreen toggle in the top bar — expands the editor to a full-window overlay
+  (a second click or `Esc` exits). Configurable via `config.actions.fullscreen`
+  and `config.labels.fullscreen`.
+- `config.labeledActions` option to show text labels on the Save/Export buttons.
+- Automated GitHub Release creation from the matching `CHANGELOG.md` section on
+  each version tag.
+
+### Changed
+
+- The Save and Export buttons now render icon-only by default, with the label as
+  a tooltip. Set `labeledActions: true` for the previous labeled style.
+- Updated the maintainer contact email in package metadata.
 
 ## [1.0.1] - 2026-07-05
 
@@ -34,6 +45,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   headers.
 - Documentation site with guides, API reference, and a live interactive demo.
 
-[Unreleased]: https://github.com/csesumonpro/vue-mail-editor/compare/v1.0.1...HEAD
+[Unreleased]: https://github.com/csesumonpro/vue-mail-editor/compare/v1.0.2...HEAD
+[1.0.2]: https://github.com/csesumonpro/vue-mail-editor/compare/v1.0.1...v1.0.2
 [1.0.1]: https://github.com/csesumonpro/vue-mail-editor/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/csesumonpro/vue-mail-editor/releases/tag/v1.0.0

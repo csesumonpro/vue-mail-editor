@@ -228,6 +228,83 @@ async function saveTemplate({ name, design }) {
 
 :::
 
+### Reuse saved templates in the gallery
+
+`onSaveTemplate` only **captures** the design — persisting and reloading are
+yours. To show your stored templates in the built-in **"Choose a template"**
+picker, map each one into a `TemplateDef` whose `build()` returns its `Design`,
+and pass them as `config.templates` (this **replaces** the built-in gallery):
+
+::: code-group
+
+```vue [TS]
+<script setup lang="ts">
+import { ref, computed, onMounted } from 'vue'
+import { EmailEditor } from 'vue-mail-editor'
+import type { EditorConfig, TemplateDef, Design } from 'vue-mail-editor'
+
+// Whatever GET /api/templates → [{ id, name, design }] returns.
+const saved = ref<{ id: string; name: string; design: Design }[]>([])
+onMounted(async () => {
+  saved.value = await fetch('/api/templates').then((r) => r.json())
+})
+
+const config = computed<EditorConfig>(() => ({
+  actions: { saveTemplate: true },
+  templates: saved.value.map(
+    (t): TemplateDef => ({
+      id: t.id,
+      name: t.name,
+      description: 'Saved template',
+      accent: 'from-emerald-400 to-teal-500', // thumbnail gradient
+      build: () => t.design, // ← what gets loaded when picked
+    }),
+  ),
+}))
+</script>
+
+<template>
+  <div style="height: 100vh">
+    <EmailEditor storage="none" :config="config" :on-save-template="onSaveTemplate" />
+  </div>
+</template>
+```
+
+```vue [JS]
+<script setup>
+import { ref, computed, onMounted } from 'vue'
+import { EmailEditor } from 'vue-mail-editor'
+
+const saved = ref([])
+onMounted(async () => {
+  saved.value = await fetch('/api/templates').then((r) => r.json())
+})
+
+const config = computed(() => ({
+  actions: { saveTemplate: true },
+  templates: saved.value.map((t) => ({
+    id: t.id,
+    name: t.name,
+    description: 'Saved template',
+    accent: 'from-emerald-400 to-teal-500',
+    build: () => t.design,
+  })),
+}))
+</script>
+
+<template>
+  <div style="height: 100vh">
+    <EmailEditor storage="none" :config="config" :on-save-template="onSaveTemplate" />
+  </div>
+</template>
+```
+
+:::
+
+Prefer your **own** template list UI? Skip `config.templates` and load a chosen
+one imperatively — grab the API with `@ready="api = $event"`, then call
+`api.loadDesign(chosen.design)`.
+
 ## 3. Autosave to your database
 
 ::: warning `autosaveMs` does not apply here

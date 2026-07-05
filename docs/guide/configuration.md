@@ -48,6 +48,40 @@ const config = {
 | `autosaveMs` | `number` | `800` | localStorage autosave debounce (ms). |
 | `meta` | `boolean \| MetaFields` | all shown | Email metadata header (subject/from/reply-to/preview). |
 
+## `templates` — starter gallery
+
+The **"Choose a template"** picker's cards. Passing `templates` **replaces** the
+built-in gallery. Each entry is a `TemplateDef`:
+
+```ts
+interface TemplateDef {
+  id: string
+  name: string
+  description: string
+  accent: string        // Tailwind gradient classes for the thumbnail card
+  build: () => Design   // returns the design loaded when the card is picked
+}
+```
+
+```ts
+const config: EditorConfig = {
+  templates: [
+    {
+      id: 'welcome',
+      name: 'Welcome',
+      description: 'Onboarding email with logo, intro and CTA.',
+      accent: 'from-indigo-400 to-violet-500',
+      build: () => myWelcomeDesign, // any Design object
+    },
+  ],
+}
+```
+
+These are **static** starter designs. To surface designs your users **saved**
+(via `onSaveTemplate`) in this same gallery, map each stored design into a
+`TemplateDef` whose `build()` returns it — see
+[Reuse saved templates in the gallery](/guide/server-side#reuse-saved-templates-in-the-gallery).
+
 ## `meta` — email header fields
 
 A header card above the email with **From**, **Reply-To**, **Subject**, and

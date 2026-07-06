@@ -4,6 +4,7 @@ import RichTextEditor from './RichTextEditor.vue'
 import { VARIABLES_KEY } from '@/core/keys'
 import { createVariablesController } from '@/composables/useVariables'
 import type { DesignVariable } from '@/types/schema'
+import type { RteToolbarItem } from '@/api/toolbar'
 
 /**
  * Standalone rich-text editor — the same engine the email editor uses, usable
@@ -16,6 +17,11 @@ const props = withDefaults(
     /** Toolbar style: persistent bar, selection bubble, or none. */
     toolbar?: 'fixed' | 'bubble' | false
     lists?: boolean
+    /**
+     * Restrict the toolbar to specific buttons, e.g. `['variable']` for just the
+     * variable inserter. Omit to show the default set. Overrides `lists`.
+     */
+    toolbarItems?: RteToolbarItem[]
     placeholder?: string
     editable?: boolean
     /**
@@ -55,6 +61,7 @@ provide(
       :model-value="modelValue"
       :editable="editable"
       :lists="lists"
+      :toolbar-items="toolbarItems"
       :toolbar="toolbar"
       :placeholder="placeholder"
       :enable-variables="enableVariables"

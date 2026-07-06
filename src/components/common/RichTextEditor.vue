@@ -11,6 +11,7 @@ import { LinkMark } from './LinkMark'
 import { VariableNode, type VariableEditRequest } from './VariableNode'
 import VariablePopover from './VariablePopover.vue'
 import RteToolbarButtons from './RteToolbarButtons.vue'
+import type { RteToolbarItem } from '@/api/toolbar'
 import { EDITOR_KEY } from '@/core/keys'
 import { useVariables } from '@/composables/useVariables'
 import { useConfig } from '@/core/useConfig'
@@ -31,6 +32,8 @@ const props = withDefaults(
     toolbar?: 'bubble' | 'fixed' | false
     /** Enable the `{{` template-variable system. */
     enableVariables?: boolean
+    /** Allowlist of toolbar buttons; omit for the default set. */
+    toolbarItems?: RteToolbarItem[]
   }>(),
   {
     editable: false,
@@ -351,6 +354,7 @@ watch(
         :editor="editor"
         :lists="lists"
         :show-variables="enableVariables"
+        :items="toolbarItems"
         @variable="openVariablesFromToolbar"
       />
     </div>
@@ -368,6 +372,7 @@ watch(
         :editor="editor"
         :lists="lists"
         :show-variables="enableVariables"
+        :items="toolbarItems"
         @variable="openVariablesFromToolbar"
       />
     </div>

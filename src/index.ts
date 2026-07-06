@@ -27,6 +27,7 @@ export type {
   EditorApi,
 } from './api/types'
 export type { ThemeTokens, ThemeColors, ThemeFont } from './api/theme'
+export type { RteToolbarItem } from './api/toolbar'
 export type {
   EditorConfig,
   EditorActions,

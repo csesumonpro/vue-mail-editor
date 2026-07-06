@@ -186,6 +186,29 @@
   z-index: 99999 !important;
 }
 
+/* Top-bar action groups. A divider is drawn (as a ::before) only *between* two
+   visible groups via the adjacent-sibling selector — so disabling a whole group
+   removes it from the DOM and no orphaned/doubled separator is ever shown. */
+.vue-email-editor .cvee-toolbar-group {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+.vue-email-editor .cvee-toolbar-group + .cvee-toolbar-group {
+  position: relative;
+  padding-left: 0.75rem;
+}
+.vue-email-editor .cvee-toolbar-group + .cvee-toolbar-group::before {
+  content: '';
+  position: absolute;
+  left: 0.1875rem;
+  top: 50%;
+  height: 1.5rem;
+  width: 1px;
+  transform: translateY(-50%);
+  background: var(--cvee-border);
+}
+
 /* Thin scrollbars for editor panels */
 .scroll-thin {
   scrollbar-width: thin;

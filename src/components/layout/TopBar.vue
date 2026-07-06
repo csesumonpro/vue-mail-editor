@@ -46,6 +46,24 @@ const devices = computed(() =>
   allDevices.filter((d) => config.devices.includes(d.id)),
 )
 
+// Action groups (separated by dividers). A divider renders only when the group
+// it precedes AND some earlier group both have at least one visible action, so
+// disabling a whole group never leaves an orphaned or doubled-up separator.
+const hasView = computed(
+  () => config.actions.undo || config.actions.preview || config.actions.theme,
+)
+const hasDesign = computed(
+  () => config.actions.templates || config.actions.new || config.actions.import,
+)
+const hasSave = computed(
+  () => config.actions.saveTemplate || config.actions.save || config.actions.export,
+)
+const sepBeforeDesign = computed(() => hasView.value && hasDesign.value)
+const sepBeforeSave = computed(() => (hasView.value || hasDesign.value) && hasSave.value)
+const sepBeforeFullscreen = computed(
+  () => (hasView.value || hasDesign.value || hasSave.value) && config.actions.fullscreen,
+)
+
 function onNew() {
   if (confirm('Start a new design? Unsaved changes will be lost.')) {
     store.resetDesign()
@@ -99,125 +117,141 @@ async function onImport(e: Event) {
       </button>
     </div>
 
-    <!-- Actions -->
+    <!-- Actions. Each group is its own element; CSS draws a divider only
+         *between* two visible groups, so hiding a whole group never leaves an
+         orphaned separator. -->
     <div class="flex items-center gap-1.5">
-      <template v-if="config.actions.undo">
+      <!-- History + view toggles -->
+      <div
+        v-if="config.actions.undo || config.actions.preview || config.actions.theme"
+        class="cvee-toolbar-group"
+      >
+        <template v-if="config.actions.undo">
+          <button
+            type="button"
+            v-tooltip="config.labels.undo"
+            class="flex h-8 w-8 items-center justify-center rounded-md text-faint transition hover:bg-ink/10 hover:text-header-fg disabled:opacity-40 disabled:hover:bg-transparent"
+            :disabled="!store.canUndo"
+            @click="store.undo()"
+          >
+            <Undo2 class="h-4 w-4" />
+          </button>
+          <button
+            type="button"
+            v-tooltip="config.labels.redo"
+            class="flex h-8 w-8 items-center justify-center rounded-md text-faint transition hover:bg-ink/10 hover:text-header-fg disabled:opacity-40 disabled:hover:bg-transparent"
+            :disabled="!store.canRedo"
+            @click="store.redo()"
+          >
+            <Redo2 class="h-4 w-4" />
+          </button>
+        </template>
         <button
+          v-if="config.actions.preview"
           type="button"
-          v-tooltip="config.labels.undo"
-          class="flex h-8 w-8 items-center justify-center rounded-md text-faint transition hover:bg-ink/10 hover:text-header-fg disabled:opacity-40 disabled:hover:bg-transparent"
-          :disabled="!store.canUndo"
-          @click="store.undo()"
+          v-tooltip="store.previewMode ? 'Exit preview' : config.labels.preview"
+          class="flex h-8 w-8 items-center justify-center rounded-md transition"
+          :class="
+            store.previewMode
+              ? 'bg-brand text-on-accent'
+              : 'text-faint hover:bg-ink/10 hover:text-header-fg'
+          "
+          @click="store.togglePreview()"
         >
-          <Undo2 class="h-4 w-4" />
+          <component :is="store.previewMode ? EyeOff : Eye" class="h-4 w-4" />
         </button>
         <button
+          v-if="config.actions.theme"
           type="button"
-          v-tooltip="config.labels.redo"
-          class="flex h-8 w-8 items-center justify-center rounded-md text-faint transition hover:bg-ink/10 hover:text-header-fg disabled:opacity-40 disabled:hover:bg-transparent"
-          :disabled="!store.canRedo"
-          @click="store.redo()"
+          v-tooltip="store.isDark ? 'Light mode' : 'Dark mode'"
+          class="flex h-8 w-8 items-center justify-center rounded-md text-faint transition hover:bg-ink/10 hover:text-header-fg"
+          @click="store.toggleDark()"
         >
-          <Redo2 class="h-4 w-4" />
+          <component :is="store.isDark ? Sun : Moon" class="h-4 w-4" />
         </button>
-      </template>
-      <button
-        v-if="config.actions.preview"
-        type="button"
-        v-tooltip="store.previewMode ? 'Exit preview' : config.labels.preview"
-        class="flex h-8 w-8 items-center justify-center rounded-md transition"
-        :class="
-          store.previewMode
-            ? 'bg-brand text-on-accent'
-            : 'text-faint hover:bg-ink/10 hover:text-header-fg'
-        "
-        @click="store.togglePreview()"
-      >
-        <component :is="store.previewMode ? EyeOff : Eye" class="h-4 w-4" />
-      </button>
-      <button
-        v-if="config.actions.theme"
-        type="button"
-        v-tooltip="store.isDark ? 'Light mode' : 'Dark mode'"
-        class="flex h-8 w-8 items-center justify-center rounded-md text-faint transition hover:bg-ink/10 hover:text-header-fg"
-        @click="store.toggleDark()"
-      >
-        <component :is="store.isDark ? Sun : Moon" class="h-4 w-4" />
-      </button>
+      </div>
 
-      <div class="mx-1 h-6 w-px bg-line" />
+      <!-- Design ops -->
+      <div
+        v-if="config.actions.templates || config.actions.new || config.actions.import"
+        class="cvee-toolbar-group"
+      >
+        <button
+          v-if="config.actions.templates"
+          type="button"
+          v-tooltip="config.labels.templates"
+          class="flex h-8 w-8 items-center justify-center rounded-md text-faint transition hover:bg-ink/10 hover:text-header-fg"
+          @click="emit('templates')"
+        >
+          <LayoutTemplate class="h-4 w-4" />
+        </button>
+        <button
+          v-if="config.actions.new"
+          type="button"
+          v-tooltip="config.labels.new"
+          class="flex h-8 w-8 items-center justify-center rounded-md text-faint transition hover:bg-ink/10 hover:text-header-fg"
+          @click="onNew"
+        >
+          <FilePlus2 class="h-4 w-4" />
+        </button>
+        <button
+          v-if="config.actions.import"
+          type="button"
+          v-tooltip="config.labels.import"
+          class="flex h-8 w-8 items-center justify-center rounded-md text-faint transition hover:bg-ink/10 hover:text-header-fg"
+          @click="fileInput?.click()"
+        >
+          <FolderOpen class="h-4 w-4" />
+        </button>
+        <input
+          ref="fileInput"
+          type="file"
+          accept="application/json,.json"
+          style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0"
+          @change="onImport"
+        />
+      </div>
 
-      <button
-        v-if="config.actions.templates"
-        type="button"
-        v-tooltip="config.labels.templates"
-        class="flex h-8 w-8 items-center justify-center rounded-md text-faint transition hover:bg-ink/10 hover:text-header-fg"
-        @click="emit('templates')"
+      <!-- Persistence -->
+      <div
+        v-if="config.actions.saveTemplate || config.actions.save || config.actions.export"
+        class="cvee-toolbar-group"
       >
-        <LayoutTemplate class="h-4 w-4" />
-      </button>
-      <button
-        v-if="config.actions.new"
-        type="button"
-        v-tooltip="config.labels.new"
-        class="flex h-8 w-8 items-center justify-center rounded-md text-faint transition hover:bg-ink/10 hover:text-header-fg"
-        @click="onNew"
-      >
-        <FilePlus2 class="h-4 w-4" />
-      </button>
-      <button
-        v-if="config.actions.import"
-        type="button"
-        v-tooltip="config.labels.import"
-        class="flex h-8 w-8 items-center justify-center rounded-md text-faint transition hover:bg-ink/10 hover:text-header-fg"
-        @click="fileInput?.click()"
-      >
-        <FolderOpen class="h-4 w-4" />
-      </button>
-      <input
-        ref="fileInput"
-        type="file"
-        accept="application/json,.json"
-        style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0"
-        @change="onImport"
-      />
+        <button
+          v-if="config.actions.saveTemplate"
+          type="button"
+          v-tooltip="config.labels.saveTemplate"
+          class="flex h-8 w-8 items-center justify-center rounded-md text-faint transition hover:bg-ink/10 hover:text-header-fg"
+          @click="actions.saveTemplate()"
+        >
+          <BookmarkPlus class="h-4 w-4" />
+        </button>
+        <button
+          v-if="config.actions.save"
+          type="button"
+          v-tooltip="config.labeledActions ? '' : config.labels.save"
+          class="flex items-center justify-center gap-1.5 rounded-md bg-primary font-semibold text-on-primary transition hover:opacity-90"
+          :class="config.labeledActions ? 'px-3 py-1.5 text-xs' : 'h-8 w-8'"
+          @click="actions.save()"
+        >
+          <Save class="h-4 w-4" />
+          <span v-if="config.labeledActions">{{ config.labels.save }}</span>
+        </button>
+        <button
+          v-if="config.actions.export"
+          type="button"
+          v-tooltip="config.labeledActions ? '' : config.labels.export"
+          class="flex items-center justify-center gap-1.5 rounded-md bg-primary font-semibold text-on-primary transition hover:opacity-90"
+          :class="config.labeledActions ? 'px-3 py-1.5 text-xs' : 'h-8 w-8'"
+          @click="emit('export')"
+        >
+          <Code2 class="h-4 w-4" />
+          <span v-if="config.labeledActions">{{ config.labels.export }}</span>
+        </button>
+      </div>
 
-      <div class="mx-1 h-6 w-px bg-line" />
-
-      <button
-        v-if="config.actions.saveTemplate"
-        type="button"
-        v-tooltip="config.labels.saveTemplate"
-        class="flex h-8 w-8 items-center justify-center rounded-md text-faint transition hover:bg-ink/10 hover:text-header-fg"
-        @click="actions.saveTemplate()"
-      >
-        <BookmarkPlus class="h-4 w-4" />
-      </button>
-      <button
-        v-if="config.actions.save"
-        type="button"
-        v-tooltip="config.labeledActions ? '' : config.labels.save"
-        class="flex items-center justify-center gap-1.5 rounded-md bg-primary font-semibold text-on-primary transition hover:opacity-90"
-        :class="config.labeledActions ? 'px-3 py-1.5 text-xs' : 'h-8 w-8'"
-        @click="actions.save()"
-      >
-        <Save class="h-4 w-4" />
-        <span v-if="config.labeledActions">{{ config.labels.save }}</span>
-      </button>
-      <button
-        v-if="config.actions.export"
-        type="button"
-        v-tooltip="config.labeledActions ? '' : config.labels.export"
-        class="flex items-center justify-center gap-1.5 rounded-md bg-primary font-semibold text-on-primary transition hover:opacity-90"
-        :class="config.labeledActions ? 'px-3 py-1.5 text-xs' : 'h-8 w-8'"
-        @click="emit('export')"
-      >
-        <Code2 class="h-4 w-4" />
-        <span v-if="config.labeledActions">{{ config.labels.export }}</span>
-      </button>
-
-      <template v-if="config.actions.fullscreen">
-        <div class="mx-1 h-6 w-px bg-line" />
+      <!-- Fullscreen -->
+      <div v-if="config.actions.fullscreen" class="cvee-toolbar-group">
         <button
           type="button"
           v-tooltip:left="store.fullscreen ? 'Exit fullscreen' : config.labels.fullscreen"
@@ -231,7 +265,7 @@ async function onImport(e: Event) {
         >
           <component :is="store.fullscreen ? Minimize : Maximize" class="h-4 w-4" />
         </button>
-      </template>
+      </div>
 
       <!-- Host-injected actions -->
       <slot name="actions" />

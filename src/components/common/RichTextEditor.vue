@@ -13,6 +13,7 @@ import VariablePopover from './VariablePopover.vue'
 import RteToolbarButtons from './RteToolbarButtons.vue'
 import { EDITOR_KEY } from '@/core/keys'
 import { useVariables } from '@/composables/useVariables'
+import { useConfig } from '@/core/useConfig'
 import { placeAnchored } from '@/utils/popover'
 import { formatToken } from '@/utils/variableToken'
 import type { DesignVariable } from '@/types/schema'
@@ -46,6 +47,7 @@ const root = ref<HTMLElement | null>(null)
 // Optional: present inside <EmailEditor> (drives preview mode); null when standalone.
 const store = inject(EDITOR_KEY, null)
 const variables = useVariables()
+const config = useConfig()
 
 const extensions: Extensions = [
   StarterKit.configure({ heading: false }),
@@ -61,6 +63,7 @@ if (props.enableVariables) {
       getVariable: (name) => variables.get(name),
       isPreview: () => store?.previewMode ?? false,
       onEdit: (req) => openEdit(req),
+      syntax: config.variableSyntax,
     }),
   )
 }
@@ -389,7 +392,7 @@ watch(
           :class="i === varActive ? 'bg-hover' : ''"
           @click="pickVariable(v.name)"
           @mouseenter="varActive = i"
-        >{{ formatToken(v.name) }}</button>
+        >{{ formatToken(v.name, config.variableSyntax) }}</button>
       </div>
       <button
         type="button"

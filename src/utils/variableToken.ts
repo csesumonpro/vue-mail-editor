@@ -1,15 +1,18 @@
-// Single source of truth for the `{{{name}}}` template-variable token syntax.
-// Change the delimiter here and every consumer (chip, export, autocomplete)
-// stays in sync.
+// Single source of truth for the template-variable token syntax. The delimiter
+// is configurable (`config.variableSyntax`): `triple` → {{{name}}} (default,
+// Mustache/Handlebars raw), `double` → {{name}}. Change a call site and every
+// consumer (chip, export, autocomplete) stays in sync.
 
-/** Format a variable name as its `{{{name}}}` merge token. */
-export function formatToken(name: string): string {
-  return `{{{${name}}}}`
+export type VariableSyntax = 'double' | 'triple'
+
+/** Format a variable name as its merge token (`{{{name}}}` or `{{name}}`). */
+export function formatToken(name: string, syntax: VariableSyntax = 'triple'): string {
+  return syntax === 'double' ? `{{${name}}}` : `{{{${name}}}}`
 }
 
-/** Matches a raw `{{{name}}}` token (name = word chars). */
-export function tokenRe(): RegExp {
-  return /\{\{\{(\w+)\}\}\}/g
+/** Matches a raw token (name = word chars) for the given syntax. */
+export function tokenRe(syntax: VariableSyntax = 'triple'): RegExp {
+  return syntax === 'double' ? /\{\{(\w+)\}\}/g : /\{\{\{(\w+)\}\}\}/g
 }
 
 /** Matches a serialized variable chip: `<span data-variable="name">…</span>`. */

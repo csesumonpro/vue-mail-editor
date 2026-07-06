@@ -3,6 +3,7 @@ import { ref, computed, nextTick } from 'vue'
 import { Plus } from 'lucide-vue-next'
 import type { DesignVariable } from '@/types/schema'
 import { useVariables } from '@/composables/useVariables'
+import { useConfig } from '@/core/useConfig'
 import { placeAnchored } from '@/utils/popover'
 import { formatToken } from '@/utils/variableToken'
 import VariablePopover from './VariablePopover.vue'
@@ -16,6 +17,7 @@ defineProps<{ modelValue: string; placeholder?: string; inputClass?: string }>()
 const emit = defineEmits<{ 'update:modelValue': [string] }>()
 
 const variables = useVariables()
+const config = useConfig()
 const inputEl = ref<HTMLInputElement | null>(null)
 
 const menuOpen = ref(false)
@@ -86,12 +88,12 @@ function pick(name: string) {
   if (!el) return
   const before = el.value.slice(0, triggerStart.value)
   const after = el.value.slice(caretPos.value)
-  const next = before + formatToken(name) + after
+  const next = before + formatToken(name, config.variableSyntax) + after
   emit('update:modelValue', next)
   menuOpen.value = false
   nextTick(() => {
     el.focus()
-    const pos = (before + formatToken(name)).length
+    const pos = (before + formatToken(name, config.variableSyntax)).length
     el.setSelectionRange(pos, pos)
   })
 }
@@ -162,7 +164,7 @@ function onKeydown(e: KeyboardEvent) {
         :class="i === active ? 'bg-hover' : ''"
         @click="pick(v.name)"
         @mouseenter="active = i"
-      >{{ formatToken(v.name) }}</button>
+      >{{ formatToken(v.name, config.variableSyntax) }}</button>
     </div>
     <button
       type="button"

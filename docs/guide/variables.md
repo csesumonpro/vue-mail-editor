@@ -34,7 +34,8 @@ variable registry, so editing one variable updates every place it appears.
 ## Export
 
 On export, chips become <code v-pre>{{{name}}}</code> tokens by default — your server-side merge
-engine replaces them with real values at send time.
+engine replaces them with real values at send time. Prefer double braces
+(<code v-pre>{{name}}</code>)? Set [`variableSyntax: 'double'`](/guide/configuration#variablesyntax-merge-token-delimiter).
 
 ::: code-group
 

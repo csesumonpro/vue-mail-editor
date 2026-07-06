@@ -1,5 +1,5 @@
 import type { BgImage, BorderValue, DesignVariable } from '@/types/schema'
-import { formatToken, tokenRe, chipRe } from '@/utils/variableToken'
+import { formatToken, tokenRe, chipRe, type VariableSyntax } from '@/utils/variableToken'
 
 /** How template variables are emitted on export. */
 export type VariableMode = 'token' | 'fallback'
@@ -8,10 +8,12 @@ export type VariableMode = 'token' | 'fallback'
 export interface ExportContext {
   contentWidth: number
   linkColor: string
-  /** Template variable registry (for resolving `{{{name}}}` tokens). */
+  /** Template variable registry (for resolving variable tokens). */
   variables?: DesignVariable[]
-  /** `token` keeps `{{{name}}}`; `fallback` substitutes the fallback value. */
+  /** `token` keeps the merge token; `fallback` substitutes the fallback value. */
   variableMode?: VariableMode
+  /** Merge-token delimiter (`triple` → {{{name}}}, `double` → {{name}}). */
+  variableSyntax?: VariableSyntax
 }
 
 export function esc(s: string): string {
@@ -72,18 +74,19 @@ export function resolveVariables(
   html: string,
   variables: DesignVariable[] | undefined,
   mode: VariableMode = 'token',
+  syntax: VariableSyntax = 'triple',
 ): string {
   // 1) Chip spans → token or fallback. Atoms never nest, so non-greedy is safe.
   let out = html.replace(chipRe(), (_m, name: string) => {
-    if (mode === 'token') return formatToken(name)
+    if (mode === 'token') return formatToken(name, syntax)
     const v = variables?.find((x) => x.name === name)
     return esc(v?.fallback ?? '')
   })
-  // 2) Fallback mode also resolves raw typed `{{{name}}}` tokens.
+  // 2) Fallback mode also resolves raw typed tokens.
   if (mode === 'fallback') {
-    out = out.replace(tokenRe(), (_m, name: string) => {
+    out = out.replace(tokenRe(syntax), (_m, name: string) => {
       const v = variables?.find((x) => x.name === name)
-      return v ? esc(v.fallback) : formatToken(name)
+      return v ? esc(v.fallback) : formatToken(name, syntax)
     })
   }
   return out

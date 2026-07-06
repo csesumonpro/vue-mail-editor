@@ -12,8 +12,8 @@ const name = computed<string>(() => props.node.attrs.name ?? '')
 const variable = computed<DesignVariable | undefined>(() => opts.value.getVariable(name.value))
 const isPreview = computed(() => opts.value.isPreview())
 const known = computed(() => !!variable.value)
-// `{{{…}}}` literal built in script (a template interpolation can't hold one).
-const display = computed(() => formatToken(name.value))
+// Merge-token literal built in script (a template interpolation can't hold one).
+const display = computed(() => formatToken(name.value, opts.value.syntax))
 
 // Defer the edit UI to RichTextEditor (rendered outside the contenteditable DOM
 // so its buttons aren't swallowed by ProseMirror). Pass our position + doc pos.

@@ -18,6 +18,7 @@ import {
   type ExportContext,
   type VariableMode,
 } from './helpers'
+import type { VariableSyntax } from '@/utils/variableToken'
 
 function renderContent(content: Content, blocks: BlockRegistry, ctx: ExportContext): string {
   const def = blocks.get(content.type)
@@ -91,6 +92,7 @@ export function exportHtml(
   design: Design,
   blocks: BlockRegistry,
   mode: VariableMode = 'token',
+  syntax: VariableSyntax = 'triple',
 ): string {
   const body = design.body
   const v = body.values
@@ -99,6 +101,7 @@ export function exportHtml(
     linkColor: v.linkColor,
     variables: design.variables,
     variableMode: mode,
+    variableSyntax: syntax,
   }
 
   const rows = body.rows.map((r) => renderRow(r, ctx, blocks)).join('')
@@ -158,5 +161,7 @@ ${container}
   // In fallback mode, resolve any remaining raw `{{{name}}}` tokens left in plain
   // fields (preheader, button text/href, etc.) that don't pass through a block's
   // variable-aware toHtml. In token mode the document is returned untouched.
-  return mode === 'fallback' ? resolveVariables(doc, design.variables, 'fallback') : doc
+  return mode === 'fallback'
+    ? resolveVariables(doc, design.variables, 'fallback', syntax)
+    : doc
 }

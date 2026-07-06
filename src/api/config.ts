@@ -1,7 +1,9 @@
 import type { Device, DesignVariable } from '@/types/schema'
 import type { TemplateDef } from '@/config/templates'
+import type { VariableSyntax } from '@/utils/variableToken'
 
 export type { TemplateDef }
+export type { VariableSyntax }
 
 /** Which top-bar actions are shown. */
 export interface EditorActions {
@@ -62,6 +64,12 @@ export interface EditorConfig {
   /** Predefined template variables (seeded into new/empty designs). */
   variables?: DesignVariable[]
   /**
+   * Merge-token delimiter for template variables. `'triple'` → `{{{name}}}`
+   * (default), `'double'` → `{{name}}`. Match your templating engine / ESP.
+   * Affects both the chips shown in the editor and the exported HTML tokens.
+   */
+  variableSyntax?: VariableSyntax
+  /**
    * Email metadata header (subject / from / reply-to / preview text) above the
    * canvas. Off by default — `true` shows all fields, or pass an object to pick
    * fields. For a fully custom header (e.g. a domain-validated From), use the
@@ -80,6 +88,7 @@ export interface ResolvedConfig {
   variables: DesignVariable[]
   meta: Required<MetaFields>
   labeledActions: boolean
+  variableSyntax: VariableSyntax
 }
 
 export function resolveConfig(c?: EditorConfig): ResolvedConfig {
@@ -116,6 +125,7 @@ export function resolveConfig(c?: EditorConfig): ResolvedConfig {
     variables: c?.variables ?? [],
     meta: resolveMeta(c?.meta),
     labeledActions: c?.labeledActions ?? false,
+    variableSyntax: c?.variableSyntax ?? 'triple',
   }
 }
 

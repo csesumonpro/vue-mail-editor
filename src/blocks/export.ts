@@ -14,7 +14,7 @@ import { esc, pad, borderCss, cell, inlineText, resolveVariables, safeUrl } from
 import { resolveSocial } from '@/config/social'
 
 export function headingToHtml(v: HeadingValues, ctx: ExportContext): string {
-  const inner = inlineText(resolveVariables(v.text, ctx.variables, ctx.variableMode))
+  const inner = inlineText(resolveVariables(v.text, ctx.variables, ctx.variableMode, ctx.variableSyntax))
   const text = v.href
     ? `<a href="${esc(safeUrl(v.href))}" style="color:inherit;text-decoration:none;">${inner}</a>`
     : inner
@@ -29,13 +29,13 @@ export function paragraphToHtml(v: ParagraphValues, ctx: ExportContext): string 
   return cell(
     v.align,
     pad(v.padding),
-    `<div style="font-family:${v.fontFamily.value};font-size:${v.fontSize}px;color:${v.color};line-height:${v.lineHeight};">${resolveVariables(v.text, ctx.variables, ctx.variableMode)}</div>`,
+    `<div style="font-family:${v.fontFamily.value};font-size:${v.fontSize}px;color:${v.color};line-height:${v.lineHeight};">${resolveVariables(v.text, ctx.variables, ctx.variableMode, ctx.variableSyntax)}</div>`,
   )
 }
 
 export function buttonToHtml(v: ButtonValues, ctx: ExportContext): string {
   const b = borderCss(v.border)
-  const label = inlineText(resolveVariables(v.text, ctx.variables, ctx.variableMode))
+  const label = inlineText(resolveVariables(v.text, ctx.variables, ctx.variableMode, ctx.variableSyntax))
   const a = `<a href="${esc(safeUrl(v.href))}" target="${v.target}" style="display:inline-block;background:${v.backgroundColor};color:${v.color};font-family:${v.fontFamily.value};font-size:${v.fontSize}px;font-weight:${v.fontWeight};text-decoration:none;border-radius:${v.borderRadius}px;${b ? `border:${b};` : ''}padding:${pad(v.innerPadding)};mso-padding-alt:0;${v.fullWidth ? 'width:100%;text-align:center;box-sizing:border-box;' : ''}">${label}</a>`
   return cell(v.align, pad(v.containerPadding), a)
 }

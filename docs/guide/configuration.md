@@ -44,6 +44,7 @@ const config = {
 | `actions` | `EditorActions` | all on (`saveTemplate` off) | Show/hide built-in top-bar actions. |
 | `labels` | `EditorLabels` | English defaults | Rename built-in action labels & tooltips. |
 | `labeledActions` | `boolean` | `false` | Show text labels on the Save/Export buttons (icon-only otherwise). |
+| `variableSyntax` | `'double' \| 'triple'` | `'triple'` | Merge-token delimiter: <code v-pre>{{name}}</code> vs <code v-pre>{{{name}}}</code>. |
 | `templates` | `TemplateDef[]` | built-ins | Replace the starter-template gallery. |
 | `autosaveMs` | `number` | `800` | localStorage autosave debounce (ms). |
 | `meta` | `boolean \| MetaFields` | all shown | Email metadata header (subject/from/reply-to/preview). |
@@ -259,6 +260,27 @@ label next to the icon.
 ```ts
 const config: EditorConfig = { labeledActions: true }
 ```
+
+## `variableSyntax` — merge-token delimiter
+
+Template variables export as **triple** curly braces by default —
+<code v-pre>{{{name}}}</code> (Mustache/Handlebars *raw*). If your templating engine
+/ ESP uses **double** braces, set `variableSyntax: 'double'` to emit
+<code v-pre>{{name}}</code> instead:
+
+```ts
+const config: EditorConfig = { variableSyntax: 'double' } // {{name}} tokens
+```
+
+This affects both the chips shown in the editor and the exported HTML tokens.
+Keep it consistent with what your backend merges at send time.
+
+::: warning Don't change it on existing content
+Designs are stored independently of the delimiter (chips carry the variable
+**name**, not the braces), so switching is safe for stored designs. But any
+**already-exported HTML** you saved elsewhere used the old delimiter — re-export
+after changing this.
+:::
 
 ## `autosaveMs` — important caveat
 

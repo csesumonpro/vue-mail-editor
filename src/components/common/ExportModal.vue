@@ -4,6 +4,7 @@ import { Copy, Download, Check } from 'lucide-vue-next'
 import ModalShell from './ModalShell.vue'
 import { useEditor } from '@/core/useEditor'
 import { useBlocks } from '@/core/registry'
+import { useConfig } from '@/core/useConfig'
 import { useToast } from '@/composables/useToast'
 import { exportHtml } from '@/export/htmlExporter'
 import { downloadText } from '@/utils/designIO'
@@ -13,6 +14,7 @@ const emit = defineEmits<{ close: [] }>()
 
 const store = useEditor()
 const blocks = useBlocks()
+const config = useConfig()
 const { notify } = useToast()
 
 type Tab = 'preview' | 'code'
@@ -27,7 +29,14 @@ const useFallback = ref(false)
 // Raw, email-safe HTML — used for copy/download (compact keeps inline-block
 // social icons / menu links from gaining whitespace gaps).
 const html = computed(() =>
-  props.open ? exportHtml(store.design, blocks, useFallback.value ? 'fallback' : 'token') : '',
+  props.open
+    ? exportHtml(
+        store.design,
+        blocks,
+        useFallback.value ? 'fallback' : 'token',
+        config.variableSyntax,
+      )
+    : '',
 )
 
 // Pretty-printed version, lazily beautified, shown only in the Code tab.

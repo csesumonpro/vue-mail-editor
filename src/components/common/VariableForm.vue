@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import type { DesignVariable } from '@/types/schema'
 import { formatToken } from '@/utils/variableToken'
+import { useConfig } from '@/core/useConfig'
 
 const props = withDefaults(
   defineProps<{
@@ -20,8 +21,12 @@ const emit = defineEmits<{
   'update:fallback': [string]
 }>()
 
-// `{{{…}}}` literal built in script (a template interpolation can't hold one).
-const display = computed(() => formatToken(props.name))
+const config = useConfig()
+// Merge-token literals built in script (a template interpolation can't hold one).
+const display = computed(() => formatToken(props.name, config.variableSyntax))
+const placeholder = computed(() =>
+  config.variableSyntax === 'double' ? '{{ YOUR_VARIABLE }}' : '{{{ YOUR_VARIABLE }}}',
+)
 </script>
 
 <template>
@@ -31,7 +36,7 @@ const display = computed(() => formatToken(props.name))
       <input
         v-if="nameEditable"
         :value="name"
-        placeholder="{{{ YOUR_VARIABLE }}}"
+        :placeholder="placeholder"
         class="w-full rounded-md border bg-input px-2 py-1.5 font-mono text-xs text-ink outline-none focus:border-brand"
         :class="nameError ? 'border-danger' : 'border-line'"
         @input="emit('update:name', ($event.target as HTMLInputElement).value)"

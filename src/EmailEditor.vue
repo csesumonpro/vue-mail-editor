@@ -103,7 +103,11 @@ provide(ACTIONS_KEY, {
 
 async function onExportClick() {
   showExport.value = true
-  if (props.onExport) await props.onExport(exportHtml(store.design, registry), store.design)
+  if (props.onExport)
+    await props.onExport(
+      exportHtml(store.design, registry, 'token', config.variableSyntax),
+      store.design,
+    )
 }
 
 /* Color mode (two-way via v-model:colorMode) ------------------------ */
@@ -239,7 +243,7 @@ const api: EditorApi = {
   getDesign: () => deepClone(store.design),
   loadDesign: (d) => store.loadDesign(d),
   newDesign: () => store.resetDesign(),
-  exportHtml: (mode) => exportHtml(store.design, registry, mode),
+  exportHtml: (mode) => exportHtml(store.design, registry, mode, config.variableSyntax),
   getVariables: () => deepClone(store.design.variables ?? []),
   setVariables: (vars) => store.updateVariables(vars),
   save: () => doSave(),

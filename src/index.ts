@@ -33,5 +33,6 @@ export type {
   EditorLabels,
   MetaFields,
   TemplateDef,
+  VariableSyntax,
 } from './api/config'
 export type { ContentType } from './types/schema'

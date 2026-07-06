@@ -49,6 +49,7 @@ and lists).
 | `v-model` | `string` | `''` | The editor HTML. |
 | `toolbar` | `'fixed' \| 'bubble' \| false` | `'fixed'` | Persistent top bar, selection bubble, or no toolbar. |
 | `lists` | `boolean` | `true` | Show bullet / numbered list buttons. |
+| `toolbarItems` | `RteToolbarItem[]` | — | Allowlist of toolbar buttons to show. Overrides `lists`. |
 | `placeholder` | `string` | `'Type here…'` | Empty-state placeholder. |
 | `editable` | `boolean` | `true` | Set `false` for a read-only render. |
 | `variables` | `DesignVariable[]` | — | Opt-in template variables (see below). |
@@ -60,6 +61,42 @@ and lists).
 <TextEditor v-model="html" toolbar="bubble" />  <!-- appears over a selection -->
 <TextEditor v-model="html" :toolbar="false" />  <!-- no toolbar -->
 ```
+
+### Choosing which buttons show — `toolbarItems`
+
+By default the toolbar shows every button. Pass `toolbarItems` — an allowlist of
+`RteToolbarItem` values — to show only a subset:
+
+```vue
+<TextEditor v-model="html" :toolbar-items="['bold', 'italic', 'link']" />
+```
+
+The available items are:
+
+`'bold'` · `'italic'` · `'underline'` · `'strike'` · `'link'` · `'color'` ·
+`'bulletList'` · `'orderedList'` · `'variable'`
+
+**Variable-only editor** — combine with the `variables` prop for just the `{}`
+button (nothing else):
+
+```vue
+<script setup lang="ts">
+import type { RteToolbarItem } from 'vue-mail-editor'
+</script>
+
+<template>
+  <TextEditor v-model="html" v-model:variables="vars" :toolbar-items="['variable']" />
+</template>
+```
+
+- **Allowlist, fixed order** — the array picks *which* buttons appear; their order
+  follows the toolbar layout, not the array.
+- **Dividers are automatic** — separators show only between visible groups, so a
+  single-button toolbar has none.
+- **The variable button needs variables enabled** — it only renders when you also
+  pass `variables`.
+- **No effect with `:toolbar="false"`** — there's no toolbar to render into
+  (variables still work by typing <code v-pre>{{</code>).
 
 ## Template variables (opt-in)
 

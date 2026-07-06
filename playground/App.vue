@@ -43,8 +43,8 @@ const htmlSubset = ref('<p>Bold / italic / link / variable only.</p>')
 
 // A shared variable registry (seeded so the {{ autocomplete has entries).
 const vars = ref<DesignVariable[]>([
-  { name: 'first_name', type: 'text', fallback: 'there' },
-  { name: 'company', type: 'text', fallback: 'Acme' },
+  { name: 'first_name', type: 'string', fallback: 'there' },
+  { name: 'company', type: 'string', fallback: 'Acme' },
 ])
 
 // Built as a JS string so the literal braces aren't parsed as Vue interpolation.

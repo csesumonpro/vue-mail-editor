@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-07-06
+
+### Added
+
+- **Real inline preview.** Preview mode now renders the actual exported email in
+  an isolated, auto-sizing iframe (no editing chrome, spacers, or selection
+  borders) instead of the editable canvas.
+- **`config.variableSyntax`** (`'double' | 'triple'`, default `'triple'`) to
+  choose the merge-token delimiter — `{{name}}` vs `{{{name}}}` — applied to both
+  the editor chips and the exported HTML.
+- **`TextEditor` `toolbarItems`** — an allowlist to show only chosen toolbar
+  buttons (e.g. `['variable']` for a variable-only editor). Adds the exported
+  `RteToolbarItem` type.
+
+### Fixed
+
+- Top-bar dividers no longer leave an orphaned or doubled separator when a whole
+  action group is hidden via `config.actions`.
+- Raise the fullscreen overlay `z-index` so it reliably covers host page chrome.
+
 ## [1.0.3] - 2026-07-06
 
 ### Added
@@ -54,7 +74,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   headers.
 - Documentation site with guides, API reference, and a live interactive demo.
 
-[Unreleased]: https://github.com/csesumonpro/vue-mail-editor/compare/v1.0.3...HEAD
+[Unreleased]: https://github.com/csesumonpro/vue-mail-editor/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/csesumonpro/vue-mail-editor/compare/v1.0.3...v1.1.0
 [1.0.3]: https://github.com/csesumonpro/vue-mail-editor/compare/v1.0.2...v1.0.3
 [1.0.2]: https://github.com/csesumonpro/vue-mail-editor/compare/v1.0.1...v1.0.2
 [1.0.1]: https://github.com/csesumonpro/vue-mail-editor/compare/v1.0.0...v1.0.1

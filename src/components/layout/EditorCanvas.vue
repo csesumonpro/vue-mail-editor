@@ -23,6 +23,18 @@ const frameWidth = computed(() => {
   return cw
 })
 
+// Viewport width for the real-preview iframe. The exported email stacks columns
+// at `@media (max-width:600px)`, so a desktop preview rendered at exactly the
+// 600px content width would (wrongly) collapse multi-column containers. Render
+// desktop wider than that breakpoint — the email still caps at contentWidth and
+// centers, matching the Export dialog and real desktop clients. Mobile/tablet
+// keep their true device widths so responsive stacking previews faithfully.
+const previewWidth = computed(() => {
+  if (store.device === 'mobile') return 375
+  if (store.device === 'tablet') return 600
+  return Math.max(store.design.body.values.contentWidth + 80, 680)
+})
+
 function onBackdropClick() {
   // Clicking the surrounding backdrop selects the body.
   if (!store.previewMode) store.selectBody()
@@ -70,7 +82,7 @@ function fitFrame() {
 }
 
 // Device switch changes the iframe width without reloading srcdoc — re-measure.
-watch(frameWidth, () => nextTick(fitFrame))
+watch(previewWidth, () => nextTick(fitFrame))
 onBeforeUnmount(() => ro?.disconnect())
 </script>
 
@@ -83,7 +95,7 @@ onBeforeUnmount(() => ro?.disconnect())
     <div class="flex min-h-full justify-center p-8">
       <div
         class="w-full transition-[max-width] duration-200"
-        :style="{ maxWidth: frameWidth + 'px' }"
+        :style="{ maxWidth: (store.previewMode ? previewWidth : frameWidth) + 'px' }"
       >
         <!-- Preview mode: the real exported email in an isolated iframe. -->
         <iframe

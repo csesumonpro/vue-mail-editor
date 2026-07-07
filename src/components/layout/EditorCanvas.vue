@@ -15,12 +15,13 @@ const showMeta = computed(
   () => config.meta.from || config.meta.replyTo || config.meta.subject || config.meta.preview,
 )
 
-// Canvas frame width per device (email content width caps the desktop view).
+// Canvas frame width per device. Widths come from config (host-overridable);
+// desktop falls back to the design's own content width when unset.
 const frameWidth = computed(() => {
-  const cw = store.design.body.values.contentWidth
-  if (store.device === 'mobile') return 375
-  if (store.device === 'tablet') return 600
-  return cw
+  const dw = config.deviceWidths
+  if (store.device === 'mobile') return dw.mobile
+  if (store.device === 'tablet') return dw.tablet
+  return dw.desktop ?? store.design.body.values.contentWidth
 })
 
 // Viewport width for the real-preview iframe. The exported email stacks columns
@@ -30,9 +31,11 @@ const frameWidth = computed(() => {
 // centers, matching the Export dialog and real desktop clients. Mobile/tablet
 // keep their true device widths so responsive stacking previews faithfully.
 const previewWidth = computed(() => {
-  if (store.device === 'mobile') return 375
-  if (store.device === 'tablet') return 600
-  return Math.max(store.design.body.values.contentWidth + 80, 680)
+  const dw = config.deviceWidths
+  if (store.device === 'mobile') return dw.mobile
+  if (store.device === 'tablet') return dw.tablet
+  const desktop = dw.desktop ?? store.design.body.values.contentWidth
+  return Math.max(desktop + 80, 680)
 })
 
 function onBackdropClick() {

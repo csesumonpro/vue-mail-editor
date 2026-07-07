@@ -11,6 +11,7 @@ import type { EditorConfig } from 'vue-mail-editor'
 const config: EditorConfig = {
   contentWidth: 640,
   devices: ['desktop', 'mobile'],
+  deviceWidths: { mobile: 320, tablet: 768 },
   actions: { import: false, saveTemplate: true },
   labels: { save: 'Publish', export: 'Get HTML' },
   templates: [ /* your starter templates */ ],
@@ -22,6 +23,7 @@ const config: EditorConfig = {
 const config = {
   contentWidth: 640,
   devices: ['desktop', 'mobile'],
+  deviceWidths: { mobile: 320, tablet: 768 },
   actions: { import: false, saveTemplate: true },
   labels: { save: 'Publish', export: 'Get HTML' },
   templates: [ /* your starter templates */ ],
@@ -41,6 +43,7 @@ const config = {
 | ----- | ---- | ------- | ----------- |
 | `contentWidth` | `number` | template default | Email content width (px) for new designs. |
 | `devices` | `('desktop' \| 'tablet' \| 'mobile')[]` | all three | Which device-preview toggles to show. |
+| `deviceWidths` | `DeviceWidths` | `mobile 375`, `tablet 600`, `desktop` = content width | Override the canvas/preview width (px) per device. |
 | `actions` | `EditorActions` | all on (`saveTemplate` off) | Show/hide built-in top-bar actions. |
 | `labels` | `EditorLabels` | English defaults | Rename built-in action labels & tooltips. |
 | `labeledActions` | `boolean` | `false` | Show text labels on the Save/Export buttons (icon-only otherwise). |
@@ -48,6 +51,29 @@ const config = {
 | `templates` | `TemplateDef[]` | built-ins | Replace the starter-template gallery. |
 | `autosaveMs` | `number` | `800` | localStorage autosave debounce (ms). |
 | `meta` | `boolean \| MetaFields` | all shown | Email metadata header (subject/from/reply-to/preview). |
+
+## `deviceWidths` — per-device preview size
+
+The device toggles in the top bar (`desktop` / `tablet` / `mobile`) render the
+canvas and the real-preview at a fixed width. Override any of them:
+
+```ts
+const config: EditorConfig = {
+  deviceWidths: {
+    mobile: 320,   // default 375
+    tablet: 768,   // default 600
+    desktop: 700,  // default: the design's own content width
+  },
+}
+```
+
+- Omit a device to keep its default (`mobile` 375, `tablet` 600, `desktop` =
+  the design's content width).
+- The width drives **both** the editable canvas and the preview iframe.
+- The **desktop preview** always renders above the 600 px responsive breakpoint,
+  so multi-column rows stay side-by-side there even if you set a small
+  `desktop` width — that value still caps the email content and centers it.
+- Pair with [`devices`](#fields) to control **which** toggles appear.
 
 ## `templates` — starter gallery
 

@@ -19,6 +19,17 @@ export interface EditorActions {
   export?: boolean
 }
 
+/**
+ * Preview/canvas width in px for each device toggle. Any omitted device keeps
+ * its default (`tablet` 600, `mobile` 375). `desktop` defaults to the design's
+ * own content width when left unset.
+ */
+export interface DeviceWidths {
+  desktop?: number
+  tablet?: number
+  mobile?: number
+}
+
 /** Which fields the email metadata header shows (subject, from, reply-to, preview). */
 export interface MetaFields {
   from?: boolean
@@ -47,6 +58,8 @@ export interface EditorConfig {
   contentWidth?: number
   /** Which device toggles to show. */
   devices?: Device[]
+  /** Override the preview/canvas width (px) for each device toggle. */
+  deviceWidths?: DeviceWidths
   /** Show/hide built-in actions. */
   actions?: EditorActions
   /** Rename built-in action labels/tooltips. */
@@ -81,6 +94,7 @@ export interface EditorConfig {
 export interface ResolvedConfig {
   contentWidth?: number
   devices: Device[]
+  deviceWidths: { desktop?: number; tablet: number; mobile: number }
   actions: Required<EditorActions>
   labels: Required<EditorLabels>
   templates?: TemplateDef[]
@@ -95,6 +109,11 @@ export function resolveConfig(c?: EditorConfig): ResolvedConfig {
   return {
     contentWidth: c?.contentWidth,
     devices: c?.devices ?? ['desktop', 'tablet', 'mobile'],
+    deviceWidths: {
+      desktop: c?.deviceWidths?.desktop,
+      tablet: c?.deviceWidths?.tablet ?? 600,
+      mobile: c?.deviceWidths?.mobile ?? 375,
+    },
     actions: {
       undo: c?.actions?.undo ?? true,
       preview: c?.actions?.preview ?? true,

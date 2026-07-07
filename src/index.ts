@@ -33,6 +33,7 @@ export type {
   EditorActions,
   EditorLabels,
   MetaFields,
+  DeviceWidths,
   TemplateDef,
   VariableSyntax,
 } from './api/config'

@@ -62,6 +62,9 @@ const canMoveDown = computed(() => {
   return !!loc && loc.index < loc.column.contents.length - 1
 })
 
+// Nodes with a hover/selected toolbar (grip / move / duplicate / delete).
+// Row and content only — moving up the tree to a column/row is done via the
+// breadcrumb in the settings panel, so no select-parent button is needed here.
 const hasActions = computed(() => props.kind === 'row' || props.kind === 'content')
 
 function move(delta: number) {

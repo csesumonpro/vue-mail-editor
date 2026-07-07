@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { vTooltip } from "@/directives/tooltip"
 import { computed } from 'vue'
-import { X, Copy, Trash2 } from 'lucide-vue-next'
+import { X, Copy, Trash2, ChevronRight } from 'lucide-vue-next'
 import { useEditor } from '@/core/useEditor'
 import { useBlocks } from '@/core/registry'
+import type { SelectionKind } from '@/types/schema'
 import type { InspectorSchema } from '@/config/inspector'
 import {
   bodyInspector,
@@ -66,6 +67,40 @@ const target = computed<Target | null>(() => {
   }
   return null
 })
+
+// Ancestor path of the current selection (Body › Row › Column › Block), so the
+// user can jump directly to any level — one click, no walking up the toolbar,
+// and it always shows where they are. The last crumb is the current selection.
+interface Crumb {
+  label: string
+  kind: SelectionKind
+  id: string
+}
+const crumbs = computed<Crumb[]>(() => {
+  const sel = store.selection
+  const list: Crumb[] = [{ label: 'Body', kind: 'body', id: store.design.body.id }]
+  if (sel.kind === 'row' && sel.id) {
+    list.push({ label: 'Row', kind: 'row', id: sel.id })
+  } else if (sel.kind === 'column' && sel.id) {
+    const f = store.findColumn(sel.id)
+    if (f) {
+      list.push({ label: 'Row', kind: 'row', id: f.row.id })
+      list.push({ label: 'Column', kind: 'column', id: f.column.id })
+    }
+  } else if (sel.kind === 'content' && sel.id) {
+    const f = store.findContent(sel.id)
+    if (f) {
+      const def = blocks.get(f.content.type)
+      list.push({ label: 'Row', kind: 'row', id: f.row.id })
+      list.push({ label: 'Column', kind: 'column', id: f.column.id })
+      list.push({ label: def?.label ?? f.content.type, kind: 'content', id: f.content.id })
+    }
+  }
+  return list
+})
+function goTo(c: Crumb) {
+  store.selectAndInspect(c.kind, c.id)
+}
 
 /** Read a (possibly dotted) key from the current values. */
 function getValue(key: string): unknown {
@@ -158,6 +193,30 @@ function remove() {
         </button>
       </div>
     </div>
+
+    <!-- Selection path: click any level to jump straight to it. -->
+    <nav
+      v-if="target && crumbs.length > 1"
+      class="flex flex-wrap items-center gap-0.5 border-b border-line px-4 py-2 text-xs"
+      aria-label="Selection path"
+    >
+      <template v-for="(c, i) in crumbs" :key="c.kind + c.id">
+        <ChevronRight v-if="i > 0" class="h-3 w-3 shrink-0 text-faint" />
+        <button
+          type="button"
+          class="max-w-[9rem] truncate rounded px-1 py-0.5 transition"
+          :class="
+            i === crumbs.length - 1
+              ? 'font-semibold text-ink'
+              : 'text-faint hover:bg-hover hover:text-ink'
+          "
+          :disabled="i === crumbs.length - 1"
+          @click="goTo(c)"
+        >
+          {{ c.label }}
+        </button>
+      </template>
+    </nav>
 
     <div class="scroll-thin flex-1 overflow-y-auto">
       <template v-if="target && hasControls">

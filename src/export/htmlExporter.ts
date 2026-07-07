@@ -63,8 +63,9 @@ function renderRow(row: Row, ctx: ExportContext, blocks: BlockRegistry): string 
     })
     .join('')
 
+  const colsBg = bgColor(v.columnsBackground)
   const colsWrap =
-    `<div style="font-size:0;text-align:center;">` +
+    `<div style="font-size:0;text-align:center;${colsBg ? `background-color:${colsBg};` : ''}">` +
     `<!--[if mso]><table role="presentation" width="${innerWidth}" cellpadding="0" cellspacing="0"><tr><![endif]-->` +
     columns +
     `<!--[if mso]></tr></table><![endif]-->` +

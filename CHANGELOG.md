@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Export the built-in starter templates as `TEMPLATES` so consumers can reuse or
+  extend the default gallery (e.g. preload a template as the initial design).
+
 ## [1.2.0] - 2026-07-09
 
 ### Added

@@ -71,6 +71,7 @@ export default defineConfig({
       { text: 'Showcase', link: '/showcase' },
       { text: 'Guide', link: '/guide/getting-started' },
       { text: 'API', link: '/reference/api' },
+      { text: 'Changelog', link: '/changelog' },
     ],
     sidebar: {
       // Scope the sidebar to docs only — marketing pages get no sidebar.

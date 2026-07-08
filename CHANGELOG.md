@@ -7,6 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-07-09
+
+### Added
+
+- **`config.deviceWidths`** — override the canvas/preview width (px) for each
+  device toggle (`desktop` / `tablet` / `mobile`). Omitted devices keep their
+  defaults (`mobile` 375, `tablet` 600, `desktop` = content width). Adds the
+  exported `DeviceWidths` type.
+- **Selection breadcrumb** in the settings panel (`Body › Row › Column › Block`)
+  — one click to jump to any ancestor level, so a filled column's (and its
+  row's) settings are always reachable.
+
+### Fixed
+
+- Inline preview no longer stacks multi-column rows: the desktop preview now
+  renders above the 600 px responsive breakpoint, matching the Export dialog and
+  real desktop clients.
+- The row **Columns color** (`columnsBackground`) is now written to the exported
+  HTML, so the two-tone row / card effect ships instead of showing only on the
+  editor canvas.
+
 ## [1.1.0] - 2026-07-06
 
 ### Added
@@ -55,6 +76,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.0.1] - 2026-07-05
 
+
 ### Changed
 
 - Maintenance release verifying the automated, tag-triggered npm publishing
@@ -74,7 +96,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   headers.
 - Documentation site with guides, API reference, and a live interactive demo.
 
-[Unreleased]: https://github.com/csesumonpro/vue-mail-editor/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/csesumonpro/vue-mail-editor/compare/v1.2.0...HEAD
+[1.2.0]: https://github.com/csesumonpro/vue-mail-editor/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/csesumonpro/vue-mail-editor/compare/v1.0.3...v1.1.0
 [1.0.3]: https://github.com/csesumonpro/vue-mail-editor/compare/v1.0.2...v1.0.3
 [1.0.2]: https://github.com/csesumonpro/vue-mail-editor/compare/v1.0.1...v1.0.2

@@ -7,10 +7,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.0] - 2026-07-13
+
 ### Added
 
+- **`config.lockVariables`** — lock the template-variable registry to the set the
+  host provides. Users can still insert those variables and edit each one's
+  fallback value, but cannot create or delete any: the "Create Variable" row, the
+  Delete button and the name/type fields are hidden, and `create()` / `remove()`
+  no-op. Pair it with `config.variables` when your merge tags come from your own
+  system (a CRM schema, an ESP's merge fields) and a user-invented token would
+  export something your backend can't resolve. The standalone `TextEditor` takes
+  the same flag as a `lock-variables` prop. `api.setVariables()` is unaffected, so
+  the host stays in control.
+- **Image `height`** — the image block only supported width (height was always
+  auto). It now has a `height` value with an `autoHeight` toggle, which defaults
+  to auto so aspect ratio is preserved and older designs are unchanged. Adds a
+  generic `showIf` predicate to inspector controls, so the Width / Height fields
+  appear only when their "Full width" / "Auto height" toggle is off.
 - Export the built-in starter templates as `TEMPLATES` so consumers can reuse or
   extend the default gallery (e.g. preload a template as the initial design).
+
+### Fixed
+
+- The configuration docs listed `meta` as shown by default; it is off unless you
+  opt in with `meta: true` or a field object.
 
 ## [1.2.0] - 2026-07-09
 
@@ -101,7 +122,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   headers.
 - Documentation site with guides, API reference, and a live interactive demo.
 
-[Unreleased]: https://github.com/csesumonpro/vue-mail-editor/compare/v1.2.0...HEAD
+[Unreleased]: https://github.com/csesumonpro/vue-mail-editor/compare/v1.3.0...HEAD
+[1.3.0]: https://github.com/csesumonpro/vue-mail-editor/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/csesumonpro/vue-mail-editor/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/csesumonpro/vue-mail-editor/compare/v1.0.3...v1.1.0
 [1.0.3]: https://github.com/csesumonpro/vue-mail-editor/compare/v1.0.2...v1.0.3

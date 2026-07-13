@@ -41,7 +41,9 @@ export function buttonToHtml(v: ButtonValues, ctx: ExportContext): string {
 }
 
 export function imageToHtml(v: ImageValues): string {
-  const img = `<img src="${esc(safeUrl(v.src, true))}" alt="${esc(v.alt)}" width="${v.autoWidth ? '' : v.width}" style="display:block;border:0;outline:none;text-decoration:none;max-width:100%;width:${v.autoWidth ? '100%' : v.width + 'px'};height:auto;border-radius:${v.borderRadius}px;" />`
+  // Older designs predate the height fields — treat a missing autoHeight as auto.
+  const autoHeight = v.autoHeight !== false
+  const img = `<img src="${esc(safeUrl(v.src, true))}" alt="${esc(v.alt)}" width="${v.autoWidth ? '' : v.width}" height="${autoHeight ? '' : v.height}" style="display:block;border:0;outline:none;text-decoration:none;max-width:100%;width:${v.autoWidth ? '100%' : v.width + 'px'};height:${autoHeight ? 'auto' : v.height + 'px'};border-radius:${v.borderRadius}px;" />`
   const wrapped = v.href ? `<a href="${esc(safeUrl(v.href))}">${img}</a>` : img
   return cell(
     v.align,

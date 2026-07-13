@@ -246,7 +246,9 @@ export const blockInspectors: Record<ContentType, InspectorSchema> = {
       icon: Palette,
       controls: [
         { type: 'toggle', key: 'autoWidth', label: 'Full width' },
-        { type: 'number', key: 'width', label: 'Width', unit: 'px', min: 20 },
+        { type: 'number', key: 'width', label: 'Width', unit: 'px', min: 20, showIf: (v) => !v.autoWidth },
+        { type: 'toggle', key: 'autoHeight', label: 'Auto height' },
+        { type: 'number', key: 'height', label: 'Height', unit: 'px', min: 20, showIf: (v) => v.autoHeight === false },
         { type: 'align', key: 'align', label: 'Align' },
         { type: 'number', key: 'borderRadius', label: 'Radius', unit: 'px', min: 0 },
       ],

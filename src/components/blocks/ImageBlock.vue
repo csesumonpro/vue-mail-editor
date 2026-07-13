@@ -14,6 +14,7 @@ defineProps<{ values: ImageValues }>()
         display: 'inline-block',
         width: values.autoWidth ? '100%' : values.width + 'px',
         maxWidth: '100%',
+        height: values.autoHeight === false ? values.height + 'px' : 'auto',
         borderRadius: values.borderRadius + 'px',
       }"
     />

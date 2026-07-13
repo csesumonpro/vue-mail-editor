@@ -36,6 +36,9 @@ export interface ControlDef {
   placeholder?: string
   /** For the list editor: which item shape to edit. */
   itemKind?: 'social' | 'menu'
+  /** Only render this control when the predicate (given the node's current
+   *  values) returns true. Omit to always show. */
+  showIf?: (values: Record<string, unknown>) => boolean
 }
 
 export interface AccordionGroup {

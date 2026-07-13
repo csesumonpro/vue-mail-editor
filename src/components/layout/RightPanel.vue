@@ -5,7 +5,7 @@ import { X, Copy, Trash2, ChevronRight } from 'lucide-vue-next'
 import { useEditor } from '@/core/useEditor'
 import { useBlocks } from '@/core/registry'
 import type { SelectionKind } from '@/types/schema'
-import type { InspectorSchema } from '@/config/inspector'
+import type { ControlDef, InspectorSchema } from '@/config/inspector'
 import {
   bodyInspector,
   rowInspector,
@@ -125,8 +125,16 @@ function setValue(key: string, value: unknown) {
   }
 }
 
+/** Controls in a group that pass their `showIf` predicate for the current values. */
+function visibleControls(controls: ControlDef[]): ControlDef[] {
+  const values = target.value?.values ?? {}
+  return controls.filter((c) => !c.showIf || c.showIf(values))
+}
+
 const hasControls = computed(
-  () => !!target.value && target.value.schema.some((g) => g.controls.length),
+  () =>
+    !!target.value &&
+    target.value.schema.some((g) => visibleControls(g.controls).length),
 )
 
 const sel = computed(() => store.selection)
@@ -221,13 +229,13 @@ function remove() {
     <div class="scroll-thin flex-1 overflow-y-auto">
       <template v-if="target && hasControls">
         <Accordion
-          v-for="(group, gi) in target.schema.filter((g) => g.controls.length)"
+          v-for="(group, gi) in target.schema.filter((g) => visibleControls(g.controls).length)"
           :key="group.title + gi"
           :title="group.title"
           :icon="group.icon"
         >
           <InspectorControl
-            v-for="(ctrl, ci) in group.controls"
+            v-for="(ctrl, ci) in visibleControls(group.controls)"
             :key="ctrl.key + ci"
             :def="ctrl"
             :model-value="getValue(ctrl.key)"

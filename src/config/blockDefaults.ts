@@ -51,6 +51,8 @@ export const blockDefaults: { [K in ContentType]: () => Content<K>['values'] } =
     alt: '',
     width: 560,
     autoWidth: true,
+    height: 280,
+    autoHeight: true,
     align: 'center',
     href: '',
     borderRadius: 0,

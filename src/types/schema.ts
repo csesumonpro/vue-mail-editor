@@ -105,6 +105,8 @@ export interface ImageValues {
   alt: string
   width: number
   autoWidth: boolean
+  height: number
+  autoHeight: boolean
   align: TextAlign
   href: string
   borderRadius: number

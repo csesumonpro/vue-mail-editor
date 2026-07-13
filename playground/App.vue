@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { Star } from 'lucide-vue-next'
 import { EmailEditor, TextEditor, defineBlock } from '@/index'
 import type { EditorConfig, DesignVariable } from '@/index'
@@ -25,7 +25,23 @@ const ratingBlock = defineBlock<{ stars: number; color: string }>({
     `<div style="text-align:center;font-size:26px;color:${v.color}">${'★'.repeat(v.stars)}</div>`,
 })
 
-const config: EditorConfig = { contentWidth: 600 }
+// `lockVariables` demo: the host owns the merge tags, so users may insert them
+// and edit fallbacks, but not create or delete any. Toggle it to compare.
+const lockVars = ref(true)
+
+const hostVariables: DesignVariable[] = [
+  { name: 'first_name', type: 'string', fallback: 'there' },
+  { name: 'order_total', type: 'number', fallback: '0.00' },
+]
+
+const config = computed<EditorConfig>(() => ({
+  contentWidth: 600,
+  // Meta header on, so the Subject / preview-text fields (which also take
+  // variables, via VariableInput) are part of the lock demo.
+  meta: true,
+  variables: hostVariables,
+  lockVariables: lockVars.value,
+}))
 
 function publish() {
   // eslint-disable-next-line no-alert
@@ -82,12 +98,36 @@ function tabStyle(active: boolean) {
       <button type="button" :style="tabStyle(view === 'text')" @click="view = 'text'">
         Text Editor
       </button>
+
+      <label
+        style="
+          margin-left: auto;
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          font-size: 13px;
+          color: #334155;
+          cursor: pointer;
+        "
+      >
+        <input v-model="lockVars" type="checkbox" />
+        <code>lockVariables</code>
+        <span style="font-size: 11px; color: #94a3b8">
+          {{
+            lockVars
+              ? 'locked — insert + edit fallback only, no create/delete'
+              : 'unlocked — users can create & delete variables'
+          }}
+        </span>
+      </label>
     </div>
 
     <div style="flex: 1; min-height: 0">
       <!-- Full email editor -->
+      <!-- `config` is resolved once on mount, so remount when the lock flips. -->
       <EmailEditor
         v-if="view === 'email'"
+        :key="`email-${lockVars}`"
         :blocks="[ratingBlock]"
         :config="config"
         color-mode="light"
@@ -143,9 +183,10 @@ function tabStyle(active: boolean) {
               Variable only — <code>:toolbar-items="['variable']"</code>
             </h3>
             <TextEditor
+              :key="`varonly-${lockVars}`"
               v-model="htmlVarOnly"
               v-model:variables="vars"
-              :variables="vars"
+              :lock-variables="lockVars"
               :toolbar="toolbarMode"
               :toolbar-items="['variable']"
               :placeholder="varHint"
@@ -166,9 +207,10 @@ function tabStyle(active: boolean) {
               Subset — <code>['bold', 'italic', 'link', 'variable']</code>
             </h3>
             <TextEditor
+              :key="`subset-${lockVars}`"
               v-model="htmlSubset"
               v-model:variables="vars"
-              :variables="vars"
+              :lock-variables="lockVars"
               :toolbar="toolbarMode"
               :toolbar-items="['bold', 'italic', 'link', 'variable']"
             />

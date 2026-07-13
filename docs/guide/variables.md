@@ -100,6 +100,46 @@ const config = {
 Predefined variables seed **new/empty** designs only — a loaded design keeps its
 own saved variables.
 
+## Locking the registry
+
+When the merge tags come from your own system, you usually don't want users
+inventing new ones — a token your backend can't resolve would ship in the export.
+Pair `variables` with `lockVariables: true`:
+
+```ts
+const config: EditorConfig = {
+  variables: [
+    { name: 'first_name', type: 'string', fallback: 'there' },
+    { name: 'order_total', type: 'number', fallback: '0.00' },
+  ],
+  lockVariables: true,
+}
+```
+
+Locked, users can still:
+
+- **insert** any variable you provided (via the <code v-pre>{{</code> autocomplete
+  or the toolbar), and
+- edit a variable's **fallback value**, so previews and fallback exports look right.
+
+They cannot **create** or **delete** variables: the **Create Variable** row, the
+**Delete** button and the type selector are hidden, and `create()` / `remove()`
+no-op even if called. The set of tokens that can reach your backend is exactly the
+set you passed in.
+
+The same applies to the standalone `<TextEditor>` via a prop:
+
+```vue
+<TextEditor v-model="html" :variables="variables" lock-variables />
+```
+
+::: tip Loaded designs
+`lockVariables` only locks the **UI**. A design loaded with variables it saved
+earlier keeps them (see above), so a user can't delete a stale variable while
+locked. If your registry is the source of truth, push it after loading with
+`api.setVariables(...)`, which is unaffected by the lock.
+:::
+
 ## Reading & writing programmatically
 
 The registry round-trips with the design (autosave, JSON import/export,

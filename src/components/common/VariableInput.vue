@@ -17,6 +17,8 @@ defineProps<{ modelValue: string; placeholder?: string; inputClass?: string }>()
 const emit = defineEmits<{ 'update:modelValue': [string] }>()
 
 const variables = useVariables()
+// Locked registry: insert-only, no "Create Variable" row.
+const locked = variables.locked
 const config = useConfig()
 const inputEl = ref<HTMLInputElement | null>(null)
 
@@ -104,6 +106,7 @@ function chooseActive() {
 }
 
 function openCreate() {
+  if (locked) return
   createName.value = query.value
   menuOpen.value = false
   createOpen.value = true
@@ -121,7 +124,9 @@ function onKeydown(e: KeyboardEvent) {
     menuOpen.value = false
     e.preventDefault()
   } else if (e.key === 'ArrowDown') {
-    active.value = Math.min(active.value + 1, filtered.value.length)
+    // Last selectable index is the "Create" row, unless the registry is locked.
+    const max = Math.max(0, filtered.value.length - (locked ? 1 : 0))
+    active.value = Math.min(active.value + 1, max)
     e.preventDefault()
   } else if (e.key === 'ArrowUp') {
     active.value = Math.max(active.value - 1, 0)
@@ -146,7 +151,7 @@ function onKeydown(e: KeyboardEvent) {
 
   <!-- `{{` list (same look as the rich-text autocomplete) -->
   <div
-    v-if="menuOpen"
+    v-if="menuOpen && (filtered.length || !locked)"
     ref="menuEl"
     class="fixed z-[var(--cvee-z-overlay)] w-60 overflow-hidden rounded-lg border border-line bg-surface p-1 text-xs shadow-xl"
     :style="{ top: menuTop + 'px', left: menuLeft + 'px' }"
@@ -167,6 +172,7 @@ function onKeydown(e: KeyboardEvent) {
       >{{ formatToken(v.name, config.variableSyntax) }}</button>
     </div>
     <button
+      v-if="!locked"
       type="button"
       class="flex w-full items-center gap-1.5 rounded-md px-2 py-1.5 text-left text-ink"
       :class="active === filtered.length ? 'bg-hover' : ''"

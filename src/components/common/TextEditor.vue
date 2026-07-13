@@ -29,6 +29,11 @@ const props = withDefaults(
      * `{{` autocomplete; use with `v-model:variables` to persist the registry.
      */
     variables?: DesignVariable[]
+    /**
+     * Lock the registry: users can insert variables and edit fallback values,
+     * but cannot create or delete them. Off by default.
+     */
+    lockVariables?: boolean
   }>(),
   {
     modelValue: '',
@@ -51,6 +56,7 @@ provide(
   createVariablesController(
     computed(() => props.variables ?? []),
     (next) => emit('update:variables', next),
+    props.lockVariables ?? false,
   ),
 )
 </script>

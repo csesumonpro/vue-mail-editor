@@ -77,6 +77,12 @@ export interface EditorConfig {
   /** Predefined template variables (seeded into new/empty designs). */
   variables?: DesignVariable[]
   /**
+   * Lock the variable registry to what the host provides: end users can insert
+   * variables and edit each one's fallback value, but cannot create or delete
+   * variables. Pair with `variables`. Off by default.
+   */
+  lockVariables?: boolean
+  /**
    * Merge-token delimiter for template variables. `'triple'` → `{{{name}}}`
    * (default), `'double'` → `{{name}}`. Match your templating engine / ESP.
    * Affects both the chips shown in the editor and the exported HTML tokens.
@@ -100,6 +106,7 @@ export interface ResolvedConfig {
   templates?: TemplateDef[]
   autosaveMs: number
   variables: DesignVariable[]
+  lockVariables: boolean
   meta: Required<MetaFields>
   labeledActions: boolean
   variableSyntax: VariableSyntax
@@ -142,6 +149,7 @@ export function resolveConfig(c?: EditorConfig): ResolvedConfig {
     templates: c?.templates,
     autosaveMs: c?.autosaveMs ?? 800,
     variables: c?.variables ?? [],
+    lockVariables: c?.lockVariables ?? false,
     meta: resolveMeta(c?.meta),
     labeledActions: c?.labeledActions ?? false,
     variableSyntax: c?.variableSyntax ?? 'triple',

@@ -3,7 +3,9 @@ import { ref, watch, computed, nextTick, onBeforeUnmount } from 'vue'
 import { Trash2 } from 'lucide-vue-next'
 import type { DesignVariable } from '@/types/schema'
 import { useVariables } from '@/composables/useVariables'
+import { useConfig } from '@/core/useConfig'
 import { placeAnchored } from '@/utils/popover'
+import { formatToken } from '@/utils/variableToken'
 import VariableForm from './VariableForm.vue'
 
 /**
@@ -33,6 +35,9 @@ const emit = defineEmits<{
 }>()
 
 const variables = useVariables()
+const locked = variables.locked
+const config = useConfig()
+const token = computed(() => formatToken(props.name, config.variableSyntax))
 const popoverEl = ref<HTMLElement | null>(null)
 
 const localName = ref('')
@@ -147,12 +152,17 @@ function create() {
     <p v-else-if="!known" class="mb-2 text-[11px] text-danger">
       This variable was deleted from the template.
     </p>
+    <!-- Locked: name/type fields are gone, so the token itself is the heading. -->
+    <p v-else-if="locked" class="mb-2 truncate font-mono text-[11px] text-faint">
+      {{ token }}
+    </p>
 
     <VariableForm
       :name="mode === 'create' ? localName : name"
       :type="type"
       :fallback="fallback"
       :name-editable="mode === 'create'"
+      :fallback-only="locked && mode === 'edit'"
       :name-error="nameError"
       @update:name="localName = $event"
       @update:type="onType"
@@ -177,7 +187,7 @@ function create() {
       </button>
     </div>
     <button
-      v-else
+      v-else-if="!locked"
       type="button"
       class="mt-3 flex w-full items-center justify-center gap-1.5 rounded-md bg-danger-soft px-2 py-1.5 text-xs font-semibold text-danger hover:opacity-90"
       @mousedown.prevent="emit('delete')"

@@ -11,9 +11,14 @@ const props = withDefaults(
     fallback: string
     /** Name is editable only when creating (locked once a variable exists). */
     nameEditable?: boolean
+    /**
+     * Locked registry: the host owns name and type, so show the fallback field
+     * alone (the only thing the user may still change).
+     */
+    fallbackOnly?: boolean
     nameError?: string
   }>(),
-  { nameEditable: true, nameError: '' },
+  { nameEditable: true, fallbackOnly: false, nameError: '' },
 )
 const emit = defineEmits<{
   'update:name': [string]
@@ -31,7 +36,7 @@ const placeholder = computed(() =>
 
 <template>
   <div class="flex flex-col gap-3">
-    <label class="flex flex-col gap-1">
+    <label v-if="!fallbackOnly" class="flex flex-col gap-1">
       <span class="text-xs font-medium text-subtle">Name</span>
       <input
         v-if="nameEditable"
@@ -48,7 +53,7 @@ const placeholder = computed(() =>
       <span v-if="nameError" class="text-[11px] text-danger">{{ nameError }}</span>
     </label>
 
-    <label class="flex flex-col gap-1">
+    <label v-if="!fallbackOnly" class="flex flex-col gap-1">
       <span class="text-xs font-medium text-subtle">Type</span>
       <select
         :value="type"

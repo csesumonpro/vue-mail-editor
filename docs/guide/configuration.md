@@ -48,9 +48,11 @@ const config = {
 | `labels` | `EditorLabels` | English defaults | Rename built-in action labels & tooltips. |
 | `labeledActions` | `boolean` | `false` | Show text labels on the Save/Export buttons (icon-only otherwise). |
 | `variableSyntax` | `'double' \| 'triple'` | `'triple'` | Merge-token delimiter: <code v-pre>{{name}}</code> vs <code v-pre>{{{name}}}</code>. |
+| `variables` | `DesignVariable[]` | `[]` | [Predefined template variables](/guide/variables#predefining-variables) seeded into new designs. |
+| `lockVariables` | `boolean` | `false` | Lock the registry to the variables you provide — users can insert them but not create or delete any. |
 | `templates` | `TemplateDef[]` | built-ins | Replace the starter-template gallery. |
 | `autosaveMs` | `number` | `800` | localStorage autosave debounce (ms). |
-| `meta` | `boolean \| MetaFields` | all shown | Email metadata header (subject/from/reply-to/preview). |
+| `meta` | `boolean \| MetaFields` | off | Email metadata header (subject/from/reply-to/preview). `true` shows all fields. |
 
 ## `deviceWidths` — per-device preview size
 
@@ -307,6 +309,29 @@ Designs are stored independently of the delimiter (chips carry the variable
 **already-exported HTML** you saved elsewhere used the old delimiter — re-export
 after changing this.
 :::
+
+## `lockVariables` — host-managed registry
+
+By default users can create and delete template variables from the editor. If the
+merge tags come from *your* system (a CRM contact schema, an ESP's merge fields),
+a user-invented variable would export a token your backend can't resolve. Set
+`lockVariables: true` to make the registry read-only:
+
+```ts
+const config: EditorConfig = {
+  variables: [
+    { name: 'first_name', type: 'string', fallback: 'there' },
+    { name: 'order_total', type: 'number', fallback: '0.00' },
+  ],
+  lockVariables: true,
+}
+```
+
+Users can still **insert** those variables and edit each one's **fallback value**
+(so previews and fallback exports look right). The **Create Variable** row, the
+**Delete** button and the type selector are hidden, and `create()` / `remove()`
+no-op — so the set of tokens that can reach your backend is exactly the set you
+passed in. See [Template variables](/guide/variables#locking-the-registry).
 
 ## `autosaveMs` — important caveat
 

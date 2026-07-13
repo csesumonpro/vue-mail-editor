@@ -20,6 +20,9 @@ export const CONFIG_KEY: InjectionKey<ResolvedConfig> = Symbol('vue-email-editor
  */
 export interface VariablesController {
   list: ComputedRef<DesignVariable[]>
+  /** Locked (host-managed) registry: variables can't be created or deleted in
+   *  the UI — only their fallback value may be edited. `create`/`remove` no-op. */
+  locked: boolean
   get(name: string): DesignVariable | undefined
   exists(name: string): boolean
   create(variable: DesignVariable): void

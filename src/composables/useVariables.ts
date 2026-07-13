@@ -2,6 +2,7 @@ import { computed, inject } from 'vue'
 import type { ComputedRef } from 'vue'
 import type { DesignVariable } from '@/types/schema'
 import { EDITOR_KEY, VARIABLES_KEY, type VariablesController } from '@/core/keys'
+import { useConfig } from '@/core/useConfig'
 
 export type { VariablesController }
 
@@ -13,6 +14,7 @@ export type { VariablesController }
 export function createVariablesController(
   list: ComputedRef<DesignVariable[]>,
   set: (next: DesignVariable[], key?: string) => void,
+  locked = false,
 ): VariablesController {
   const get = (name: string) => list.value.find((v) => v.name === name)
   const exists = (name: string) => list.value.some((v) => v.name === name)
@@ -21,13 +23,18 @@ export function createVariablesController(
       list.value.map((v) => (v.name === name ? { ...v, ...patch } : v)),
       `variables:update:${name}`,
     )
+  // In a locked registry only fallback edits (`update`) are allowed; creating or
+  // removing variables is a no-op (host owns the registry).
   const create = (variable: DesignVariable) => {
+    if (locked) return
     if (exists(variable.name)) update(variable.name, variable)
     else set([...list.value, variable], 'variables:create')
   }
-  const remove = (name: string) =>
+  const remove = (name: string) => {
+    if (locked) return
     set(list.value.filter((v) => v.name !== name), 'variables:remove')
-  return { list, get, exists, create, update, remove }
+  }
+  return { list, locked, get, exists, create, update, remove }
 }
 
 /**
@@ -42,11 +49,13 @@ export function useVariables(): VariablesController {
 
   const store = inject(EDITOR_KEY, null)
   if (store) {
+    const config = useConfig()
     return createVariablesController(
       computed(() => store.design.variables ?? []),
       (next, key) => store.updateVariables(next, key),
+      config.lockVariables,
     )
   }
 
-  return createVariablesController(computed(() => []), () => {})
+  return createVariablesController(computed(() => []), () => {}, true)
 }

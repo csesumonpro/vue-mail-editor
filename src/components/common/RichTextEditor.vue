@@ -50,6 +50,8 @@ const root = ref<HTMLElement | null>(null)
 // Optional: present inside <EmailEditor> (drives preview mode); null when standalone.
 const store = inject(EDITOR_KEY, null)
 const variables = useVariables()
+// Locked registry: no "Create Variable" row, no create popover.
+const locked = variables.locked
 const config = useConfig()
 
 const extensions: Extensions = [
@@ -89,7 +91,9 @@ const editor = useEditor({
         return true
       }
       if (event.key === 'ArrowDown') {
-        varActive.value = Math.min(varActive.value + 1, filteredVars.value.length)
+        // Last selectable index is the "Create" row, unless the registry is locked.
+        const max = Math.max(0, filteredVars.value.length - (locked ? 1 : 0))
+        varActive.value = Math.min(varActive.value + 1, max)
         return true
       }
       if (event.key === 'ArrowUp') {
@@ -279,6 +283,7 @@ function chooseActive() {
 }
 
 function openCreate() {
+  if (locked) return
   popoverMode.value = 'create'
   popoverName.value = varQuery.value
   popoverAnchorTop.value = caretTop.value
@@ -379,7 +384,7 @@ watch(
 
     <!-- `{{` variable autocomplete: anchored to the caret (flips up if needed). -->
     <div
-      v-if="editor && varMenuVisible"
+      v-if="editor && varMenuVisible && (filteredVars.length || !locked)"
       ref="varMenuEl"
       class="fixed z-[var(--cvee-z-overlay)] w-60 overflow-hidden rounded-lg border border-line bg-surface p-1 text-xs shadow-xl"
       :style="{ top: varMenuTop + 'px', left: varMenuLeft + 'px' }"
@@ -400,6 +405,7 @@ watch(
         >{{ formatToken(v.name, config.variableSyntax) }}</button>
       </div>
       <button
+        v-if="!locked"
         type="button"
         class="flex w-full items-center gap-1.5 rounded-md px-2 py-1.5 text-left text-ink"
         :class="varActive === filteredVars.length ? 'bg-hover' : ''"
